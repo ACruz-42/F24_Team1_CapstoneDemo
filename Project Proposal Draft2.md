@@ -62,24 +62,11 @@ As stated in the game Rules R04 [insert reference], each robot competing in the 
 
 ## Constraints
 
-1)	The robot shall know its location on the game field within 2 in. (5.08 cm).
+1)	The robot shall read April Tags to help with Specifications 1, 2e, 2g, 2h, and 2i. 
 
-2)	The robot shall have an autonomous navigation system that controls movement.
+2)	The robot shall have a user manual that explains functionality and design intent for each subsystem.
 
-3)	The robot shall turn left and right 360 degrees and move forwards and backwards based on external sensor inputs and its internal localization systems
-
-4)	The robot shall read April Tags to help with Specifications 1, 2e, 2g, 2h, and 2i. 
-
-5)	The robot shall have a user manual that explains functionality and design intent for each subsystem.
-
-6)	The robot shall have protective measures against back EMF and other sources of noise interference. 
-
-7)	The robot shall contain a modular battery that supplies power to the microcontroller and motor of the machine.
-
-8)	The robot shall sustain power for at least 1 hour and be rechargeable for continuous use.
-
-9)	The robot shall have at most 2 power buses for the efficiency of both the motor and microcontroller circuits that are used to process.
-10)	 The robot shall adhere to applicable requirements in standard IEC 60204-1 pertaining to electrical supply, electromagnetic compatibility, emergency stop, and control circuit protection. The power-based and electromagnetic interactions of components in the motor control subsystem will need to adhere to this standard [11].
+3)	 The robot shall adhere to applicable requirements in standard IEC 60204-1 pertaining to electrical supply, electromagnetic compatibility, emergency stop, and control circuit protection. The power-based and electromagnetic interactions of components in the motor control subsystem will need to adhere to this standard [11].
 
 ## Survey of Solutions
 
@@ -137,8 +124,6 @@ The robot will be allowed to run for the full duration of the game. After the 3 
 
 Specification 11 will be tested by adding noise outside the game field but possible within the sight of the robot’s sensors. If the robot filters through the noise from 10 separate stimuli, specification 11 will be considered satisfied.
 
-The robot will know its location within 2 in. while traversing to 10 points of interest in a row in both an open and closed arena. This will ensure that the robot knows its location while it is traveling from point to point and through the cave. If the robot's internal location does not agree with its actual location, landmarks such as the April Tags will have to be used to help orient the robot. If this is successful, constraint 1 will be considered satisfied. 
-
 ### Ethics and Responsibility
 
 This design team shall follow not only the rules of the competition Mining Mayhem, but also the National Electrical Code safety procedures, associated National Fire Protection Agency procedures, and abide by piracy laws. 
@@ -173,13 +158,16 @@ Timeline
   - Sam Hunter – Computer Engineering major. Proficient in C++.
   - Dakota Moye – Electrical Engineering major with minors in Physics and Math. Proficient in C++, MATLAB, Arduino IDE. Some experience with Python, Inventor, 3D Printing, PuTTY.
   - Alejandro Moore – Electrical Engineering major. Proficient in C++, C#, C, Assembly, Python, AutoCAD, PLC, and Altium. PCB Design experience and BNC/Ethernet cable installation experience.
+
 - Contributions
   - Sean Borchers – Motor Control
   - Alex Cruz - Intro, Navigation and Master Control, Measures of Success
   - Sam Hunter - Object and Line Detection
   - Dakota Moye – Sensor for Navigation and Location
-  - Alejandro Moore - 
+  - Alejandro Moore -
+
 ## Works Cited
+
 1. “Mining Mayhem – Game Manual 1” Apr. 2024. [Online]. Available <https://docs.google.com/document/d/1hTvIeRj649eyGU8oWLR_yD-mYgayySX7tRQBbetUCqc/edit> 
 1. “Mining Mayhem – Game Manual 2” Aug. 2024. [Online]. Available <https://docs.google.com/document/d/1fN7bsJFpCJur66JkueRHXtlybt0m7QSY4Nn62lHAnrc/edit> 
 1. Raspberry Pi Foundation.  “Machine Vision” Accessed Sep. 2024 [Online]. https://projects.raspberrypi.org/en/pathways/machine-vision
