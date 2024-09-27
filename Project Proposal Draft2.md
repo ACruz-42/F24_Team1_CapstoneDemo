@@ -32,6 +32,10 @@ The robot must take in data from its sensors, keep track of its own location, de
 
 During the competition the robot will need to be able to detect the white lines that denote the starting area, the 5 telemetry zones, and the path in and out of the cave, and interpret the lines in a useful way pertaining to the competition. The robot must also be able to detect the astral material and the shipping containers. The robot must be able to detect the white lines, the astral materials, and the shipping containers in both illuminated and dark environments. The robot must be able to mark and remember the locations of the shipping containers, the astral materials, and the white lines so that it can plan an efficient path to collect the astral material and place it in the shipping containers.
 
+### Emergency Stop
+
+As stated in the game Rule R04, each robot competing in the match must have a clearly marked emergency stop button/switch. This is also a safe method of ethics to follow for autonomous machines as stated in NFPA 79-10: NFPA 79 Section 10 [6] outlines Emergency-Stop system Requirement for industrial machinery. The Robot’s E-stop will be based on the code identified in the reference.
+
 ## Specifications
 
 1)	The robot shall act autonomously. Rule G08 [2].
@@ -55,10 +59,6 @@ During the competition the robot will need to be able to detect the white lines 
 10)	The robot shall cease operation of all its units after the allotted 3-minute timeframe of play is over, and no game element positions can be disturbed after time expires. Rule G07 [2]. 
 11)	The robot shall account for background interference in the competition environment. Rule R13 [1].
 12)	The robot shall sustain power of 30V maximum. Rule R16 [1].
-
-### Emergency Stop
-
-As stated in the game Rules R04 [insert reference], each robot competing in the match must have a clearly marked emergency stop button/switch. This is also a safe method of ethics to follow for autonomous machines as stated in NFPA 79-10: NFPA 79 Section 10 outlines Emergency-Stop system Requirement for industrial machinery. The Robot’s E-stop will be based on the code identified in the reference. [insert reference]
 
 ## Constraints
 
@@ -150,21 +150,22 @@ Table 1 is the suggested Bill of Materials (BOM).
 
 Timeline
 
- ![image](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/3b0272b824db69aba49f735e246663ff42dbf47a/Reports/Photos/Project%20Proposal/Gantt_Draft2.png)
+![image](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/a78e467d4dc7ae5cd5a58d4d5bec27a2e4cb2b21/Reports/Photos/Project%20Proposal/Screenshot%202024-09-27%20141156.png)
+
 
 - Personnel
   - Sean Borchers - Electrical Engineering major with a Mechatronics concentration. Proficient in CAD software (AutoCAD, Inventor, SolidWorks), MATLAB, C++
   - Alex Cruz – Electrical Engineering major. Proficient in Python and C++. Some familiarity with machine learning.
   - Sam Hunter – Computer Engineering major. Proficient in C++.
   - Dakota Moye – Electrical Engineering major with minors in Physics and Math. Proficient in C++, MATLAB, Arduino IDE. Some experience with Python, Inventor, 3D Printing, PuTTY.
-  - Alejandro Moore – Electrical Engineering major. Proficient in C++, C#, C, Assembly, Python, AutoCAD, PLC, and Altium. PCB Design experience and BNC/Ethernet cable installation experience.
+  - Alejandro Moore – Electrical Engineering major Proficient in C++, C#, C, Assembly, Python, AutoCAD, PLC, and Altium. PCB Design experience and BNC/Ethernet cable installation experience.
 
 - Contributions
   - Sean Borchers – Motor Control
   - Alex Cruz - Intro, Navigation and Master Control, Measures of Success
   - Sam Hunter - Object and Line Detection
   - Dakota Moye – Sensor for Navigation and Location
-  - Alejandro Moore -
+  - Alejandro Moore - Power Management, Emergency Stop, Timeline (Gantt Chart)
 
 ## Works Cited
 
@@ -173,7 +174,7 @@ Timeline
 1. Raspberry Pi Foundation.  “Machine Vision” Accessed Sep. 2024 [Online]. https://projects.raspberrypi.org/en/pathways/machine-vision
 1. Seok-Ju L., Girma T., Jongil L., et al. “QR-code based Localization for Indoor Mobile Robot with Validation using a 3D Optical Tracking Instrument” Feb. 2023. [Online]. Available https://jrkwon.com/wordpress/wp-content/uploads/2023/02/AIM-2015-Final.pdf
 1. NVIDIA. “NVIDIA Jetson Nano”. Accessed Sep. 2024. [Online]. Available https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-nano/product-development/
-1. “Motor Driver Fundamentals: Your Guide To Efficient Motor Control - Jhdpcb,” *jhdpcb*, Jan. 18, 2024. https://jhdpcb.com/blog/efficient-motor-control/#:~:text=The%20key%20role%20of%20the[,enable%20speed%20and%20torque%20control](https://jhdpcb.com/blog/efficient-motor-control/#:~:text=The%20key%20role%20of%20the,enable%20speed%20and%20torque%20control)
+1. National Fire Proctection Association Report (Accessed Sept. 27, 2024) https://docinfofiles.nfpa.org/files/AboutTheCodes/79/79_F2023_EEI_AAA_SD_SRStatements.pdf
 1. ‌J3, “DC MOTORS —Against Back-EMF,” *Medium*, Dec. 05, 2020. <https://medium.com/jungletronics/dc-motors-against-back-emf-589d8ed174cc>
 1. “Tony’s Train Exchange,” *News & Resources*, Sep. 12, 2018. <https://tonystrains.com/news/dcc-motor-control-with-back-emf-and-p-i-d/> (accessed Sep. 15, 2024).
 1. A. Corry, G. Mostyn, and J.-Y. Michel, “Noise reduction in integrated circuits and circuit assemblies,” Jul. 15, 1997 Available: <https://patents.google.com/patent/US5649160A/en>
