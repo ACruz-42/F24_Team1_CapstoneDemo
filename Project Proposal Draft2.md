@@ -187,33 +187,35 @@ Timeline
 
 5.	NVIDIA. “NVIDIA Jetson Nano”. Accessed: Sep. 2024. [Online]. Available: https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-nano/product-development/ 
 
-6.	J3, “DC MOTORS —Against Back-EMF,” Medium, Dec. 05, 2020. Accessed: Sep. 2024. [Online]. Available: https://medium.com/jungletronics/dc-motors-against-back-emf-589d8ed174cc
+6. National Fire Proctection Association Report Accessed: Sep. 2024. [Online]. Available: https://docinfofiles.nfpa.org/files/AboutTheCodes/79/79_F2023_EEI_AAA_SD_SRStatements.pdf
 
-7.	“Tony’s Train Exchange,” News & Resources, Sep. 12, 2018. Accessed: Sep. 2024. [Online]. Available: https://tonystrains.com/news/dcc-motor-control-with-back-emf-and-p-i-d/
+7.	J3, “DC MOTORS —Against Back-EMF,” Medium, Dec. 05, 2020. Accessed: Sep. 2024. [Online]. Available: https://medium.com/jungletronics/dc-motors-against-back-emf-589d8ed174cc
 
-8.	A. Corry, G. Mostyn, and J.-Y. Michel, “Noise reduction in integrated circuits and circuit assemblies,” Jul. 15, 1997. Accessed: Sep. 2024. [Online]. Available: https://patents.google.com/patent/US5649160A/en
+8.	“Tony’s Train Exchange,” News & Resources, Sep. 12, 2018. Accessed: Sep. 2024. [Online]. Available: https://tonystrains.com/news/dcc-motor-control-with-back-emf-and-p-i-d/
 
-9.	S. Schrems, “Top 8 Ways to Deal with Noise in Data Acquisition and Test Systems,” genuen.com. Accessed: Sep. 2024. [Online]. Available:  https://www.genuen.com/blog/top-8-ways-to-deal-with-noise-in-data-acquisition-and-test-systems/
+9.	A. Corry, G. Mostyn, and J.-Y. Michel, “Noise reduction in integrated circuits and circuit assemblies,” Jul. 15, 1997. Accessed: Sep. 2024. [Online]. Available: https://patents.google.com/patent/US5649160A/en
 
-10.	Safety of machinery - Electrical equipment of machines. 2016. Accessed: Sep. 2024. [Online]. Available: https://webstore.iec.ch/en/publication/26037
+10.	S. Schrems, “Top 8 Ways to Deal with Noise in Data Acquisition and Test Systems,” genuen.com. Accessed: Sep. 2024. [Online]. Available:  https://www.genuen.com/blog/top-8-ways-to-deal-with-noise-in-data-acquisition-and-test-systems/
 
-11.	L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “Experimental Analysis: Specification-14.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sep. 2024. [Online.] Available: https://github.com/lchapman42/Control-Sensing-Wireless-Charging-Robot/blob/main/Documentation/Experimental%20Analysis/Experimental%20Analysis.md#specification-14---frame-weight-requirements
+11.	Safety of machinery - Electrical equipment of machines. 2016. Accessed: Sep. 2024. [Online]. Available: https://webstore.iec.ch/en/publication/26037
 
-12.	L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “Orientation-Signoff.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sep. 2024. [Online.] Available: Control-Sensing-Wireless-Charging-Robot/Documentation/Signoffs/Orientation-Signoff.md at main · lchapman42/Control-Sensing-Wireless-Charging-Robot (github.com)
+12.	L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “Experimental Analysis: Specification-14.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sep. 2024. [Online.] Available: https://github.com/lchapman42/Control-Sensing-Wireless-Charging-Robot/blob/main/Documentation/Experimental%20Analysis/Experimental%20Analysis.md#specification-14---frame-weight-requirements
 
-13.	L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “ReidCrews-Signoff-Location.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sep. 2024. [Online.] Available: Control-Sensing-Wireless-Charging-Robot/Documentation/Signoffs/ReidCrews-Signoff-Location.md at main · lchapman42/Control-Sensing-Wireless-Charging-Robot (github.com)
+13.	L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “Orientation-Signoff.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sep. 2024. [Online.] Available: Control-Sensing-Wireless-Charging-Robot/Documentation/Signoffs/Orientation-Signoff.md at main · lchapman42/Control-Sensing-Wireless-Charging-Robot (github.com)
 
-14.	“Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications.” edmundoptics.com. Accessed: Sep. 2024. [Online.] Available: Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications (edmundoptics.com)
+14.	L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “ReidCrews-Signoff-Location.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sep. 2024. [Online.] Available: Control-Sensing-Wireless-Charging-Robot/Documentation/Signoffs/ReidCrews-Signoff-Location.md at main · lchapman42/Control-Sensing-Wireless-Charging-Robot (github.com)
 
-15.	“Machine Vision Camera Selection Guide.” mech-mind.com Accessed: Sep. 2024. [Online.] Available: Machine Vision Camera Selection Guide (mech-mind.com)
+15.	“Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications.” edmundoptics.com. Accessed: Sep. 2024. [Online.] Available: Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications (edmundoptics.com)
 
-16.	W. Wang, A. Tan-Torres, and H. Hamledari, “Lecture #06: Edge Detection.” Accessed: Sep. 2024. [Online]. Available:  http://vision.stanford.edu/teaching/cs131_fall1718/files/06_notes.pdf
+16.	“Machine Vision Camera Selection Guide.” mech-mind.com Accessed: Sep. 2024. [Online.] Available: Machine Vision Camera Selection Guide (mech-mind.com)
 
-17.	“Line Detection,” Ed.ac.uk, 2024. Accessed: Sep. 2024. [Online]. Available: https://homepages.inf.ed.ac.uk/rbf/HIPR2/linedet.htm
+17.	W. Wang, A. Tan-Torres, and H. Hamledari, “Lecture #06: Edge Detection.” Accessed: Sep. 2024. [Online]. Available:  http://vision.stanford.edu/teaching/cs131_fall1718/files/06_notes.pdf
 
-18.	K. He, G. Gkioxari, P. Dollar, and R. Girshick, “Mask R-CNN,” IEEE Transactions on Pattern Analysis and Machine Intelligence, pp. 1–1, 2018. Accessed: Sep. 2024. [Online]. Available: https://doi.org/10.1109/tpami.2018.2844175
+18.	“Line Detection,” Ed.ac.uk, 2024. Accessed: Sep. 2024. [Online]. Available: https://homepages.inf.ed.ac.uk/rbf/HIPR2/linedet.htm
 
-19.	“What is Object Detection in Computer Vision?,” GeeksforGeeks, May 10, 2024. Accessed: Sep. 2024. [Online]. Available: https://www.geeksforgeeks.org/what-is-object-detection-in-computer-vision/
+19.	K. He, G. Gkioxari, P. Dollar, and R. Girshick, “Mask R-CNN,” IEEE Transactions on Pattern Analysis and Machine Intelligence, pp. 1–1, 2018. Accessed: Sep. 2024. [Online]. Available: https://doi.org/10.1109/tpami.2018.2844175
 
-20.	“RPLIDAR A2.” slamtec.com. Accessed: Sep. 2024. [Online.] Available: RPLIDAR-A2 Laser Range Scanner Parameters|SLAMTEC
+20.	“What is Object Detection in Computer Vision?,” GeeksforGeeks, May 10, 2024. Accessed: Sep. 2024. [Online]. Available: https://www.geeksforgeeks.org/what-is-object-detection-in-computer-vision/
+
+21.	“RPLIDAR A2.” slamtec.com. Accessed: Sep. 2024. [Online.] Available: RPLIDAR-A2 Laser Range Scanner Parameters|SLAMTEC
 
