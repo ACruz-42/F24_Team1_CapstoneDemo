@@ -82,7 +82,9 @@ Even though the previous methods help reduce noise from the motors, there is sti
 
 ### Sensors for localization and navigation
 
-According to the works presented in Modular IEEE Robot, there were two sets sensors used for localization and navigation. The Grove Ultrasonic Sensor is used for navigation. This sensor sends out a high frequency sound pulse, collects the reflected pulse, and calculates the time between the output and input [13]. The Adafruit LSM6DSOX + LIS3MDL breakout board is used for orientation. It can detect changes in linear and angular acceleration and has a magnetometer for detecting the Earth’s magnetic field [14]. A single orientation sensor is used while an ultrasonic sonic sensor is used on each side of the past robot [12].
+According to the works presented in Modular IEEE Robot, there were two sets of sensors used for localization and navigation. The Grove Ultrasonic Sensor is used for navigation. This sensor sends out a high frequency sound pulse, collects the reflected pulse, and calculates the time between the output and input [13]. The Adafruit LSM6DSOX + LIS3MDL breakout board is used for orientation. It can detect changes in linear and angular acceleration and has a magnetometer for detecting the Earth’s magnetic field [14]. A single orientation sensor is used while an ultrasonic sonic sensor is used on each side of the past robot [12].
+
+Another solution to navigating the environment is using a Light Detection and Ranging (LiDAR) device. LiDAR is commonly used to map out an environment to make it navigable by an autonomous unit. LiDAR’s have high resolution at a relatively large distance. A LiDAR could be used for getting a map of the game field. However, LiDAR has a minimum detection range of 20 cm (7.874 in.). When the robot is close to a wall, LiDAR data will have to be filtered out, and a different sensor will need to be used. LiDAR placement on the robot will have to be careful, so that it can detect as much as possible in its 360-degree field of view, given our size requirements. While LiDAR uses a laser, it is human safe and in the infrared range [20].
 
 April Tags can be read easiest with a camera. An RGB-D camera can read in both color and depth. The tags have both color difference and depth difference; however, the depth difference is only 0.4 mm. Using the color difference should be easily implemented and the depth can be used to filter noise out of the background. The data read in from the camera will have to be carefully analyzed and filtered to be able to read the tag from multiple different directions and angles.
 
@@ -175,22 +177,43 @@ Timeline
 
 ## Works Cited
 
-1. “Mining Mayhem – Game Manual 1” Apr. 2024. [Online]. Available <https://docs.google.com/document/d/1hTvIeRj649eyGU8oWLR_yD-mYgayySX7tRQBbetUCqc/edit> 
-1. “Mining Mayhem – Game Manual 2” Aug. 2024. [Online]. Available <https://docs.google.com/document/d/1fN7bsJFpCJur66JkueRHXtlybt0m7QSY4Nn62lHAnrc/edit> 
-1. Raspberry Pi Foundation.  “Machine Vision” Accessed Sep. 2024 [Online]. https://projects.raspberrypi.org/en/pathways/machine-vision
-1. Seok-Ju L., Girma T., Jongil L., et al. “QR-code based Localization for Indoor Mobile Robot with Validation using a 3D Optical Tracking Instrument” Feb. 2023. [Online]. Available https://jrkwon.com/wordpress/wp-content/uploads/2023/02/AIM-2015-Final.pdf
-1. NVIDIA. “NVIDIA Jetson Nano”. Accessed Sep. 2024. [Online]. Available https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-nano/product-development/
-1. National Fire Proctection Association Report (Accessed Sept. 27, 2024) https://docinfofiles.nfpa.org/files/AboutTheCodes/79/79_F2023_EEI_AAA_SD_SRStatements.pdf
-1. ‌J3, “DC MOTORS —Against Back-EMF,” *Medium*, Dec. 05, 2020. <https://medium.com/jungletronics/dc-motors-against-back-emf-589d8ed174cc>
-1. “Tony’s Train Exchange,” *News & Resources*, Sep. 12, 2018. <https://tonystrains.com/news/dcc-motor-control-with-back-emf-and-p-i-d/> (accessed Sep. 15, 2024).
-1. “What is Object Detection in Computer Vision?,” *GeeksforGeeks*, May 10, 2024. <https://www.geeksforgeeks.org/what-is-object-detection-in-computer-vision/>
-1. S. Schrems, “Top 8 Ways to Deal with Noise in Data Acquisition and Test Systems,” *genuen.com*. <https://www.genuen.com/blog/top-8-ways-to-deal-with-noise-in-data-acquisition-and-test-systems/>
-1. ‌*Safety of machinery - Electrical equipment of machines*. 2016. Available: <https://webstore.iec.ch/en/publication/26037>
-1. L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “Experimental Analysis: Specification-14.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sept 2024. [Online.] Available: <https://github.com/lchapman42/Control-Sensing-Wireless-Charging-Robot/blob/main/Documentation/Experimental%20Analysis/Experimental%20Analysis.md#specification-14---frame-weight-requirements>
-1. L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “Orientation-Signoff.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sept 2024. [Online.] Available: [Control-Sensing-Wireless-Charging-Robot/Documentation/Signoffs/Orientation-Signoff.md at main · lchapman42/Control-Sensing-Wireless-Charging-Robot (github.com)](https://github.com/lchapman42/Control-Sensing-Wireless-Charging-Robot/blob/main/Documentation/Signoffs/Orientation-Signoff.md)
-1. L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “ReidCrews-Signoff-Location.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sept 2024. [Online.] Available: [Control-Sensing-Wireless-Charging-Robot/Documentation/Signoffs/ReidCrews-Signoff-Location.md at main · lchapman42/Control-Sensing-Wireless-Charging-Robot (github.com)](https://github.com/lchapman42/Control-Sensing-Wireless-Charging-Robot/blob/main/Documentation/Signoffs/ReidCrews-Signoff-Location.md)
-1. “Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications.” edmundoptics.com. Accessed: Sept 2024. [Onlline.] Available: [Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications (edmundoptics.com)](https://www.edmundoptics.com/knowledge-center/application-notes/imaging/understanding-camera-sensors-for-machine-vision-applications/)
-1. “Machine Vision Camera Selection Guide.” mech-mind.com Accessed: Sept 2024. [Online.] Available: [Machine Vision Camera Selection Guide (mech-mind.com)](https://www.mech-mind.com/blog/machine-vision-camera-selection-guide.html#:~:text=How%20to%20choose%20the%20right%20machine%20vision%20cameras,6.%20Camera%20customization%20...%207%207.%20Budget%20)
-1. W. Wang, A. Tan-Torres, and H. Hamledari, “Lecture #06: Edge Detection.” Available: <http://vision.stanford.edu/teaching/cs131_fall1718/files/06_notes.pdf>
-1. “Line Detection,” *Ed.ac.uk*, 2024. <https://homepages.inf.ed.ac.uk/rbf/HIPR2/linedet.htm> (accessed Sep. 16, 2024).
-1. K. He, G. Gkioxari, P. Dollar, and R. Girshick, “Mask R-CNN,” *IEEE Transactions on Pattern Analysis and Machine Intelligence*, pp. 1–1, 2018, doi: <https://doi.org/10.1109/tpami.2018.2844175>
+1.	“Mining Mayhem – Game Manual 1.” Version 1.1, Apr. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1hTvIeRj649eyGU8oWLR_yD-mYgayySX7tRQBbetUCqc/edit 
+
+2.	“Mining Mayhem – Game Manual 2” Version 1.1.3, Aug. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1fN7bsJFpCJur66JkueRHXtlybt0m7QSY4Nn62lHAnrc/edit 
+
+3.	Raspberry Pi Foundation.  “Machine Vision.” Accessed: Sep. 2024. [Online]. Available: https://projects.raspberrypi.org/en/pathways/machine-vision 
+
+4.	S. Lee, G. Tewolde, J. Lim, et al. “QR-code based Localization for Indoor Mobile Robot with Validation using a 3D Optical Tracking Instrument” Feb. 2023. Accessed: Sep. 2024. [Online]. Available: https://jrkwon.com/wordpress/wp-content/uploads/2023/02/AIM-2015-Final.pdf 
+
+5.	NVIDIA. “NVIDIA Jetson Nano”. Accessed: Sep. 2024. [Online]. Available: https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-nano/product-development/ 
+
+6.	J3, “DC MOTORS —Against Back-EMF,” Medium, Dec. 05, 2020. Accessed: Sep. 2024. [Online]. Available: https://medium.com/jungletronics/dc-motors-against-back-emf-589d8ed174cc
+
+7.	“Tony’s Train Exchange,” News & Resources, Sep. 12, 2018. Accessed: Sep. 2024. [Online]. Available: https://tonystrains.com/news/dcc-motor-control-with-back-emf-and-p-i-d/
+
+8.	A. Corry, G. Mostyn, and J.-Y. Michel, “Noise reduction in integrated circuits and circuit assemblies,” Jul. 15, 1997. Accessed: Sep. 2024. [Online]. Available: https://patents.google.com/patent/US5649160A/en
+
+9.	S. Schrems, “Top 8 Ways to Deal with Noise in Data Acquisition and Test Systems,” genuen.com. Accessed: Sep. 2024. [Online]. Available:  https://www.genuen.com/blog/top-8-ways-to-deal-with-noise-in-data-acquisition-and-test-systems/
+
+10.	Safety of machinery - Electrical equipment of machines. 2016. Accessed: Sep. 2024. [Online]. Available: https://webstore.iec.ch/en/publication/26037
+
+11.	L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “Experimental Analysis: Specification-14.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sep. 2024. [Online.] Available: https://github.com/lchapman42/Control-Sensing-Wireless-Charging-Robot/blob/main/Documentation/Experimental%20Analysis/Experimental%20Analysis.md#specification-14---frame-weight-requirements
+
+12.	L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “Orientation-Signoff.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sep. 2024. [Online.] Available: Control-Sensing-Wireless-Charging-Robot/Documentation/Signoffs/Orientation-Signoff.md at main · lchapman42/Control-Sensing-Wireless-Charging-Robot (github.com)
+
+13.	L. Chapman, R. Crews, I. Hoese, I. Jennings, A. Kennedy, and M. Olson. “ReidCrews-Signoff-Location.” Control-Sensing-Wireless-Charging-Robot. GitHub.com. Accessed: Sep. 2024. [Online.] Available: Control-Sensing-Wireless-Charging-Robot/Documentation/Signoffs/ReidCrews-Signoff-Location.md at main · lchapman42/Control-Sensing-Wireless-Charging-Robot (github.com)
+
+14.	“Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications.” edmundoptics.com. Accessed: Sep. 2024. [Online.] Available: Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications (edmundoptics.com)
+
+15.	“Machine Vision Camera Selection Guide.” mech-mind.com Accessed: Sep. 2024. [Online.] Available: Machine Vision Camera Selection Guide (mech-mind.com)
+
+16.	W. Wang, A. Tan-Torres, and H. Hamledari, “Lecture #06: Edge Detection.” Accessed: Sep. 2024. [Online]. Available:  http://vision.stanford.edu/teaching/cs131_fall1718/files/06_notes.pdf
+
+17.	“Line Detection,” Ed.ac.uk, 2024. Accessed: Sep. 2024. [Online]. Available: https://homepages.inf.ed.ac.uk/rbf/HIPR2/linedet.htm
+
+18.	K. He, G. Gkioxari, P. Dollar, and R. Girshick, “Mask R-CNN,” IEEE Transactions on Pattern Analysis and Machine Intelligence, pp. 1–1, 2018. Accessed: Sep. 2024. [Online]. Available: https://doi.org/10.1109/tpami.2018.2844175
+
+19.	“What is Object Detection in Computer Vision?,” GeeksforGeeks, May 10, 2024. Accessed: Sep. 2024. [Online]. Available: https://www.geeksforgeeks.org/what-is-object-detection-in-computer-vision/
+
+20.	“RPLIDAR A2.” slamtec.com. Accessed: Sep. 2024. [Online.] Available: RPLIDAR-A2 Laser Range Scanner Parameters|SLAMTEC
+
