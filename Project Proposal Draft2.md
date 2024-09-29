@@ -193,7 +193,7 @@ Timeline
 
 8.	“Tony’s Train Exchange,” News & Resources, Sep. 12, 2018. Accessed: Sep. 2024. [Online]. Available: https://tonystrains.com/news/dcc-motor-control-with-back-emf-and-p-i-d/
 
-9.	A. Corry, G. Mostyn, and J.-Y. Michel, “Noise reduction in integrated circuits and circuit assemblies,” Jul. 15, 1997. Accessed: Sep. 2024. [Online]. Available: https://patents.google.com/patent/US5649160A/en
+9.	“What is Object Detection in Computer Vision?,” GeeksforGeeks, May 10, 2024. Accessed: Sep. 2024. [Online]. Available: https://www.geeksforgeeks.org/what-is-object-detection-in-computer-vision/
 
 10.	S. Schrems, “Top 8 Ways to Deal with Noise in Data Acquisition and Test Systems,” genuen.com. Accessed: Sep. 2024. [Online]. Available:  https://www.genuen.com/blog/top-8-ways-to-deal-with-noise-in-data-acquisition-and-test-systems/
 
@@ -215,7 +215,5 @@ Timeline
 
 19.	K. He, G. Gkioxari, P. Dollar, and R. Girshick, “Mask R-CNN,” IEEE Transactions on Pattern Analysis and Machine Intelligence, pp. 1–1, 2018. Accessed: Sep. 2024. [Online]. Available: https://doi.org/10.1109/tpami.2018.2844175
 
-20.	“What is Object Detection in Computer Vision?,” GeeksforGeeks, May 10, 2024. Accessed: Sep. 2024. [Online]. Available: https://www.geeksforgeeks.org/what-is-object-detection-in-computer-vision/
-
-21.	“RPLIDAR A2.” slamtec.com. Accessed: Sep. 2024. [Online.] Available: RPLIDAR-A2 Laser Range Scanner Parameters|SLAMTEC
+20.	“RPLIDAR A2.” slamtec.com. Accessed: Sep. 2024. [Online.] Available: RPLIDAR-A2 Laser Range Scanner Parameters|SLAMTEC
 
