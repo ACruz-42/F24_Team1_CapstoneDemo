@@ -25,7 +25,7 @@
 1)	The robot shall sustain power of 30V maximum. Rule R16 [1].
 	
 ### Constraints
-1)	The robot shall read April Tags to help with Specifications 1, 2e, 2g, 2h, and 2i. 
+1)	The robot shall read April Tags to help with Specifications 1, 2-v, 2-vii, 2-viii, and 2-ix. 
 1)	The robot shall have a user manual that explains functionality and design intent for each subsystem.
 1)	The robot shall adhere to applicable requirements in standard IEC 60204-1 pertaining to electrical supply, electromagnetic compatibility, emergency stop, and control circuit protection. The power-based and electromagnetic interactions of components in the motor control subsystem will need to adhere to this standard [3].
 
