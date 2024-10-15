@@ -56,6 +56,42 @@ A camera is needed to read these.
 ### General Sensors
 #### Atomic Subsystem Specifications
 #### Comparative Analysis of Potential Solutions
+
+GOAL FOR THIS SECTION: In this section, various potential solutions are hypothesized, design considerations are discussed, and factors influencing the selection of a solution are outlined. The chosen solution is then identified with justifications for its selection.
+
+##### Line Sensor
+
+The line sensor system needs to be able to detect the lines on the game field.
+The primary solution is to use a reflectance sensor array.
+A secondary solution is to use the camera.
+The reflectance array would remove work from the camera and provide a single device whose goal is to detect the lines.
+A single device focusing on line following would give better results and need less software than using a camera.
+A reflectance array would have higher accuracy and less room for error than a camera.
+
+##### Inertial Measurement Unit
+
+The robot needs to know its location on the game field.
+Muliple different sensors can read data provided by the robot to know its inertia, which gives it change in location over time.
+These sensors include speedometers, tachometers, accelerometers, gyroscopes, and odometers.
+Electric speedometers and odometers in vehicles use a magnet on the wheel to send a signal to a sensor near the wheel when the magnet passes by the sensor [4-5].
+A tachometer measures the rotation of an object.
+For the robot, it would measure the rotation of the wheels or motor shaft that drives the wheels.
+An accelerometer measures the linear and angular acceleration of the robot in three dimensions.
+A gyroscope measure the relative position to Earth's northern magnetic field.
+A Speedometer or odometer would require parts to be constructed with them in place.
+A tachometer would give the rotational speed and then need to be converted to a linear distance.
+This would require the speed of all wheels to be known and certain algorithms to be made to account for turning.
+Accelerometers give the total acceleration of the robot but need to be integrated to get position.
+Gyroscopes give the position relative to a set object but can be interferred with noise from motors or magnetic materials.
+Accelerometers and gyroscopes come in small, single-chip package that are interfaceable with a microcontroller.
+However, a tachometer would require two individual units to measure each of the motors or wheels.
+
+##### Location Sensor
+
+##### Start LED Sensor
+
+##### Magnetic Sensor
+
 #### Ethical, Professional, and Standards Considerations
 #### Resources
 #### Budget
@@ -95,6 +131,8 @@ A camera is needed to read these.
 
 ## Works Cited
 1.	“Mining Mayhem – Game Manual 1.” Version 1.1, Apr. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1hTvIeRj649eyGU8oWLR_yD-mYgayySX7tRQBbetUCqc/edit 
-1.	“Mining Mayhem – Game Manual 2” Version 1.1.3, Aug. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1fN7bsJFpCJur66JkueRHXtlybt0m7QSY4Nn62lHAnrc/edit 
+2.	“Mining Mayhem – Game Manual 2” Version 1.1.3, Aug. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1fN7bsJFpCJur66JkueRHXtlybt0m7QSY4Nn62lHAnrc/edit 
 1.	Safety of machinery - Electrical equipment of machines. 2016. Accessed: Sep. 2024. [Online]. Available: https://webstore.iec.ch/en/publication/26037
+2.	https://www.explainthatstuff.com/how-speedometer-works.html
+3.	https://auto.howstuffworks.com/car-driving-safety/safety-regulatory-devices/odometer.htm#pt2
 
