@@ -36,6 +36,7 @@
 ## Subsystems
 ### Camera
 #### Atomic Subsystem Specifications
+
 A camera is needed for specifcations 1, 2-vii, 2-viii, and 4 and constraint 1.
 By having a camera, a robot can see very similarly to a human, but needs to have that information filter and processed in a way the robot can understand.
 If it understands what it can effectively see, it shall be able to act autonomously, meeting specification 1.
@@ -45,6 +46,8 @@ The camera will be the only sensor in the front getting active feedback, due to 
 The camera shall help keep the robot from running into obstacles in the front. 
 Constraint 1 shall have the robot read April Tags. 
 A camera is needed to read these.
+
+#### Comparative Analysis of Potential Solutions
 #### Ethical, Professional, and Standards Considerations
 #### Resources
 #### Budget
