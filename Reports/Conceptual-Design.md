@@ -36,6 +36,7 @@
 ## Subsystems
 ### Camera
 #### Atomic Subsystem Specifications
+#### Comparative Analysis of Potential Solutions
 #### Ethical, Professional, and Standards Considerations
 #### Resources
 #### Budget
