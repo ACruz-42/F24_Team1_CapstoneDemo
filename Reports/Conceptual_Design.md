@@ -1,4 +1,4 @@
-﻿# Subsystems![Atomic Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/Navigation-Master-Control--Edits--Conceptual-Design/Reports/Photos/Conceptual%20Design/Master_Control_Subsystem_V1.png?raw=true)
+﻿# Subsystems
 
 ### Motor Control
 
