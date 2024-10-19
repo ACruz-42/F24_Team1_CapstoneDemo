@@ -57,8 +57,6 @@ A camera is needed to read these.
 #### Atomic Subsystem Specifications
 #### Comparative Analysis of Potential Solutions
 
-GOAL FOR THIS SECTION: In this section, various potential solutions are hypothesized, design considerations are discussed, and factors influencing the selection of a solution are outlined. The chosen solution is then identified with justifications for its selection.
-
 ##### Line Sensor
 
 The line sensor system needs to be able to detect the lines on the game field.
