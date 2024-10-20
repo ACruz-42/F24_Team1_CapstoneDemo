@@ -129,7 +129,7 @@ There are several quantifiable specifications and constraints for the power subs
 #### Resources
 #### Budget
 #### Skills
-
+## Timeline
 ## Statement of Contributions
   - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications)
   - Alex Cruz -
