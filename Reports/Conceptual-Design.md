@@ -48,10 +48,34 @@ Constraint 1 shall have the robot read April Tags.
 A camera is needed to read these.
 
 #### Comparative Analysis of Potential Solutions
+
+The robot will need a camera with both RGB and dpeth sensing capabillites.
+The camera has 2 cameras in it, 1 is a 2D camera which will be used like a normal 2D camera for video and RGB values.
+The second camera is an infrared camera which uses an infrared laser detector which seperates objects into layers. 
+The primary purpose of the camera will be to identify the astral material and then accurately place it on the game field for the navigation algorithm.
+The camera will use the 2D RGB camera to find and differentiate the different objects, including astral material, game field walls, and cave walls.
+It will then use the infrared camera to accurately place the objects in relation to the robot.[1]
+
 #### Ethical, Professional, and Standards Considerations
+
+The datasheet for the camera will be followed and the intended use matches closely with the designed use.
+The infrared laser projector is safe for use in the vicinity of humans. 
+
 #### Resources
+
+The robot will only need 1 such camera, which will be mounted on the front of the robot facing forward. 
+
 #### Budget
+
+|Item|Cost per Item|Quantity|Total Cost for Item|
+| :- | :- | :- | :- |
+|RGBD Camera|$272|1|$272|
+|Total|||$272|
+
 #### Skills
+
+The image from the camera will need to be processed so that the algorithms using it will be able to pull useful data.
+The camera will also need to be interfaced with the master control microprossesor 
 
 ### General Sensors
 #### Atomic Subsystem Specifications
@@ -196,3 +220,6 @@ The gyroscope on the inertial measurement unit will need to be tested with the m
 7.	"Optical Mouse Sensors." digikey.com. May 2007. Accessed: Oct. 2024. [Online]. Avilable: https://media.digikey.com/pdf/Data%20Sheets/Avago%20PDFs/ToolKitSelectionGuide.pdf
 8.	"GL125 Series Photoresistor." knowing-tech.com. Accessed: Oct. 2024. [Online]. Avilable: https://knowing-tech.com/wp-content/uploads/data/g/GL12528.pdf
 9.	"LINEAR HALL-EFFECT IC." digikey.com. Rev.1.3, Aug. 2010. Accessed: Oct. 2024. [Online]. Avilable: https://www.digikey.com/htmldatasheets/production/1364519/0/0/1/ah49e.html?utm_adgroup=General&utm_source=bing&utm_medium=cpc&utm_campaign=Dynamic%20Search_EN_RLSA&utm_term=digikey&utm_content=General&utm_id=bi_cmp-384476624_adg-1302921504343623_ad-81432643449113_dat-2333232393680005:aud-807631099:loc-190_dev-c_ext-_prd-&msclkid=ef9edc5046c81a3f6ce4bb4050601364
+24. 	“Intel ® RealSense TM Product Family D400 Series Datasheet Intel ® RealSenseTM Vision Processor D4, Intel,” 2022. Available: https://www.intelrealsense.com/wp-content/uploads/2022/03/Intel-RealSense-D400-Series-Datasheet-March-2022.pdf
+‌
+
