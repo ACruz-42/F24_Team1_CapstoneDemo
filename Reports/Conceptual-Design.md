@@ -63,10 +63,101 @@ A camera is needed to read these.
 ### General Sensors
 #### Atomic Subsystem Specifications
 #### Comparative Analysis of Potential Solutions
+
+##### Line Sensor
+
+The line sensor system needs to be able to detect the lines on the game field.
+The primary solution is to use a reflectance sensor array.
+A secondary solution is to use the camera.
+The reflectance array would remove work from the camera and provide a single device whose goal is to detect the lines.
+A single device focusing on line following would give better results and need less software than using a camera.
+A reflectance array would have higher accuracy and less room for error than a camera.
+
+##### Inertial Measurement Unit
+
+The robot needs to know its location on the game field.
+Muliple different sensors can read data provided by the robot to know its inertia, which gives it change in location over time.
+These sensors include speedometers, tachometers, accelerometers, gyroscopes, and odometers.
+Electric speedometers and odometers in vehicles use a magnet on the wheel to send a signal to a sensor near the wheel when the magnet passes by the sensor [4-5].
+A tachometer measures the rotation of an object.
+For the robot, it would measure the rotation of the wheels or motor shaft that drives the wheels.
+An accelerometer measures the linear and angular acceleration of the robot in three dimensions.
+A gyroscope measure the relative position to Earth's northern magnetic field.
+A Speedometer or odometer would require parts to be constructed with them in place.
+A tachometer would give the rotational speed and then need to be converted to a linear distance.
+This would require the speed of all wheels to be known and certain algorithms to be made to account for turning.
+Accelerometers give the total acceleration of the robot but need to be integrated to get position.
+Gyroscopes give the position relative to a set object but can be interferred with noise from motors or magnetic materials.
+Accelerometers and gyroscopes come in small, single-chip package that are interfaceable with a microcontroller and are known as inertial measurement units [6].
+However, a tachometer would require two individual units to measure each of the motors or wheels.
+
+##### Location Sensor
+
+Specification 3 requires the robot to detect walls of the arena and cave to keep it from running into and damaging them.
+Both an infrared sensor and an ultrasonic sensor would be able to detect the walls of the arena.
+The infrared sensor, such as a time-of-flight or LiDAR, would cost more but be more precise.
+The ultrasonic sensor has a very large field-fo-view that could interact with the materials that are placed throughout the field.
+The infrared sensor has a smaller field-of-view that allows it to ignore the materials so that it can see tha absolute limits of the arena [7-8].
+
+A second option for a location sensor could be a computer mouse.
+They have a navigation chip that uses light to detect change in position.
+The biggest issue is that they need to be very close to the object that they are detecting.
+This means the mouse would need to be sliding along the ground.
+The light used on the mouse also needs to be a continous LED and not a strobe light [9].
+
+##### Start LED Sensor
+
+Specification 2-ii requires the robot to start based on an input from a LED.
+The simplest method is to use a photoresistor.
+A photoresistor gets a lower resistance as the incident light increases.
+This change in resistance can be read as a change in voltage on the lower side of the photoresistor.
+A photoresistor is a simple and robust sensor that will work easily and repeatedly [10].
+
+##### Magnetic Sensor
+
+Specifications 2-vii and 2-viii require the material to be in its proper container for maximum points.
+The easiest way to distinguish between the two is to use a magnetic, or hall effect, sensor.
+Hall effect sensors produce a more positive or negative voltage depending on whether it detects a positive or negative magnetic field.
+A different voltage gives a way for the microcontroller to determine where a certain material should go [11].
+
+A second option is to use weight.
+This require whatever is being used to transport the material to be weighed as well.
+Unless, the material is placed directly on a scale, but then it also has to be moved off of the scale.
+The weight sensor would also need to account for the acceleration of the robot, which gives more room for error and causes more work for software.
+
 #### Ethical, Professional, and Standards Considerations
+
+Resources and materials uses for this subsystem will be built following an expected use.
+This use will be listed in their datasheets, and their datasheets will be followed properly.
+The rules point out safety measures that will be taken throughout the competition.
+A rule that sensors need to abide by is no visible strobe lights.
+Furthermore, if using non-visble lasers, lasers will need to be safe for human interaction.
+
 #### Resources
+
+Each sensor will need to be purchased at least once.
+The robot will need three of either ultrasonic or LiDAR based sensors, two for each side and one for the back.
+Depending on budget, it may be a good idea to purchase extra in the case of a failure.
+All sensors will need to be calibrated and properly connected.
+
 #### Budget
+
+|Item|Cost per Item|Quantity|Total Cost for Item|
+| :- | :- | :- | :- |
+|Reflectance Array|$10|1|$10|
+|Inerital Measurement Unit|$30|1|$30|
+|LiDAR|$45|3|$135|
+|Photoresistor|$4|1|$4|
+|Hall Effect Sensor|$4|1|$4|
+|Total|||$183|
+
 #### Skills
+
+Software for the each of the sensors will need to be made.
+The reflectance array, inertial measurement unit, and LiDAR will take the most work.
+The other two should be a simple voltage comparison, or trigger.
+The first three will need to be tested repeatedly.
+The gyroscope on the inertial measurement unit will need to be tested with the motors running and with the magnetic material.
 
 ### Master Control and Navigation
 #### Atomic Subsystem Specifications
@@ -159,8 +250,21 @@ A more in-depth block diagram of the power management/distribution subsystem wil
 
 ## Works Cited
 1.	“Mining Mayhem – Game Manual 1.” Version 1.1, Apr. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1hTvIeRj649eyGU8oWLR_yD-mYgayySX7tRQBbetUCqc/edit 
-1.	“Mining Mayhem – Game Manual 2” Version 1.1.3, Aug. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1fN7bsJFpCJur66JkueRHXtlybt0m7QSY4Nn62lHAnrc/edit 
+2.	“Mining Mayhem – Game Manual 2” Version 1.1.3, Aug. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1fN7bsJFpCJur66JkueRHXtlybt0m7QSY4Nn62lHAnrc/edit 
 1.	Safety of machinery - Electrical equipment of machines. 2016. Accessed: Sep. 2024. [Online]. Available: https://webstore.iec.ch/en/publication/26037
+2.	C. Woodford. "Speedometers." explainthatstuff.com. Mar. 2023. Accessed: Oct. 2024. [Online]. Available: https://www.explainthatstuff.com/how-speedometer-works.html
+3.	K. Nice. "How Odometers Work." howstuffworks.com. Jan. 2001. Accessed: Oct. 2024. [Online]. Available: https://auto.howstuffworks.com/car-driving-safety/safety-regulatory-devices/odometer.htm#pt2
+4.	yida. "What is a Time of Flight Sensor and How does a ToF Sensor work?" seeedstudio.com. 2019. Accessed: Oct. 2024. [Online]. Available: https://www.seeedstudio.com/blog/2020/01/08/what-is-a-time-of-flight-sensor-and-how-does-a-tof-sensor-work/
+5.	gunengyu. "Grove - Ultrasonic Ranger." seeedstudio.com. Mar. 2023. Accessed: Oct. 2024. [Online]. Available: https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/
+6.	Ralph. "What’s the Difference Between an Accelerometer, Gyroscope and IMU Sensors?" intorobotics.com. Sep. 2023. Accessed: Oct. 2024. [Online]. Available: https://intorobotics.com/accelerometer-gyroscope-and-imu-sensors-in-robotics/#3_List_of_IMU_Sensors
+7.	"Optical Mouse Sensors." digikey.com. May 2007. Accessed: Oct. 2024. [Online]. Avilable: https://media.digikey.com/pdf/Data%20Sheets/Avago%20PDFs/ToolKitSelectionGuide.pdf
+8.	"GL125 Series Photoresistor." knowing-tech.com. Accessed: Oct. 2024. [Online]. Avilable: https://knowing-tech.com/wp-content/uploads/data/g/GL12528.pdf
+9.	"LINEAR HALL-EFFECT IC." digikey.com. Rev.1.3, Aug. 2010. Accessed: Oct. 2024. [Online]. Avilable: https://www.digikey.com/htmldatasheets/production/1364519/0/0/1/ah49e.html?utm_adgroup=General&utm_source=bing&utm_medium=cpc&utm_campaign=Dynamic%20Search_EN_RLSA&utm_term=digikey&utm_content=General&utm_id=bi_cmp-384476624_adg-1302921504343623_ad-81432643449113_dat-2333232393680005:aud-807631099:loc-190_dev-c_ext-_prd-&msclkid=ef9edc5046c81a3f6ce4bb4050601364
+
+
+
+
+
 17.	“Motor Driver Fundamentals: Your Guide To Efficient Motor Control - Jhdpcb,” jhdpcb, Jan. 18, 2024. https://jhdpcb.com/blog/efficient-motor-control/#:~:text=The%20key%20role%20of%20the,enable%20speed%20and%20torque%20control
 18.	E. P. Company, “Motor Encoders: What is a Motor Encoder? How Do Motor Encoders Work?,” www.encoder.com. https://www.encoder.com/motor-encoders#:~:text=What%20are%20motor%20encoders%3F,are%20either%20incremental%20or%20absolute
 19.	Instructables, “Complete Motor Guide for Robotics,” Instructables, Dec. 13, 2015. https://www.instructables.com/Complete-Motor-Guide-for-Robotics/
