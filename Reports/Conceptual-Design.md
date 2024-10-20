@@ -38,7 +38,9 @@ The motor control subsystem is formally known as a motor drive and can include t
 
 
 ### Hardware Block Diagram
+![Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/BlockDiagram.jpg)
 ### Operational Flow Chart
+![Operation Flow Chart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/Robot_Flowchart.png)
 
 ## Subsystems
 ### Camera
@@ -61,12 +63,7 @@ The camera has 2 cameras in it, 1 is a 2D camera which will be used like a norma
 The second camera is an infrared camera which uses an infrared laser detector which seperates objects into layers. 
 The primary purpose of the camera will be to identify the astral material and then accurately place it on the game field for the navigation algorithm.
 The camera will use the 2D RGB camera to find and differentiate the different objects, including astral material, game field walls, and cave walls.
-It will then use the infrared camera to accurately place the objects in relation to the robot.[1]
-
-#### Ethical, Professional, and Standards Considerations
-
-The datasheet for the camera will be followed and the intended use matches closely with the designed use.
-The infrared laser projector is safe for use in the vicinity of humans. 
+It will then use the infrared camera to accurately place the objects in relation to the robot.[24]
 
 #### Resources
 
@@ -149,14 +146,6 @@ This require whatever is being used to transport the material to be weighed as w
 Unless, the material is placed directly on a scale, but then it also has to be moved off of the scale.
 The weight sensor would also need to account for the acceleration of the robot, which gives more room for error and causes more work for software.
 
-#### Ethical, Professional, and Standards Considerations
-
-Resources and materials uses for this subsystem will be built following an expected use.
-This use will be listed in their datasheets, and their datasheets will be followed properly.
-The rules point out safety measures that will be taken throughout the competition.
-A rule that sensors need to abide by is no visible strobe lights.
-Furthermore, if using non-visble lasers, lasers will need to be safe for human interaction.
-
 #### Resources
 
 Each sensor will need to be purchased at least once.
@@ -196,7 +185,6 @@ A system on module with carrier board like the Jetson Nano, or a single board co
 
 For a robot tasked with picking up static objects, such as small icosahedrons on a flat board, A* is particularly effective for this scenario, as it efficiently computes the shortest path to each target while accounting for the fixed locations of the astral material. Its heuristic-based approach [13] enables the robot to prioritize routes, reducing the overall travel time and enhancing operational efficiency. In comparison to algorithms like Dijkstra’s, which can be less efficient due to their exhaustive exploration of all paths, A* provides a more targeted and expedient solution [13]. Additionally, while algorithms like Greedy Best-First Search can quickly find a path, they may be prone to getting stuck in loops [14]. Given the Jetson Nano's processing capabilities, A* can be executed in real-time, allowing for quick recalculations if the robot encounters obstacles on its path. By employing A*, we can ensure that the robot navigates the board efficiently, optimizing its collection of materials while maintaining reliability and minimizing computational overhead. This approach effectively aligns with the project’s goals of streamlined performance and resource management.
 
-#### Ethical, Professional, and Standards Considerations
 #### Resources
 
 #### Budget
@@ -237,12 +225,6 @@ Based on the selection of the motor and driver, the encoder can be chosen to add
 
 The type of sensor for the encoder is also an important consideration, with the two main types being magnetic and optical sensors. Magnetic encoders use a sensing circuit, rotating wheel connected to the motor, and magnetic poles on the circumference of the wheel that each go by the sensor during rotation [18]. The interaction of each detected pole with the sensor creates a measurement of magnetic field strength that corresponds to motor speed. The major advantage of magnetic encoders is that they do not succumb to physical contamination from the environment. However, they have a notable disadvantage in their susceptibility to electrical interference from magnetic fields in the environment, such as through the motor back emf. Optical encoders use light to measure the position of the motor and transform it into a digital signal, and the main components of an optical encoder include a light, a sensor, and a rotating linear code disk [18]. The code disk is connected to the rotation of the motor and sits between the light and the sensor, with the different light and dark patterns on the disk being the input for the measurement of motor speed [18]. The main advantage of optical encoders is that they are unaffected by electrical noise, but they can be disrupted if contaminated by physical debris [23]. Due to the main factors being noise interference and physical contamination and given the relatively clean competition environment of play, the best option between these sensor types would be optical. Magnetic sensors would be more necessary if the environment was full of dirt, dust, and other debris that would interfere with the light, but this will not be a notable issue in the competition arena.
 
-#### Ethical, Professional, and Standards Considerations
-
-The project will have an impact on the outreach of Tennessee Tech, with the team representing the school in this competition both technically and professionally. If the team can perform well, it will build on the image of the College of Engineering for prospective students, encouraging them to attend the university and be engaged in similar endeavors in the future. In preparing for the competition, the team will follow the IEEE Code of Ethics for respectful collaboration and safe design practice. To maintain a healthy relationship among team members while also holding each other accountable, each member completes evaluations for themselves and for the others on the team, providing opportunity for self-reflection of progress and for checking in on the progress of others. 
-
-The robot movement will need to comply with Game Manual specifications. There are specific rules in place for the safety of the team and the referees/technicians at the competition. Specification 10 details the need for the robot to cease operation of all units after the given 3 minutes of play. Therefore, the motor control programming and mechanisms will need to have measures in place to quickly and safely halt the robot and any actions it is performing toward the end of the time of play. 
-
 #### Resources
 
 The following items are necessary for the completion of the motor control subsystem. In order for the motors to respond to environmental and robot feedback, a central motor microcontroller must be present to be able to properly distribute the large quantity of connections required for the robot to move and collect/sort astral material. In the current configuration, the robot will only need two driving brushed motors for translation along the ground, implementing the use of ball bearing wheels on the back for stability. However, these motors need a voltage regulator for speed and direction, which requires the use of two motor drivers, such as the L298N H-bridge module. In order to adjust motor commands based on the current state of the motors, the robot must collect positional data of the motor shafts, which employs the use of encoders, with optical encoders being a safe choice in comparison to magnetic encoders, which may disturb the low-level logic circuitry due to the magnetic properties. 
@@ -270,10 +252,6 @@ There are several quantifiable specifications and constraints for the power subs
 
 This power subsystem requires adequate power management and distribution of all hardware within the robot. Since we must power both the microcontroller and the motor subsystems, it would be wise to separate the power buses at a certain point so that neither subsystems connected to the power subsystem will interfere with each other, but work together towards a common goal. Based on last year’s SECON Modular-Based Robot, creating a power distribution circuit that isolates 2 batteries to power both subsystems we believe will be most optimal. For Specification 6 and 2-ii, the start button mentioned within the sensor section will be connected to the power subsystem. Once pressed, it will have both batteries provide sufficient voltage and current to both the motor and microcontroller, but will not start moving until 5 seconds after the button or LED receiver  is triggered. Similarly, Specification 7 refers to an Emergency Stop button that is required within the Game Rules. This E-Stop button will also be connected to the circuit. Once pressed, the circuit shall open the power bus to the motor while the bus to the microcontrollers will stay closed. Thus, giving the microcontroller power to process still, and cutting off all power to the motor for optimal safety while also saving critical data.
 
-#### Ethical, Professional, and Standards Considerations
-
-The Game Manual provided structures for the competition to follow IEEE guidelines and general electrical standards. Resources mentioned such as datasheets and procedures correlated with clean power transmission will be followed closely. For example, the E-stop mentioned in the rules are for the safety of the competitors, judges, and audience in the case of a motor malfunction.
-
 #### Resources
 
 At least 2 batteries are needed for this solution that follows the specifications and constraints. We may be able to salvage an older e-stop button used in past CAPSTONE projects and test to see if it works within the circuit. Further schematics and simulations will be displayed to better explain the power subsystem structure.
@@ -290,36 +268,48 @@ At least 2 batteries are needed for this solution that follows the specification
 
 A more in-depth block diagram of the power management/distribution subsystem will be made. Also, further schematics in Altium and simulations in LTSpice will be displayed to better explain the power subsystem structure. Some hardware installation for the power circuit will be required.
 
+## Ethical, Professional, and Standards Considerations
+
+The project will have an impact on the outreach of Tennessee Tech, with the team representing the school in this competition both technically and professionally. If the team can perform well, it will build on the image of the College of Engineering for prospective students, encouraging them to attend the university and be engaged in similar endeavors in the future. In preparing for the competition, the team will follow the IEEE Code of Ethics for respectful collaboration and safe design practice. To maintain a healthy relationship among team members while also holding each other accountable, each member completes evaluations for themselves and for the others on the team, providing opportunity for self-reflection of progress and for checking in on the progress of others. 
+
+The robot movement will need to comply with Game Manual specifications. There are specific rules in place for the safety of the team and the referees/technicians at the competition. Specification 10 details the need for the robot to cease operation of all units after the given 3 minutes of play. Therefore, the motor control programming and mechanisms will need to have measures in place to quickly and safely halt the robot and any actions it is performing toward the end of the time of play. 
+
+The Game Manual provided structures for the competition to follow IEEE guidelines and general electrical standards. Resources mentioned such as datasheets and procedures correlated with clean power transmission will be followed closely. For example, the E-stop mentioned in the rules are for the safety of the competitors, judges, and audience in the case of a motor malfunction.
+
+The datasheet for the camera will be followed and the intended use matches closely with the designed use.
+The infrared laser projector is safe for use in the vicinity of humans. 
+
+Resources and materials uses for this subsystem will be built following an expected use.
+This use will be listed in their datasheets, and their datasheets will be followed properly.
+The rules point out safety measures that will be taken throughout the competition.
+A rule that sensors need to abide by is no visible strobe lights.
+Furthermore, if using non-visble lasers, lasers will need to be safe for human interaction.
+
 ## Timeline
 ## Statement of Contributions
   - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications)
   - Alex Cruz - Navigation and Master Control (everything except specifications), Motor Control (only specifications)
-  - Sam Hunter -
+  - Sam Hunter - Camera (except specifications)
   - Alejandro Moore - Power Management Subsystem Information
-  - Dakota Moye - 
+  - Dakota Moye - General Senors (except specifications), Camera (only specification), Operation Flowchart
 
 ## Works Cited
 1.	“Mining Mayhem – Game Manual 1.” Version 1.1, Apr. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1hTvIeRj649eyGU8oWLR_yD-mYgayySX7tRQBbetUCqc/edit 
 2.	“Mining Mayhem – Game Manual 2” Version 1.1.3, Aug. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1fN7bsJFpCJur66JkueRHXtlybt0m7QSY4Nn62lHAnrc/edit 
-1.	Safety of machinery - Electrical equipment of machines. 2016. Accessed: Sep. 2024. [Online]. Available: https://webstore.iec.ch/en/publication/26037
-2.	C. Woodford. "Speedometers." explainthatstuff.com. Mar. 2023. Accessed: Oct. 2024. [Online]. Available: https://www.explainthatstuff.com/how-speedometer-works.html
-3.	K. Nice. "How Odometers Work." howstuffworks.com. Jan. 2001. Accessed: Oct. 2024. [Online]. Available: https://auto.howstuffworks.com/car-driving-safety/safety-regulatory-devices/odometer.htm#pt2
-4.	yida. "What is a Time of Flight Sensor and How does a ToF Sensor work?" seeedstudio.com. 2019. Accessed: Oct. 2024. [Online]. Available: https://www.seeedstudio.com/blog/2020/01/08/what-is-a-time-of-flight-sensor-and-how-does-a-tof-sensor-work/
-5.	gunengyu. "Grove - Ultrasonic Ranger." seeedstudio.com. Mar. 2023. Accessed: Oct. 2024. [Online]. Available: https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/
-6.	Ralph. "What’s the Difference Between an Accelerometer, Gyroscope and IMU Sensors?" intorobotics.com. Sep. 2023. Accessed: Oct. 2024. [Online]. Available: https://intorobotics.com/accelerometer-gyroscope-and-imu-sensors-in-robotics/#3_List_of_IMU_Sensors
-7.	"Optical Mouse Sensors." digikey.com. May 2007. Accessed: Oct. 2024. [Online]. Avilable: https://media.digikey.com/pdf/Data%20Sheets/Avago%20PDFs/ToolKitSelectionGuide.pdf
-8.	"GL125 Series Photoresistor." knowing-tech.com. Accessed: Oct. 2024. [Online]. Avilable: https://knowing-tech.com/wp-content/uploads/data/g/GL12528.pdf
-9.	"LINEAR HALL-EFFECT IC." digikey.com. Rev.1.3, Aug. 2010. Accessed: Oct. 2024. [Online]. Avilable: https://www.digikey.com/htmldatasheets/production/1364519/0/0/1/ah49e.html?utm_adgroup=General&utm_source=bing&utm_medium=cpc&utm_campaign=Dynamic%20Search_EN_RLSA&utm_term=digikey&utm_content=General&utm_id=bi_cmp-384476624_adg-1302921504343623_ad-81432643449113_dat-2333232393680005:aud-807631099:loc-190_dev-c_ext-_prd-&msclkid=ef9edc5046c81a3f6ce4bb4050601364
-
+3.	Safety of machinery - Electrical equipment of machines. 2016. Accessed: Sep. 2024. [Online]. Available: https://webstore.iec.ch/en/publication/26037
+4.	C. Woodford. "Speedometers." explainthatstuff.com. Mar. 2023. Accessed: Oct. 2024. [Online]. Available: https://www.explainthatstuff.com/how-speedometer-works.html
+5.	K. Nice. "How Odometers Work." howstuffworks.com. Jan. 2001. Accessed: Oct. 2024. [Online]. Available: https://auto.howstuffworks.com/car-driving-safety/safety-regulatory-devices/odometer.htm#pt2
+6.	yida. "What is a Time of Flight Sensor and How does a ToF Sensor work?" seeedstudio.com. 2019. Accessed: Oct. 2024. [Online]. Available: https://www.seeedstudio.com/blog/2020/01/08/what-is-a-time-of-flight-sensor-and-how-does-a-tof-sensor-work/
+7.	gunengyu. "Grove - Ultrasonic Ranger." seeedstudio.com. Mar. 2023. Accessed: Oct. 2024. [Online]. Available: https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/
+8.	Ralph. "What’s the Difference Between an Accelerometer, Gyroscope and IMU Sensors?" intorobotics.com. Sep. 2023. Accessed: Oct. 2024. [Online]. Available: https://intorobotics.com/accelerometer-gyroscope-and-imu-sensors-in-robotics/#3_List_of_IMU_Sensors
+9.	"Optical Mouse Sensors." digikey.com. May 2007. Accessed: Oct. 2024. [Online]. Avilable: https://media.digikey.com/pdf/Data%20Sheets/Avago%20PDFs/ToolKitSelectionGuide.pdf
+10.	"GL125 Series Photoresistor." knowing-tech.com. Accessed: Oct. 2024. [Online]. Avilable: https://knowing-tech.com/wp-content/uploads/data/g/GL12528.pdf
+11.	"LINEAR HALL-EFFECT IC." digikey.com. Rev.1.3, Aug. 2010. Accessed: Oct. 2024. [Online]. Avilable: https://www.digikey.com/htmldatasheets/production/1364519/0/0/1/ah49e.html?utm_adgroup=General&utm_source=bing&utm_medium=cpc&utm_campaign=Dynamic%20Search_EN_RLSA&utm_term=digikey&utm_content=General&utm_id=bi_cmp-384476624_adg-1302921504343623_ad-81432643449113_dat-2333232393680005:aud-807631099:loc-190_dev-c_ext-_prd-&msclkid=ef9edc5046c81a3f6ce4bb4050601364
 12. Nvidia Jetson Nano vs Raspberry Pi - Which one is better for your project? May 2024. Accessed: Oct. 2024.[Online].Available: https://www.socketxp.com/iot/nvidia-jetson-nano-vs-raspberry-pi-which-one-is-better-for-your-project/
 13. Comparing Dijkstra’s and A* Search Algorithm. May 2022. Accessed: Oct. 2024. [Online]. Available: https://medium.com/@miguell.m/dijkstras-and-a-search-algorithm-2e67029d7749
 14. A.I.: Informed Search Algorithms. Accessed: Oct. 2024 [Online]. Available: https://web.pdx.edu/~arhodes/ai6.pdf
 15.  ESP32 cam Object Detection. Accessed: Oct. 2024. [Online]. Available: https://webstore.iec.ch/en/publication/26037https://eloquentarduino.com/posts/esp32-cam-object-detection
 16. Another T3.5 Rover with a OpenMV Camera (Machine Vision). Aug. 2017. Accessed: Oct. 2024. [Online]. Available: https://forum.pjrc.com/index.php?threads/another-t3-5-rover-with-a-openmv-camera-machine-vision.45741/
-
-
-
-
 17.	“Motor Driver Fundamentals: Your Guide To Efficient Motor Control - Jhdpcb,” jhdpcb, Jan. 18, 2024. https://jhdpcb.com/blog/efficient-motor-control/#:~:text=The%20key%20role%20of%20the,enable%20speed%20and%20torque%20control
 18.	E. P. Company, “Motor Encoders: What is a Motor Encoder? How Do Motor Encoders Work?,” www.encoder.com. https://www.encoder.com/motor-encoders#:~:text=What%20are%20motor%20encoders%3F,are%20either%20incremental%20or%20absolute
 19.	Instructables, “Complete Motor Guide for Robotics,” Instructables, Dec. 13, 2015. https://www.instructables.com/Complete-Motor-Guide-for-Robotics/
@@ -327,6 +317,4 @@ A more in-depth block diagram of the power management/distribution subsystem wil
 21.	“Pololu - DRV8835 Dual Motor Driver Carrier,” www.pololu.com. https://www.pololu.com/product/2135
 22.	“Progeny.co.uk,” Progeny Access Control, 2015. https://progeny.co.uk/back-emf-suppression/#:~:text=The%20diode%20does%20a%20very,a%20one%20volt%20or%20so
 23.	“Differences Between Optical and Magnetic Incremental Encoders Mekre Mesganaw & Isaac Lara Position Sensing.” Accessed: Oct. 19, 2024. [Online]. Available: https://www.ti.com/lit/ab/slya061/slya061.pdf?ts=1729347629954&ref_url=https%253A%252F%252Fwww.google.com%252F
-24. 	“Intel ® RealSense TM Product Family D400 Series Datasheet Intel ® RealSenseTM Vision Processor D4, Intel,” 2022. Available: https://www.intelrealsense.com/wp-content/uploads/2022/03/Intel-RealSense-D400-Series-Datasheet-March-2022.pdf
-‌
-
+24.	"Intel RealSense Product Family D400 Series." intelrealsense.com. Rev. 012, Mar. 2020. Accessed: Oct. 2024. [Online]. Available: https://www.intelrealsense.com/wp-content/uploads/2022/03/Intel-RealSense-D400-Series-Datasheet-March-2022.pdf
