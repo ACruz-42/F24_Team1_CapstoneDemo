@@ -86,6 +86,17 @@ The camera will also need to be interfaced with the master control microprosseso
 
 ### General Sensors
 #### Atomic Subsystem Specifications
+
+The robot will need sensors to aid in finding its current position based off of the game field for the use of navigation, specifications 4 and 5.
+The robot will need sensors for detecting lines to aid in navigation and sorting, specifications 2 iii and v.
+The robot will need sensors to detect when the start LED turns on, specifications 2 i and ii.
+The robot will need a sensor capable of detecting magnetic fields for the purpose of sorting, specifications 2 vii and viii. 
+The robot cannot make any choices without input from the outside world, this input is obtained through sensors.
+The robot will need to make many choices about movement and navigation, to asist in making these choices the robot will need information about its current position, such as its relation to the game field walls and cave walls, lines on the game field, as well as its relation to its own position at an earlier point in time, it will also need to be able to detect magnetic fields to sort the astral material, and when a start LED comes on to signal the beginning of a match.
+Specifications 2 iii, v, and 4, 5 will require the robot to have information about its position.
+Specifications 2 vii, and viii will require the robot to have the ability to detect magnetic fields.
+Finally specifications 2 i and ii will require the robot to be able to detect a start LED.
+
 #### Comparative Analysis of Potential Solutions
 
 ##### Line Sensor
@@ -294,7 +305,7 @@ A more in-depth block diagram of the power management/distribution subsystem wil
 ## Statement of Contributions
   - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications)
   - Alex Cruz - Navigation and Master Control (everything except specifications), Motor Control (only specifications)
-  - Sam Hunter -
+  - Sam Hunter - Camera(all except specifications), General Sensors(specifications)
   - Alejandro Moore - Power Management Subsystem Information
   - Dakota Moye - 
 
