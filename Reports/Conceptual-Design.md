@@ -1,5 +1,12 @@
 ﻿# Conceptual Design
 ## Introduction
+The Institute of Electrical and Electronics Engineers (IEEE) hosts a yearly hardware competition at its Southeast Conference (SECON) for students to compete in. Tennessee Technological University has competed in the IEEE SECON hardware competition in the past but has often had issues undiscovered until the actual competition. The aim of this project is to design and build a robust, consistent robot to place as highly as possible. 
+
+
+### Restatement of Problem and Scope:
+The 2025 competition rules and limitations will be listed in the specifications section below but, in short, its challenge takes place over 3 minutes and involves collecting and separating two types of 40mm icosahedrons (astral material) randomly distributed on the field. Geodinium, one type of astral material, is slightly magnetic and heavier than Nebulite, the other type. The challenge is to sort these two types of astral material into two designated containers, and then bring those containers to a randomly chosen area on the board. Additionally, there is a dark roofed “cave” area with further Geodinium and Nebulite. The board is relatively simple with few obstacles beyond the containers and astral materials to navigate around, and as such, the goal is to focus on reliability followed by an extensive testing period. There are two types of matches, qualification matches in which the eight teams with the highest scoring qualification matches, and elimination matches where two teams directly compete against each other’s scores [1].
+
+Time is the major limiting factor as the competition takes place early into the second semester of this capstone project. By following an accelerated design and build schedule, this limits the design and testing periods for this project. The point distribution greatly rewards being able to correctly and reliably sort Geodinium and Nebulite into their corresponding containers. By implementing a camera for computer vision purposes and a heavy emphasis on testing, the robot can reliably gain the astral material points and unreliably gain others (such as for placing a beacon into a designated position), performance can be optimized for both the qualification matches and elimination matches [1].
 ## Restate Shall/May Statements
 ### Specifications
 1)	The robot shall act autonomously. Rule G08 [2].
@@ -31,11 +38,21 @@
 
 ## High-Level Solution
 
+### Camera
+
+### General Sensors
+
+### Navigation and Master Control
+
+The Jetson Nano functions as the hub for the both navigation algorithms and master control functions. In short, it will take sensor data from the camera and general sensors, work with these systems to localize the robot to a specific position on an internal grid, and then utilize an algorithm to find a path that will achieve the robot's objectives within the given time frame. The minimum functioning product of this subsystem will be able to, given mostly accurate sensor data, reliably navigate the robot to pick up a maximum amount of astral material within the given time frame and with few mistakes. The ideal functioning product of this subsystem will be able to reliably navigate the robot to pick up all the astral material, and finish all other objectives within the time frame with no mistakes, even given fuzzy sensor data.
+
+
 ### Motor Control
 The motor control subsystem functions as the feedback-based reaction center for the robot’s processes. It uses the input taken in from sensory data, such as object and line detection or map navigation, and follows the commands given to it from the master control to perform the physical responses of the robot. The primary method that will be used for feedback response is PID control. 
 
 The motor control subsystem is formally known as a motor drive and can include the following components: a microcontroller (MC), motor driver, motor, power supply, and specific components for noise reduction and circuit protection [17]. The motor microcontroller carries the digital signal commands from the master controller for the designated motor to operate as required. However, the power that the MC needs to function is not enough in comparison to what the motor needs. Therefore, it is essential to have a component that can step up the power from the MC to the motor. This is the purpose of the motor driver. The motor microcontroller sends a digital signal to the driver using PWM to set the desired motor speed. The driver can provide voltage regulation for the higher threshold of the motor, precision control for speed and torque, overload protection, and noise protection for the circuits involving low-power logic control [17]. The driver and motor terminals have a pair of wires that when connected, control the speed and direction of the motors. Encoders that detect the motor shaft speed/position to provide the actual speed of the motors are useful for completing a closed loop feedback system, such as with PID control [18]. All logic control circuitry, which includes the master control, motor microcontroller, and encoders, will receive low voltage from the power subsystem, while the motor driver will receive high voltage in order to provide the high power needs of the motors.
 
+### Power Management
 
 ### Hardware Block Diagram
 ![Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/BlockDiagram.jpg)
@@ -44,6 +61,10 @@ The motor control subsystem is formally known as a motor drive and can include t
 
 ## Subsystems
 ### Camera
+Customer: Dakota Moye
+
+Designer: Sam Hunter
+
 #### Atomic Subsystem Specifications
 
 A camera is needed for specifcations 1, 2-vii, 2-viii, and 4 and constraint 1.
@@ -82,6 +103,10 @@ The image from the camera will need to be processed so that the algorithms using
 The camera will also need to be interfaced with the master control microprossesor 
 
 ### General Sensors
+Customer: Sam Hunter
+
+Designer: Dakota Moye
+
 #### Atomic Subsystem Specifications
 
 The robot will need sensors to aid in finding its current position based off of the game field for the use of navigation, specifications 4 and 5.
@@ -185,10 +210,12 @@ The gyroscope on the inertial measurement unit will need to be tested with the m
 
 
 ### Navigation and Master Control
+Customer: Alejandro Moore
+
+Designer: Alex Cruz
 
 #### Atomic Subsystem Specifications
-![Atomic Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/d2995a028545a98730a56ce987d4fb0d5fdcdbad/Reports/Photos/Conceptual%20Design/Master_Control_Subsystem_V1.png)
-The main component in the navigation and master control subsystem is the Jetson Nano. The choice of the Jetson Nano is discussed below. The Jetson Nano will take in data from the sensor-related subsystems, interpret that data, form , utilize a navigation algorithm to plot a course through the game field maximizing the points obtained, then communicate to the motor subsystem the distance and angle to the desired position of the robot. Additionally, at the start of each game round, the Jetson Nano will start and maintain the movement of the auxiliary motors (such as for the auger, the roller, and potentially the docking of the cosmic shipping containers).
+The main component in the navigation and master control subsystem is the Jetson Nano. The choice of the Jetson Nano is discussed below. The Jetson Nano will take in data from the sensor-related subsystems via I2C, SPI, and USB (as depicted in the block diagram), interpret that data, form a position from that interpretation, utilize a navigation algorithm to plot a course through the game field maximizing the points obtained, then communicate to the motor subsystem the distance and angle to the desired position of the robot. Additionally, at the start of each game round, the Jetson Nano will start and maintain the movement of the auxiliary motors (such as for the auger, the roller, and potentially the docking of the cosmic shipping containers).
 #### Comparative Analysis of Potential Solutions.
 The processing power required to complete the atomic specifications for navigation, master control, and potentially localization is higher than any microcontroller on the market. Determining processing suitability (or unsuitability) for a given task is best proven experimentally. The ESP32 microcontroller [15] and Teensy 3.5 [16] both struggle with real-time image processing and computer vision but are capable of it. Attempting to optimize one microcontroller to accomplish everything needed would likely require more time than available. Connecting multiple microcontrollers to separately accomplish computer vision, localization, and navigation tasks would require extensive communication work, be at higher risk of background interference (S11), and introduce more possible points of failure.
 
@@ -209,6 +236,9 @@ Some hardware knowledge is required in determining the connections from the Jets
 
 
 ### Motor Control
+Customer: Alex Cruz
+
+Designer: Sean Borchers
 
 #### Atomic Subsystem Specifications
 1) The motors shall operate at a voltage of less than 30 volts [S12].
@@ -255,6 +285,10 @@ The following items are necessary for the completion of the motor control subsys
 For the Motor Control subsystem, there is mainly hardware implementation, but software is required for PID control. A team member with theoretical knowledge of PID feedback loops and technical experience in programming would be well-suited for this role. Classes in Controls and Robotics would help serve as a sufficient background for the project applications. 
 
 ### Power Management
+Customer: Sean Borchers
+
+Designer: Alejandro Moore
+
 #### Atomic Subsystem Specifications
 
 There are several quantifiable specifications and constraints for the power subsystem given the competition rules and the adherence to safe engineering practice. Procedurally, the main areas of focus are the start and stop mechanisms during play. In accordance with Specification 2-ii and 6, the robot functionality may have a trigger based on a given Start LED controlled by the referee or through a clearly labeled electrical start button. For the manual start button, the robot shall not move for five seconds after activation, but onboard commands can run during this time in preparation for play. The robot shall be able to safely and efficiently pause all its functions using a clearly labeled emergency stop button according to Specification 7. If there are multiple independently acting ‘Robot Units’, each shall have their own emergency stop button. Regarding power system requirements, the robot shall not go beyond 30V, as given by Specification 12. It shall also implement proper circuit shielding and isolation based on the disturbances from background interference in the competition environment, as given by Specification 11. Constraint 3 deals with International Electrotechnical Commision regulations for power supply, emergency stop, and circuit protection requirements. From this standard, the circuitry of the robot shall account for and add appropriate devices to promote safety measures such as overcurrent, overload, and over-temperature protection [3]. The power subsystem of this robot will be the electrical backbone of the project. Without a structured model of power management and distribution, the robot would not be able to meet all functions, specifications and constraints. For this subsystem to work correctly with the scope of the project, we must install a battery/(ies) so that the robot can be powered without a cord attached to a wall socket.
@@ -297,6 +331,12 @@ A rule that sensors need to abide by is no visible strobe lights.
 Furthermore, if using non-visble lasers, lasers will need to be safe for human interaction.
 
 ## Timeline
+
+## Overall Budget
+|Item|Cost per Item|Quantity|Total Cost for Item|
+| :- | :- | :- | :- |
+|Jetson Nano | $260|1|$260
+|Total|||$???|
 ## Statement of Contributions
   - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications)
   - Alex Cruz - Navigation and Master Control (everything except specifications), Motor Control (only specifications)
