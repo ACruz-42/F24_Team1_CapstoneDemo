@@ -42,6 +42,21 @@ Time is the major limiting factor as the competition takes place early into the 
 
 ### General Sensors
 
+A suite of sensor will be used for this project.
+A sensor is needed to detect the lines on the ground, difference between the two materials, the LED to start the robot, and the current location of the robot.
+The line sensor will need to detect the difference between the black ground and the white lines.
+This will need to be used when the robot is entering and exiting the cave to make sure it is properly aligned.
+The start LED sensor will need to detect the LED that starts the robot at the beginning of the match.
+The start LED will have a single task of sending a signal once a LED lights up, informing the robot to begin operations.
+The location sensor will need to know where the robot is.
+The location of the robot will be continuously updated as the robot traverses the field.
+The location sensor will use sensor fusion in order to minimize drift found in most sensors used to navigate.
+
+All sensors will send their data to the Jetson Nano for processing and interpretation.
+Data will be filtered and compared for sensor fusion for the location sensor.
+For the sensors that rely solely on their own information, they will be filtered and then used as inputs to help navigate and run the robot.
+All sensors will help in making sure the robot acts autonomously.
+
 ### Navigation and Master Control
 
 The Jetson Nano functions as the hub for the both navigation algorithms and master control functions. In short, it will take sensor data from the camera and general sensors, work with these systems to localize the robot to a specific position on an internal grid, and then utilize an algorithm to find a path that will achieve the robot's objectives within the given time frame. The minimum functioning product of this subsystem will be able to, given mostly accurate sensor data, reliably navigate the robot to pick up a maximum amount of astral material within the given time frame and with few mistakes. The ideal functioning product of this subsystem will be able to reliably navigate the robot to pick up all the astral material, and finish all other objectives within the time frame with no mistakes, even given fuzzy sensor data.
@@ -67,15 +82,11 @@ Designer: Sam Hunter
 
 #### Atomic Subsystem Specifications
 
-A camera is needed for specifcations 1, 2-vii, 2-viii, and 4 and constraint 1.
-By having a camera, a robot can see very similarly to a human, but needs to have that information filter and processed in a way the robot can understand.
-If it understands what it can effectively see, it shall be able to act autonomously, meeting specification 1.
-Specifcations 2-vii and 2-viii both shall have the robot have a way to identify the materials in the arena.
-Specifcation 4 shall have the robot detect different objects and obstacles.
-The camera will be the only sensor in the front getting active feedback, due to the constraints placed by the device used to collect the materials.
-The camera shall help keep the robot from running into obstacles in the front. 
-Constraint 1 shall have the robot read April Tags. 
-A camera is needed to read these.
+1. The robot shall act autonomously [S1].
+2. The camera shall detect the Nebulite [S2-vii].
+3. The camera shall detect the Geodinium [S2-viii].
+4. The robot shall be able to detect the walls of the arena, walls of the cave, and cave entrance. Rule S03 states that if the robot causes field damage, the team will be penalized. Detecting walls stops the robot from causing damage by moving into it. The camera will be the only sensor on the front and will need to do the listed objectives [S4].
+5. The camera shall read April Tags to help with Specifications 1, 2-v, 2-vii, 2-viii, and 2-ix [C1].
 
 #### Comparative Analysis of Potential Solutions
 
@@ -128,7 +139,9 @@ The primary solution is to use a reflectance sensor array.
 A secondary solution is to use the camera.
 The reflectance array would remove work from the camera and provide a single device whose goal is to detect the lines.
 A single device focusing on line following would give better results and need less software than using a camera.
-A reflectance array would have higher accuracy and less room for error than a camera.
+A reflectance array would have higher accuracy and less room for error than a camera [25].
+
+A reflectance array will be used for this project.
 
 ##### Inertial Measurement Unit
 
@@ -148,6 +161,9 @@ Gyroscopes give the position relative to a set object but can be interferred wit
 Accelerometers and gyroscopes come in small, single-chip package that are interfaceable with a microcontroller and are known as inertial measurement units [6].
 However, a tachometer would require two individual units to measure each of the motors or wheels.
 
+The accelerometer and gyroscope give the most data for the least amount of effort.
+They will be used for this project.
+
 ##### Location Sensor
 
 Specification 3 requires the robot to detect walls of the arena and cave to keep it from running into and damaging them.
@@ -162,6 +178,9 @@ The biggest issue is that they need to be very close to the object that they are
 This means the mouse would need to be sliding along the ground.
 The light used on the mouse also needs to be a continous LED and not a strobe light [9].
 
+The infrared sensors will be used for this project.
+The mouse will be experimented with if times permits.
+
 ##### Start LED Sensor
 
 Specification 2-ii requires the robot to start based on an input from a LED.
@@ -169,6 +188,8 @@ The simplest method is to use a photoresistor.
 A photoresistor gets a lower resistance as the incident light increases.
 This change in resistance can be read as a change in voltage on the lower side of the photoresistor.
 A photoresistor is a simple and robust sensor that will work easily and repeatedly [10].
+
+A photoresistor will be used for this project.
 
 ##### Magnetic Sensor
 
@@ -178,9 +199,11 @@ Hall effect sensors produce a more positive or negative voltage depending on whe
 A different voltage gives a way for the microcontroller to determine where a certain material should go [11].
 
 A second option is to use weight.
-This require whatever is being used to transport the material to be weighed as well.
+This requires whatever is being used to transport the material to be weighed as well.
 Unless, the material is placed directly on a scale, but then it also has to be moved off of the scale.
 The weight sensor would also need to account for the acceleration of the robot, which gives more room for error and causes more work for software.
+
+The Hall effect sensor will be used for this project.
 
 #### Resources
 
@@ -335,8 +358,14 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 ## Overall Budget
 |Item|Cost per Item|Quantity|Total Cost for Item|
 | :- | :- | :- | :- |
+|Reflectance Array|$10|1|$10|
+|Inerital Measurement Unit|$30|1|$30|
+|LiDAR|$45|3|$135|
+|Photoresistor|$4|1|$4|
+|Hall Effect Sensor|$4|1|$4|
 |Jetson Nano | $260|1|$260
 |Total|||$???|
+
 ## Statement of Contributions
   - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications)
   - Alex Cruz - Navigation and Master Control (everything except specifications), Motor Control (only specifications)
@@ -369,3 +398,4 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 22.	“Progeny.co.uk,” Progeny Access Control, 2015. https://progeny.co.uk/back-emf-suppression/#:~:text=The%20diode%20does%20a%20very,a%20one%20volt%20or%20so
 23.	“Differences Between Optical and Magnetic Incremental Encoders Mekre Mesganaw & Isaac Lara Position Sensing.” Accessed: Oct. 19, 2024. [Online]. Available: https://www.ti.com/lit/ab/slya061/slya061.pdf?ts=1729347629954&ref_url=https%253A%252F%252Fwww.google.com%252F
 24.	"Intel RealSense Product Family D400 Series." intelrealsense.com. Rev. 012, Mar. 2020. Accessed: Oct. 2024. [Online]. Available: https://www.intelrealsense.com/wp-content/uploads/2022/03/Intel-RealSense-D400-Series-Datasheet-March-2022.pdf
+25.	"QTR-8A and QTR-8RC Reflectance Sensor Array User's Guide." pololu.com. Accessed: Oct. 2024. [Online]. Available: https://www.pololu.com/docs/pdf/0J12/QTR-8x.pdf
