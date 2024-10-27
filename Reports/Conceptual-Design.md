@@ -295,7 +295,7 @@ The following items are necessary for the completion of the motor control subsys
 
 |Item|Cost per Item|Quantity|Total Cost for Item|
 | :- | :- | :- | :- |
-|Brushed Motors (24V)|~$60.00|2|$120.00|
+|Brushed Motors (12-24V)|~$60.00|2|$120.00|
 |Motor Drivers (L298N H-bridge module)|$10.00|2|$20.00|
 |Optical Encoders|$20.00|2|$40.00|
 |Total|||$180.00|
@@ -372,13 +372,13 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 |Photoresistor|$4|1|$4|
 |Hall Effect Sensor|$4|1|$4|
 |Jetson Nano | $260|1|$260|
-|Brushed Motors (24V)|~$60.00|2|$120.00|
+|Brushed Motors (12-24V)|~$60.00|2|$120.00|
 |Motor Drivers (L298N H-bridge module)|$10.00|2|$20.00|
 |Optical Encoders|$20.00|2|$40.00|
 |Total|||$???|
 
 ## Statement of Contributions
-  - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications)
+  - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications), Power Management (only specifications)
   - Alex Cruz - Navigation and Master Control (everything except specifications), Motor Control (only specifications)
   - Sam Hunter - Camera(all except specifications), General Sensors(specifications)
   - Alejandro Moore - Power Management Subsystem Information
