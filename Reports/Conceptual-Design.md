@@ -40,6 +40,8 @@ Time is the major limiting factor as the competition takes place early into the 
 
 ### Camera
 
+The camera will be the robot's primary means of object detection, and will also help with line detection. The camera will will send its depth and image input to the microprocessor where the input will be filtered to a usable state, while that is happening the other inputs from general sensors will also be fed to the microcoprocessor and each input will be filtered to obtain a usable input. After usable inputs are obtained the sensor and camera inputs will be be put into object and line detection algorithms, which will localize the astral material, game field and cave walls, lines, and shipping containers on the robot's inner grid system. All this information will then be processed and sent to navigation and master control. 
+
 ### General Sensors
 
 A suite of sensor will be used for this project.
@@ -89,11 +91,20 @@ Designer: Sam Hunter
 #### Comparative Analysis of Potential Solutions
 
 The robot will need a camera with both RGB and dpeth sensing capabillites.
-The camera has 2 cameras in it, 1 is a 2D camera which will be used like a normal 2D camera for video and RGB values.
+One option is a RGBD camera using an infrared projector, this camera
+has 2 cameras in it, 1 is a 2D camera which will be used like a normal 2D camera for video and RGB values.
 The second camera is an infrared camera which uses an infrared laser detector which seperates objects into layers. 
 The primary purpose of the camera will be to identify the astral material and then accurately place it on the game field for the navigation algorithm.
 The camera will use the 2D RGB camera to find and differentiate the different objects, including astral material, game field walls, and cave walls.
 It will then use the infrared camera to accurately place the objects in relation to the robot.[24]
+
+
+Another option is to use a stereo vision 3d camera.
+This type of camera uses 2 or more 2d RGB cameras to contruct a concept of depth in the same way humans do with our 2 eyes.
+The camera takes the 2 or more inputs from slightly different perspectives then compares them to each other and does some calculations,
+then from these calculations a distance is determined.
+This distance is then used in the same way it will be for an infrared camera, to locate the objects on the game field.
+Either way the cameras will need to interface with the microprocessor using a USB connection.
 
 #### Resources
 
@@ -118,15 +129,12 @@ Designer: Dakota Moye
 
 #### Atomic Subsystem Specifications
 
-The robot will need sensors to aid in finding its current position based off of the game field for the use of navigation, specifications 4 and 5.
-The robot will need sensors for detecting lines to aid in navigation and sorting, specifications 2 iii and v.
-The robot will need sensors to detect when the start LED turns on, specifications 2 i and ii.
-The robot will need a sensor capable of detecting magnetic fields for the purpose of sorting, specifications 2 vii and viii. 
-The robot cannot make any choices without input from the outside world, this input is obtained through sensors.
-The robot will need to make many choices about movement and navigation, to asist in making these choices the robot will need information about its current position, such as its relation to the game field walls and cave walls, lines on the game field, as well as its relation to its own position at an earlier point in time, it will also need to be able to detect magnetic fields to sort the astral material, and when a start LED comes on to signal the beginning of a match.
-Specifications 2 iii, v, and 4, 5 will require the robot to have information about its position.
-Specifications 2 vii, and viii will require the robot to have the ability to detect magnetic fields.
-Finally specifications 2 i and ii will require the robot to be able to detect a start LED.
+1) The robot's sensors shall be able to find the walls of the game field and the cave, specifications 4 and 5.
+1) The robot's sensors shall be able to detect the white lines on the game board, specifications 2 iii and v.
+1) The robot's sensors shall be bale to detect when the start LED turns on, specifications 2 i and ii.
+1) The robot's sensors shall be able to detect the magnetic fields of the Geodinium, specifications 2 vii and viii.
+1) The robot's sensors shall be able to work effectively despite background interference in the competition environment, specification 11.
+1) The robot's general sensor subsystem shall have a user manual that explains functionality and design intent, constraint 2.
 
 #### Comparative Analysis of Potential Solutions
 
@@ -352,8 +360,9 @@ The project will have an impact on the outreach of Tennessee Tech, with the team
 
 The Game Manual provided structures for the competition to follow IEEE guidelines and general electrical standards. Resources mentioned such as datasheets and procedures correlated with clean power transmission will be followed closely. For example, the E-stop mentioned in the rules are for the safety of the competitors, judges, and audience in the case of a motor malfunction.
 
-The datasheet for the camera will be followed and the intended use matches closely with the designed use.
-The infrared laser projector is safe for use in the vicinity of humans. 
+The datasheet for the camera will be followed to ensure safe and correct usage. 
+Furthermore, the way it will be used in competition, for navigation and object detection, matches very well with its intended use.
+The only danger to humans this component coud pose is its use of an infrared laser projecter, however, the lazer projecter is very small and completely safe for use in close proximity of living beings.  
 
 Resources and materials uses for this subsystem will be built following an expected use.
 This use will be listed in their datasheets, and their datasheets will be followed properly.
@@ -371,10 +380,11 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 |LiDAR|$45|3|$135|
 |Photoresistor|$4|1|$4|
 |Hall Effect Sensor|$4|1|$4|
-|Jetson Nano | $260|1|$260|
 |Brushed Motors (12-24V)|~$60.00|2|$120.00|
 |Motor Drivers (L298N H-bridge module)|$10.00|2|$20.00|
 |Optical Encoders|$20.00|2|$40.00|
+|Jetson Nano | $260|1|$260
+|RGBD Camera|$272|1|$272|
 |Total|||$???|
 
 ## Statement of Contributions
