@@ -254,7 +254,7 @@ Customer: Alejandro Moore
 Designer: Alex Cruz
 
 #### Atomic Subsystem Specifications
-The main component in the navigation and master control subsystem is the Jetson Nano. The choice of the Jetson Nano is discussed below. The Jetson Nano will take in data from the sensor-related subsystems via I2C, SPI, and USB (as depicted in the block diagram), interpret that data, form a position from that interpretation, utilize a navigation algorithm to plot a course through the game field maximizing the points obtained, then communicate to the motor subsystem the distance and angle to the desired position of the robot. Additionally, at the start of each game round, the Jetson Nano will start and maintain the movement of the auxiliary motors (such as for the auger, the roller, and potentially the docking of the cosmic shipping containers).
+
 #### Comparative Analysis of Potential Solutions.
 The processing power required to complete the atomic specifications for navigation, master control, and potentially localization is higher than any microcontroller on the market. Determining processing suitability (or unsuitability) for a given task is best proven experimentally. The ESP32 microcontroller [15] and Teensy 3.5 [16] both struggle with real-time image processing and computer vision but are capable of it. Attempting to optimize one microcontroller to accomplish everything needed would likely require more time than available. Connecting multiple microcontrollers to separately accomplish computer vision, localization, and navigation tasks would require extensive communication work, be at higher risk of background interference (S11), and introduce more possible points of failure.
 
