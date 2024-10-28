@@ -70,9 +70,11 @@ The motor control subsystem functions as the feedback-based reaction center for 
 ### Power Management
 
 ### Hardware Block Diagram
-![Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/BlockDiagram.jpg)
-### Operational Flow Chart
-![Operation Flow Chart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/Robot_Flowchart.png)
+![Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/d1b0a1bd0f7a84890326c1eae984428bc10b83ec/Reports/Photos/Conceptual%20Design/BlockDiagramV2.png)
+### Operational Flowchart
+![Operational Flowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/Robot_Flowchart.png)
+### High Level Robot Autonomous Operation Flowchart
+![High Level Robot Autonomous Operation](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/d2550610666c0f9aed239544ccb3bc6e93c8cf3b/Reports/Photos/Conceptual%20Design/Flowchart_High_Level_Tasks.png)
 
 ## Subsystems
 ### Camera
@@ -159,13 +161,19 @@ A tachometer measures the rotation of an object.
 For the robot, it would measure the rotation of the wheels or motor shaft that drives the wheels.
 An accelerometer measures the linear and angular acceleration of the robot in three dimensions.
 A gyroscope measure the relative position to Earth's northern magnetic field.
-A Speedometer or odometer would require parts to be constructed with them in place.
+A speedometer or odometer would require parts to be constructed with them in place.
 A tachometer would give the rotational speed and then need to be converted to a linear distance.
 This would require the speed of all wheels to be known and certain algorithms to be made to account for turning.
 Accelerometers give the total acceleration of the robot but need to be integrated to get position.
 Gyroscopes give the position relative to a set object but can be interferred with noise from motors or magnetic materials.
 Accelerometers and gyroscopes come in small, single-chip package that are interfaceable with a microcontroller and are known as inertial measurement units [6].
 However, a tachometer would require two individual units to measure each of the motors or wheels.
+
+For inertial measurement units, there are premade packages that include processing that would remove the need for additional processing.
+The packages include signal processing and applying algorithms and sensor fusion to give a high resolution and low error.
+The downside of these premade packages is that they cost much more than coding it personally.
+A premade package ranges from $400 to $2000.
+Only an inertial measurement unit costs $20 to $150 [27-28]
 
 The accelerometer and gyroscope give the most data for the least amount of effort.
 They will be used for this project.
@@ -223,15 +231,17 @@ All sensors will need to be calibrated and properly connected.
 |Item|Cost per Item|Quantity|Total Cost for Item|
 | :- | :- | :- | :- |
 |Reflectance Array|$10|1|$10|
-|Inerital Measurement Unit|$30|1|$30|
+|Inerital Measurement Unit|$400|1|$400|
 |LiDAR|$45|3|$135|
 |Photoresistor|$4|1|$4|
 |Hall Effect Sensor|$4|1|$4|
-|Total|||$183|
+|Total|||$553|
 
 #### Skills
 
 Software for the each of the sensors will need to be made.
+The software will be made in Python.
+Python has many mathematical libraries, and there is open source code available [29].
 The reflectance array, inertial measurement unit, and LiDAR will take the most work.
 The other two should be a simple voltage comparison, or trigger.
 The first three will need to be tested repeatedly.
@@ -372,11 +382,13 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 
 ## Timeline
 
+![Gantt Chart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/cc5105f8ea86e533da39732e5beb532a5f8b5cfe/Reports/Photos/Conceptual%20Design/Conceptual%20Design%20Gantt%20Chart%201%20Page.svg)
+
 ## Overall Budget
 |Item|Cost per Item|Quantity|Total Cost for Item|
 | :- | :- | :- | :- |
 |Reflectance Array|$10|1|$10|
-|Inerital Measurement Unit|$30|1|$30|
+|Inerital Measurement Unit|$400|1|$400|
 |LiDAR|$45|3|$135|
 |Photoresistor|$4|1|$4|
 |Hall Effect Sensor|$4|1|$4|
@@ -385,14 +397,16 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 |Optical Encoders|$20.00|2|$40.00|
 |Jetson Nano | $260|1|$260
 |RGBD Camera|$272|1|$272|
-|Total|||$???|
+|Lithium Iron Phosphate Battery|$91.43|2|$182.86|
+|Lithium Iron Phosphate Battery Charger|$129.27|1|$129.27|
+|Total|||$1577.13|
 
 ## Statement of Contributions
   - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications), Power Management (only specifications)
   - Alex Cruz - Navigation and Master Control (everything except specifications), Motor Control (only specifications)
   - Sam Hunter - Camera(all except specifications), General Sensors(specifications)
   - Alejandro Moore - Power Management Subsystem Information
-  - Dakota Moye - General Senors (except specifications), Camera (only specification), Operation Flowchart
+  - Dakota Moye - General Senors (except specifications), Camera (only specification), Operational Flowchart, High Level Robot Autonomous Operation Flowchart
 
 ## Works Cited
 1.	“Mining Mayhem – Game Manual 1.” Version 1.1, Apr. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1hTvIeRj649eyGU8oWLR_yD-mYgayySX7tRQBbetUCqc/edit 
@@ -421,4 +435,7 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 24.	"Intel RealSense Product Family D400 Series." intelrealsense.com. Rev. 012, Mar. 2020. Accessed: Oct. 2024. [Online]. Available: https://www.intelrealsense.com/wp-content/uploads/2022/03/Intel-RealSense-D400-Series-Datasheet-March-2022.pdf
 25.	"QTR-8A and QTR-8RC Reflectance Sensor Array User's Guide." pololu.com. Accessed: Oct. 2024. [Online]. Available: https://www.pololu.com/docs/pdf/0J12/QTR-8x.pdf
 26.	I. Wu, “Power Supplies for Jetson Nano Developer Kit: The Definitive Guide,” Piveral, Jun. 07, 2021. https://piveral.com/jetson-nano-power-supply-guide/ (accessed Oct. 26, 2024).
+27.	"Accurate Motion Tracking: Inertial Measurement Units." pnisensor.com. Accessed: Oct. 2024. [Online]. Available: https://www.pnisensor.com/accurate-motion-tracking-inertial-measurement-units/
+28.	"Inertial Sensors IMU." microstrain.com. Accessed: Oct. 2024. [Online]. Available: https://www.microstrain.com/inertial/IMU
+29.	"IMU-Position-Tracking." github.com. Accessed: Oct. 2024. [Online]. Available: https://github.com/john2zy/IMU-Position-Tracking
 ‌
