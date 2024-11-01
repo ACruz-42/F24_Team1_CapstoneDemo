@@ -255,6 +255,18 @@ Designer: Alex Cruz
 
 #### Atomic Subsystem Specifications
 
+1) The Robot shall act autonomously, as seen in Specification 1.
+1) The Robot shall navigate to specified areas for scored points, as seen in Specification 2
+   1) Navigate out of Landing Pad (i)
+   1) Navigate within 3 seconds of Start LED (ii)
+   1) Finding the cave (iii)
+   1) Navigate to correct zones (v)
+   1) Finding Team beacon and Mast (ix)
+1) The Robot shall stay on the game field, as seen in Specification 5.
+1) Cease all operation after 3 minute timer is done, referred from Specification 10.
+1) Specification 11 states that we shall account for some background interference towards the robot. Communication is key to the functionality of the robot.
+
+
 #### Comparative Analysis of Potential Solutions.
 The processing power required to complete the atomic specifications for navigation, master control, and potentially localization is higher than any microcontroller on the market. Determining processing suitability (or unsuitability) for a given task is best proven experimentally. The ESP32 microcontroller [15] and Teensy 3.5 [16] both struggle with real-time image processing and computer vision but are capable of it. Attempting to optimize one microcontroller to accomplish everything needed would likely require more time than available. Connecting multiple microcontrollers to separately accomplish computer vision, localization, and navigation tasks would require extensive communication work, be at higher risk of background interference (S11), and introduce more possible points of failure.
 
@@ -405,7 +417,7 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
   - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications), Power Management (only specifications)
   - Alex Cruz - Navigation and Master Control (everything except specifications), Motor Control (only specifications)
   - Sam Hunter - Camera(all except specifications), General Sensors(specifications)
-  - Alejandro Moore - Power Management Subsystem Information
+  - Alejandro Moore - Power Management Subsystem Information, Navaigation and Master Control (only Specifications)
   - Dakota Moye - General Senors (except specifications), Camera (only specification), Operational Flowchart, High Level Robot Autonomous Operation Flowchart
 
 ## Works Cited
