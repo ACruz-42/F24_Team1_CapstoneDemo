@@ -394,7 +394,7 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 
 ## Timeline
 
-![Gantt Chart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/cc5105f8ea86e533da39732e5beb532a5f8b5cfe/Reports/Photos/Conceptual%20Design/Conceptual%20Design%20Gantt%20Chart%201%20Page.svg)
+![Gantt Chart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/b604abb1fec65f27243d6ec17d9f0e17d8ff95c7/Reports/Photos/Conceptual%20Design/Conceptual%20Design%20Gantt%20Chart%201%20Page.svg)
 
 ## Overall Budget
 |Item|Cost per Item|Quantity|Total Cost for Item|
