@@ -70,7 +70,7 @@ The motor control subsystem functions as the feedback-based reaction center for 
 ### Power Management
 
 ### Hardware Block Diagram
-![Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/d1b0a1bd0f7a84890326c1eae984428bc10b83ec/Reports/Photos/Conceptual%20Design/BlockDiagramV2.png)
+![Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1676d3af9ca460442ac804a28491b97aa7afdfa4/Reports/Photos/Conceptual%20Design/BlockDiagramV3.png)
 ### Operational Flowchart
 ![Operational Flowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/Robot_Flowchart.png)
 ### High Level Robot Autonomous Operation Flowchart
