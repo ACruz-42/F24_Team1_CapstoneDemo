@@ -63,11 +63,12 @@ All sensors will help in making sure the robot acts autonomously.
 
 The Jetson Nano functions as the hub for the both navigation algorithms and master control functions. In short, it will take sensor data from the camera and general sensors, work with these systems to localize the robot to a specific position on an internal grid, and then utilize an algorithm to find a path that will achieve the robot's objectives within the given time frame. The minimum functioning product of this subsystem will be able to, given mostly accurate sensor data, reliably navigate the robot to pick up a maximum amount of astral material within the given time frame and with few mistakes. The ideal functioning product of this subsystem will be able to reliably navigate the robot to pick up all the astral material, and finish all other objectives within the time frame with no mistakes, even given fuzzy sensor data.
 
-
 ### Motor Control
 The motor control subsystem functions as the feedback-based reaction center for the robot’s processes. It uses the input taken in from sensory data, such as object and line detection or map navigation, and follows the commands given to it from the master control to perform the physical responses of the robot. Motor control can include the following components: a microcontroller (MC), motor, motor driver, encoder, power supply, and specific components for noise reduction and circuit protection [1]. The motor microcontroller carries the digital signal commands for the designated motor to operate as required. However, the power that the MC needs to function is not enough in comparison to what the motor needs. Therefore, it is essential to have a component that can step up the power from the MC to the motor. This is the purpose of the motor driver. The motor microcontroller sends a digital signal to the driver using PWM to set the desired motor speed. Encoders that detect the motor shaft speed/position to provide the actual speed of the motors are useful for completing a closed loop feedback system, such as with PID control [2]. All logic control circuitry, which includes the master control and encoders, will receive low voltage from the power subsystem, while the motor driver will receive high voltage in order to provide the high power needs of the motors.
 
 ### Power Management
+
+The LiFePO4 battery will be sufficient for the power subsystem requirements. These batteries will consistently and continuously power all required electrical components within the allotted time frame or until the E-stop button is pressed. The microcontroller, motors, and most sensors will all be driven by this subsystem. Once the circuit is closed, the robot will wait for the Start LED sensor to begin its mission. This subsystem must be tested as fully operational and consistent in order for the robot to meet all specifications and constraints.
 
 ### Hardware Block Diagram
 ![Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1676d3af9ca460442ac804a28491b97aa7afdfa4/Reports/Photos/Conceptual%20Design/BlockDiagramV3.png)
@@ -360,6 +361,18 @@ The power subsystem of this robot will be the electrical backbone of the project
 
 This power subsystem requires adequate power management and distribution of all hardware within the robot. Since we must power both the microcontroller and the motor subsystems, it would be wise to separate the power buses at a certain point so that neither subsystems connected to the power subsystem will interfere with each other, but work together towards a common goal. Based on last year’s SECON Modular-Based Robot, creating a power distribution circuit that isolates 2 batteries to power both subsystems we believe will be most optimal. For Specification 6 and 2-ii, the start button mentioned within the sensor section will be connected to the power subsystem. Once pressed, it will have both batteries provide sufficient voltage and current to both the motor and microcontroller, but will not start moving until 5 seconds after the button or LED receiver  is triggered. Similarly, Specification 7 refers to an Emergency Stop button that is required within the Game Rules. This E-Stop button will also be connected to the circuit. Once pressed, the circuit shall open the power bus to the motor while the bus to the microcontrollers will stay closed. Thus, giving the microcontroller power to process still, and cutting off all power to the motor for optimal safety while also saving critical data.
 
+##### Microcontroller
+
+The Microcontroller is the brains of the robot. As stated above, we have selected the Jetson Nano as our preferred MCU for our project design. The battery selected must power all electrical components in order to confirm functionality. Since we need a lot of volts to supply the system, we will need a way to step-down the voltage input to the microcontroller. Thus, the MOD-DC-005[30] will be used as a buck converter. According to the datasheet, the microcontroller recommends a 5V and 2.5A as input voltage and current. The adjustable DC-DC Buck converter can take an input voltage anywhere from 3.2-40V with a +/- 0.5V accuracy, being fully suitable for our battery’s needs. The buck converter's output range is from 1.25V~35V, thus giving the user max modulation for whatever voltage drop the circuit may require. So, our battery used for the microcontroller and other devices with a similar voltage level input will be sent through a buck converter, dropping the input voltage to 5V and 3A maximum to the Jetson Nano. After confirmation that the MCU has been powered, the robot will begin its first task according to the flowchart shown earlier.
+
+##### Motors
+
+For this robot, there will be several motors within it in order to complete several tasks at a time. These motors will be used for various aspects within the competition. In regards to the power management subsystem, we must also have all motors within the robot sufficiently powered. We will use another battery for the motors specifically, as mentioned earlier, because of back EMF and add flyback diodes to the rail in order to not damage the circuit.[31] It has been stated in the block diagram that the motor drivers we will implement are 12VDC. So, using this battery, we will also send this 24VDC LiFePO4 through another buck converter from 24V to 12VDC and send it to the drivers (brushed and not brushed). Thus, activating the moving functionality of the robot. The encoders for the motor calculations will also be powered by the other 5V power rail since it consumes the same amount of voltage as the sensors we will use in this project.
+
+##### Sensors
+
+The Power Management Subsystem must power the sensors as well. The Sensors being the eyes and ears of the robot must be turned ON in order for our team to complete the specifications and constraints listed above. As seen in the block diagram, every sensor (except for the camera) will be powered by the 5VDC rail from the first battery and grounded appropriately. We will make sure each sensor consumes an adequate current for the amount supplied by the rail. 
+
 #### Resources
 
 At least 2 batteries are needed for this solution that follows the specifications and constraints. We may be able to salvage an older e-stop button used in past CAPSTONE projects and test to see if it works within the circuit. Further schematics and simulations will be displayed to better explain the power subsystem structure.
@@ -370,7 +383,8 @@ At least 2 batteries are needed for this solution that follows the specification
 | :- | :- | :- | :- |
 |Lithium Iron Phosphate Battery|$91.43|2|$182.86|
 |Lithium Iron Phosphate Battery Charger|$129.27|1|$129.27|
-|Total|||$312.13|
+|DC-DC Buck Converter|$9.80|2|$19.60|
+|Total|||$331.73|
 
 #### Skills
 
@@ -411,7 +425,8 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 |RGBD Camera|$272|1|$272|
 |Lithium Iron Phosphate Battery|$91.43|2|$182.86|
 |Lithium Iron Phosphate Battery Charger|$129.27|1|$129.27|
-|Total|||$1577.13|
+|DC-DC Buck Converter|$9.80|2|$19.60|
+|Total|||$1596.73|
 
 ## Statement of Contributions
   - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications), Power Management (only specifications)
@@ -450,4 +465,6 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 27.	"Accurate Motion Tracking: Inertial Measurement Units." pnisensor.com. Accessed: Oct. 2024. [Online]. Available: https://www.pnisensor.com/accurate-motion-tracking-inertial-measurement-units/
 28.	"Inertial Sensors IMU." microstrain.com. Accessed: Oct. 2024. [Online]. Available: https://www.microstrain.com/inertial/IMU
 29.	"IMU-Position-Tracking." github.com. Accessed: Oct. 2024. [Online]. Available: https://github.com/john2zy/IMU-Position-Tracking
+30.	"DC-DC Buck Converter" kuriosity.sg. Accessed: Nov. 2024. [Online]. Available: https://kuriosity.sg/collections/dc-buck-converter/products/dc-dc-step-down-buck-converter-with-display-3-2-40v-to-1-25-35v-10w-3a-lm2596
+31.	"How to power multiple 12V motors using a 30V Battery?" quora.com. Accessed: Nov. 2024 [Online]. Available: https://www.quora.com/How-do-I-use-a-30V-battery-to-power-multiple-12V-motors
 ‌
