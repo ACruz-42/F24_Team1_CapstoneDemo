@@ -40,26 +40,45 @@ Time is the major limiting factor as the competition takes place early into the 
 
 ### Camera
 
-The camera will be the robot's primary means of object detection, and will also help with line detection. The camera will will send its depth and image input to the microprocessor where the input will be filtered to a usable state, while that is happening the other inputs from general sensors will also be fed to the microcoprocessor and each input will be filtered to obtain a usable input. After usable inputs are obtained the sensor and camera inputs will be be put into object and line detection algorithms, which will localize the astral material, game field and cave walls, lines, and shipping containers on the robot's inner grid system. All this information will then be processed and sent to navigation and master control. 
+The camera will be the robot's primary means of object detection, and will also help with line detection. The camera will send its depth and image input to the microprocessor where the input will be filtered to a usable state, while that is happening the other inputs from general sensors will also be fed to the microcoprocessor and each input will be filtered to obtain a usable input. After usable inputs are obtained the sensor and camera inputs will be be put into object and line detection algorithms, which will localize the astral material, game field and cave walls, lines, and shipping containers on the robot's inner grid system. All this information will then be processed and sent to navigation and master control. 
 
 ### General Sensors
+
+A suite of sensor will be used for this project.
+A sensor is needed to detect the lines on the ground, difference between the two materials, the LED to start the robot, and the current location of the robot.
+The line sensor will need to detect the difference between the black ground and the white lines.
+This will need to be used when the robot is entering and exiting the cave to make sure it is properly aligned.
+The start LED sensor will need to detect the LED that starts the robot at the beginning of the match.
+The start LED will have a single task of sending a signal once a LED lights up, informing the robot to begin operations.
+The location sensor will need to know where the robot is.
+The location of the robot will be continuously updated as the robot traverses the field.
+The location sensor will use sensor fusion in order to minimize drift found in most sensors used to navigate.
+
+All sensors will send their data to the Jetson Nano for processing and interpretation.
+Data will be filtered and compared for sensor fusion for the location sensor.
+For the sensors that rely solely on their own information, they will be filtered and then used as inputs to help navigate and run the robot.
+All sensors will help in making sure the robot acts autonomously.
 
 ### Navigation and Master Control
 
 The Jetson Nano functions as the hub for the both navigation algorithms and master control functions. In short, it will take sensor data from the camera and general sensors, work with these systems to localize the robot to a specific position on an internal grid, and then utilize an algorithm to find a path that will achieve the robot's objectives within the given time frame. The minimum functioning product of this subsystem will be able to, given mostly accurate sensor data, reliably navigate the robot to pick up a maximum amount of astral material within the given time frame and with few mistakes. The ideal functioning product of this subsystem will be able to reliably navigate the robot to pick up all the astral material, and finish all other objectives within the time frame with no mistakes, even given fuzzy sensor data.
 
-
 ### Motor Control
-The motor control subsystem functions as the feedback-based reaction center for the robot’s processes. It uses the input taken in from sensory data, such as object and line detection or map navigation, and follows the commands given to it from the master control to perform the physical responses of the robot. The primary method that will be used for feedback response is PID control. 
 
-The motor control subsystem is formally known as a motor drive and can include the following components: a microcontroller (MC), motor driver, motor, power supply, and specific components for noise reduction and circuit protection [17]. The motor microcontroller carries the digital signal commands from the master controller for the designated motor to operate as required. However, the power that the MC needs to function is not enough in comparison to what the motor needs. Therefore, it is essential to have a component that can step up the power from the MC to the motor. This is the purpose of the motor driver. The motor microcontroller sends a digital signal to the driver using PWM to set the desired motor speed. The driver can provide voltage regulation for the higher threshold of the motor, precision control for speed and torque, overload protection, and noise protection for the circuits involving low-power logic control [17]. The driver and motor terminals have a pair of wires that when connected, control the speed and direction of the motors. Encoders that detect the motor shaft speed/position to provide the actual speed of the motors are useful for completing a closed loop feedback system, such as with PID control [18]. All logic control circuitry, which includes the master control, motor microcontroller, and encoders, will receive low voltage from the power subsystem, while the motor driver will receive high voltage in order to provide the high power needs of the motors.
+The motor control subsystem for robot movement functions as the feedback-based reaction center for the robot’s processes. It uses the input taken in from sensory data, such as object and line detection or map navigation, and follows the commands given to it from the master control to perform the physical responses of the robot. Motor control can include the following components: a microcontroller (MC), motor, motor driver, encoder, power supply, and specific components for noise reduction and circuit protection [1]. The motor microcontroller carries the digital signal commands for the designated motor to operate as required. However, the power that the MC needs to function is not enough in comparison to what the motor needs. Therefore, it is essential to have a component that can step up the power for the motor while still using the MC for commands. This is the purpose of the motor driver. The motor microcontroller sends a digital signal to the driver using PWM to set the desired motor speed. Encoders that detect the motor shaft speed/position to provide the actual speed of the motors are useful for completing a closed loop feedback system, such as with PID control [2]. All logic control circuitry, which includes the master control and encoders, will receive low voltage from the power subsystem, while the motor driver will receive high voltage in order to provide the high power needs of the motors. 
+
+Several types of motors are utilized in the solution. Brushed DC motors are used for the mechanisms that have continuous feedback based on desired versus actual motor speed, such as with the overall robot movement and the collection of astral material. Separate motor drivers are connected to these motors and provide the appropriate power based on PWM input from the microcontroller. Linear actuators will be used for clamping onto the shipping container, and they will need drivers as well for directional control of the extension of the actuator. Servo motors will be used for the material sorting mechanism via a system of gates, lifting the shipping container, and controlling the positioning of an arm that will place the Team Beacon. Servo motors are useful for precise positioning and may not need an external driver as the control circuit is integrated into the motor [32,33].
 
 ### Power Management
 
+The LiFePO4 battery will be sufficient for the power subsystem requirements. These batteries will consistently and continuously power all required electrical components within the allotted time frame or until the E-stop button is pressed. The microcontroller, motors, and most sensors will all be driven by this subsystem. Once the circuit is closed, the robot will wait for the Start LED sensor to begin its mission. This subsystem must be tested as fully operational and consistent in order for the robot to meet all specifications and constraints.
+
 ### Hardware Block Diagram
-![Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/BlockDiagram.jpg)
-### Operational Flow Chart
-![Operation Flow Chart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/Robot_Flowchart.png)
+![Hardware Block Diagram](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1676d3af9ca460442ac804a28491b97aa7afdfa4/Reports/Photos/Conceptual%20Design/BlockDiagramV3.png)
+### Operational Flowchart
+![Operational Flowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/1fa993cd7f82cd33691eebe0be5f6cf70c7abc0e/Reports/Photos/Conceptual%20Design/Robot_Flowchart.png)
+### High Level Robot Autonomous Operation Flowchart
+![High Level Robot Autonomous Operation](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/d2550610666c0f9aed239544ccb3bc6e93c8cf3b/Reports/Photos/Conceptual%20Design/Flowchart_High_Level_Tasks.png)
 
 ## Subsystems
 ### Camera
@@ -69,15 +88,11 @@ Designer: Sam Hunter
 
 #### Atomic Subsystem Specifications
 
-A camera is needed for specifcations 1, 2-vii, 2-viii, and 4 and constraint 1.
-By having a camera, a robot can see very similarly to a human, but needs to have that information filter and processed in a way the robot can understand.
-If it understands what it can effectively see, it shall be able to act autonomously, meeting specification 1.
-Specifcations 2-vii and 2-viii both shall have the robot have a way to identify the materials in the arena.
-Specifcation 4 shall have the robot detect different objects and obstacles.
-The camera will be the only sensor in the front getting active feedback, due to the constraints placed by the device used to collect the materials.
-The camera shall help keep the robot from running into obstacles in the front. 
-Constraint 1 shall have the robot read April Tags. 
-A camera is needed to read these.
+1. The robot shall act autonomously [S1].
+2. The camera shall detect the Nebulite [S2-vii].
+3. The camera shall detect the Geodinium [S2-viii].
+4. The robot shall be able to detect the walls of the arena, walls of the cave, and cave entrance. Rule S03 states that if the robot causes field damage, the team will be penalized. Detecting walls stops the robot from causing damage by moving into it. The camera will be the only sensor on the front and will need to do the listed objectives [S4].
+5. The camera shall read April Tags to help with Specifications 1, 2-v, 2-vii, 2-viii, and 2-ix [C1].
 
 #### Comparative Analysis of Potential Solutions
 
@@ -136,7 +151,9 @@ The primary solution is to use a reflectance sensor array.
 A secondary solution is to use the camera.
 The reflectance array would remove work from the camera and provide a single device whose goal is to detect the lines.
 A single device focusing on line following would give better results and need less software than using a camera.
-A reflectance array would have higher accuracy and less room for error than a camera.
+A reflectance array would have higher accuracy and less room for error than a camera [25].
+
+A reflectance array will be used for this project.
 
 ##### Inertial Measurement Unit
 
@@ -148,13 +165,22 @@ A tachometer measures the rotation of an object.
 For the robot, it would measure the rotation of the wheels or motor shaft that drives the wheels.
 An accelerometer measures the linear and angular acceleration of the robot in three dimensions.
 A gyroscope measure the relative position to Earth's northern magnetic field.
-A Speedometer or odometer would require parts to be constructed with them in place.
+A speedometer or odometer would require parts to be constructed with them in place.
 A tachometer would give the rotational speed and then need to be converted to a linear distance.
 This would require the speed of all wheels to be known and certain algorithms to be made to account for turning.
 Accelerometers give the total acceleration of the robot but need to be integrated to get position.
 Gyroscopes give the position relative to a set object but can be interferred with noise from motors or magnetic materials.
 Accelerometers and gyroscopes come in small, single-chip package that are interfaceable with a microcontroller and are known as inertial measurement units [6].
 However, a tachometer would require two individual units to measure each of the motors or wheels.
+
+For inertial measurement units, there are premade packages that include processing that would remove the need for additional processing.
+The packages include signal processing and applying algorithms and sensor fusion to give a high resolution and low error.
+The downside of these premade packages is that they cost much more than coding it personally.
+A premade package ranges from $400 to $2000.
+Only an inertial measurement unit costs $20 to $150 [27-28]
+
+The accelerometer and gyroscope give the most data for the least amount of effort.
+They will be used for this project.
 
 ##### Location Sensor
 
@@ -170,6 +196,9 @@ The biggest issue is that they need to be very close to the object that they are
 This means the mouse would need to be sliding along the ground.
 The light used on the mouse also needs to be a continous LED and not a strobe light [9].
 
+The infrared sensors will be used for this project.
+The mouse will be experimented with if times permits.
+
 ##### Start LED Sensor
 
 Specification 2-ii requires the robot to start based on an input from a LED.
@@ -177,6 +206,8 @@ The simplest method is to use a photoresistor.
 A photoresistor gets a lower resistance as the incident light increases.
 This change in resistance can be read as a change in voltage on the lower side of the photoresistor.
 A photoresistor is a simple and robust sensor that will work easily and repeatedly [10].
+
+A photoresistor will be used for this project.
 
 ##### Magnetic Sensor
 
@@ -186,9 +217,11 @@ Hall effect sensors produce a more positive or negative voltage depending on whe
 A different voltage gives a way for the microcontroller to determine where a certain material should go [11].
 
 A second option is to use weight.
-This require whatever is being used to transport the material to be weighed as well.
+This requires whatever is being used to transport the material to be weighed as well.
 Unless, the material is placed directly on a scale, but then it also has to be moved off of the scale.
 The weight sensor would also need to account for the acceleration of the robot, which gives more room for error and causes more work for software.
+
+The Hall effect sensor will be used for this project.
 
 #### Resources
 
@@ -202,15 +235,17 @@ All sensors will need to be calibrated and properly connected.
 |Item|Cost per Item|Quantity|Total Cost for Item|
 | :- | :- | :- | :- |
 |Reflectance Array|$10|1|$10|
-|Inerital Measurement Unit|$30|1|$30|
+|Inerital Measurement Unit|$400|1|$400|
 |LiDAR|$45|3|$135|
 |Photoresistor|$4|1|$4|
 |Hall Effect Sensor|$4|1|$4|
-|Total|||$183|
+|Total|||$553|
 
 #### Skills
 
 Software for the each of the sensors will need to be made.
+The software will be made in Python.
+Python has many mathematical libraries, and there is open source code available [29].
 The reflectance array, inertial measurement unit, and LiDAR will take the most work.
 The other two should be a simple voltage comparison, or trigger.
 The first three will need to be tested repeatedly.
@@ -223,7 +258,19 @@ Customer: Alejandro Moore
 Designer: Alex Cruz
 
 #### Atomic Subsystem Specifications
-The main component in the navigation and master control subsystem is the Jetson Nano. The choice of the Jetson Nano is discussed below. The Jetson Nano will take in data from the sensor-related subsystems via I2C, SPI, and USB (as depicted in the block diagram), interpret that data, form a position from that interpretation, utilize a navigation algorithm to plot a course through the game field maximizing the points obtained, then communicate to the motor subsystem the distance and angle to the desired position of the robot. Additionally, at the start of each game round, the Jetson Nano will start and maintain the movement of the auxiliary motors (such as for the auger, the roller, and potentially the docking of the cosmic shipping containers).
+
+1) The Robot shall act autonomously, as seen in Specification 1.
+1) The Robot shall navigate to specified areas for scored points, as seen in Specification 2
+   1) Navigate out of Landing Pad (i)
+   1) Navigate within 3 seconds of Start LED (ii)
+   1) Finding the cave (iii)
+   1) Navigate to correct zones (v)
+   1) Finding Team beacon and Mast (ix)
+1) The Robot shall stay on the game field, as seen in Specification 5.
+1) Cease all operation after 3 minute timer is done, referred from Specification 10.
+1) Specification 11 states that we shall account for some background interference towards the robot. Communication is key to the functionality of the robot.
+
+
 #### Comparative Analysis of Potential Solutions.
 The processing power required to complete the atomic specifications for navigation, master control, and potentially localization is higher than any microcontroller on the market. Determining processing suitability (or unsuitability) for a given task is best proven experimentally. The ESP32 microcontroller [15] and Teensy 3.5 [16] both struggle with real-time image processing and computer vision but are capable of it. Attempting to optimize one microcontroller to accomplish everything needed would likely require more time than available. Connecting multiple microcontrollers to separately accomplish computer vision, localization, and navigation tasks would require extensive communication work, be at higher risk of background interference (S11), and introduce more possible points of failure.
 
@@ -276,17 +323,16 @@ The type of sensor for the encoder is also an important consideration, with the 
 
 #### Resources
 
-The following items are necessary for the completion of the motor control subsystem. In order for the motors to respond to environmental and robot feedback, a central motor microcontroller must be present to be able to properly distribute the large quantity of connections required for the robot to move and collect/sort astral material. In the current configuration, the robot will only need two driving brushed motors for translation along the ground, implementing the use of ball bearing wheels on the back for stability. However, these motors need a voltage regulator for speed and direction, which requires the use of two motor drivers, such as the L298N H-bridge module. In order to adjust motor commands based on the current state of the motors, the robot must collect positional data of the motor shafts, which employs the use of encoders, with optical encoders being a safe choice in comparison to magnetic encoders, which may disturb the low-level logic circuitry due to the magnetic properties. 
+The following items are necessary for the motor control subsystem involved with robot movement. In order for the motors to respond to environmental and robot feedback, a central microcontroller (Jetson Nano listed in Navigation and Master Control)  must be present to be able to properly distribute the large quantity of connections required for the robot to move and collect/sort astral material. In the current configuration, the robot will only need two driving brushed motors for translation along the ground, implementing the use of ball bearing wheels on the front and back for stability. However, these motors need a voltage regulator for speed and direction, which requires the use of two motor drivers, such as the L298N H-bridge module. In order to adjust motor commands based on the current state of the motors, the robot must collect positional data of the motor shafts, which employs the use of encoders, with optical encoders being a safe choice in comparison to magnetic encoders, which may disturb the low-level logic circuitry due to the magnetic properties. 
 
 #### Budget
 
 |Item|Cost per Item|Quantity|Total Cost for Item|
 | :- | :- | :- | :- |
-|Brushed Motors (24V)|~$60.00|2|$120.00|
-|Motor Microcontroller|~$30.00|1|$30.00|
+|Brushed Motors (12-24V)|~$60.00|2|$120.00|
 |Motor Drivers (L298N H-bridge module)|$10.00|2|$20.00|
 |Optical Encoders|$20.00|2|$40.00|
-|Total|||$210.00|
+|Total|||$180.00|
 
 #### Skills
 
@@ -299,11 +345,36 @@ Designer: Alejandro Moore
 
 #### Atomic Subsystem Specifications
 
-There are several quantifiable specifications and constraints for the power subsystem given the competition rules and the adherence to safe engineering practice. Procedurally, the main areas of focus are the start and stop mechanisms during play. In accordance with Specification 2-ii and 6, the robot functionality may have a trigger based on a given Start LED controlled by the referee or through a clearly labeled electrical start button. For the manual start button, the robot shall not move for five seconds after activation, but onboard commands can run during this time in preparation for play. The robot shall be able to safely and efficiently pause all its functions using a clearly labeled emergency stop button according to Specification 7. If there are multiple independently acting ‘Robot Units’, each shall have their own emergency stop button. Regarding power system requirements, the robot shall not go beyond 30V, as given by Specification 12. It shall also implement proper circuit shielding and isolation based on the disturbances from background interference in the competition environment, as given by Specification 11. Constraint 3 deals with International Electrotechnical Commision regulations for power supply, emergency stop, and circuit protection requirements. From this standard, the circuitry of the robot shall account for and add appropriate devices to promote safety measures such as overcurrent, overload, and over-temperature protection [3]. The power subsystem of this robot will be the electrical backbone of the project. Without a structured model of power management and distribution, the robot would not be able to meet all functions, specifications and constraints. For this subsystem to work correctly with the scope of the project, we must install a battery/(ies) so that the robot can be powered without a cord attached to a wall socket.
+There are several quantifiable specifications and constraints for the power subsystem given the competition rules and the adherence to safe engineering practice.
+
+1)	In accordance with Specification 2-ii and 6, the robot functionality may have a trigger based on a given Start LED controlled by the referee or through a clearly labeled electrical start button. 
+1)	For the manual start button, the robot shall not move for five seconds after activation, but onboard commands can run during this time in preparation for play. 
+1)	The robot shall be able to safely and efficiently pause all its functions using a clearly labeled emergency stop button according to Specification 7. 
+1)	If there are multiple independently acting ‘Robot Units’, each shall have their own emergency stop button. 
+1)	Regarding power system requirements, the robot shall sustain power at a maximum of 30V, as given by Specification 12. 
+1)	The robot shall implement proper circuit shielding and isolation based on the disturbances from background interference in the competition environment, as given by Specification 11. 
+1)	The circuitry of the robot shall account for and add appropriate devices to promote safety measures such as overcurrent, overload, and over-temperature protection, as per Constraint 3 [3]. 
+1)	Low level sensor and measurement units shall require 5 VDC and remain operational throughout the 3 minute time of play.
+1)	The Master Control (Jetson Nano) shall require 5 VDC and at least 2.5 A [26]. It shall remain operational throughout the 3 minute time of play.
+1)	The brushed motor drivers shall require at least 5-7 VDC for logic input and at least 12 VDC for motor output, with 2A continuous current per channel [20]. It shall vary the power input to the motors throughout the 3 minute time of play depending on the desired motor speed as determined by robot weight, object detection, and match time. 
+
+The power subsystem of this robot will be the electrical backbone of the project. Without a structured model of power management and distribution, the robot would not be able to meet all functions, specifications and constraints. For this subsystem to work correctly with the scope of the project, battery/(ies) shall be installed so that the robot can be powered without a cord attached to a wall socket.
 
 #### Comparative Analysis of Potential Solutions
 
 This power subsystem requires adequate power management and distribution of all hardware within the robot. Since we must power both the microcontroller and the motor subsystems, it would be wise to separate the power buses at a certain point so that neither subsystems connected to the power subsystem will interfere with each other, but work together towards a common goal. Based on last year’s SECON Modular-Based Robot, creating a power distribution circuit that isolates 2 batteries to power both subsystems we believe will be most optimal. For Specification 6 and 2-ii, the start button mentioned within the sensor section will be connected to the power subsystem. Once pressed, it will have both batteries provide sufficient voltage and current to both the motor and microcontroller, but will not start moving until 5 seconds after the button or LED receiver  is triggered. Similarly, Specification 7 refers to an Emergency Stop button that is required within the Game Rules. This E-Stop button will also be connected to the circuit. Once pressed, the circuit shall open the power bus to the motor while the bus to the microcontrollers will stay closed. Thus, giving the microcontroller power to process still, and cutting off all power to the motor for optimal safety while also saving critical data.
+
+##### Microcontroller
+
+The Microcontroller is the brains of the robot. As stated above, we have selected the Jetson Nano as our preferred MCU for our project design. The battery selected must power all electrical components in order to confirm functionality. Since we need a lot of volts to supply the system, we will need a way to step-down the voltage input to the microcontroller. Thus, the MOD-DC-005[30] will be used as a buck converter. According to the datasheet, the microcontroller recommends a 5V and 2.5A as input voltage and current. The adjustable DC-DC Buck converter can take an input voltage anywhere from 3.2-40V with a +/- 0.5V accuracy, being fully suitable for our battery’s needs. The buck converter's output range is from 1.25V~35V, thus giving the user max modulation for whatever voltage drop the circuit may require. So, our battery used for the microcontroller and other devices with a similar voltage level input will be sent through a buck converter, dropping the input voltage to 5V and 3A maximum to the Jetson Nano. After confirmation that the MCU has been powered, the robot will begin its first task according to the flowchart shown earlier.
+
+##### Motors
+
+For this robot, there will be several motors within it in order to complete several tasks at a time. These motors will be used for various aspects within the competition. In regards to the power management subsystem, we must also have all motors within the robot sufficiently powered. We will use another battery for the motors specifically, as mentioned earlier, because of back EMF and add flyback diodes to the rail in order to not damage the circuit.[31] It has been stated in the block diagram that the motor drivers we will implement are 12VDC. So, using this battery, we will also send this 24VDC LiFePO4 through another buck converter from 24V to 12VDC and send it to the drivers (brushed and not brushed). Thus, activating the moving functionality of the robot. The encoders for the motor calculations will also be powered by the other 5V power rail since it consumes the same amount of voltage as the sensors we will use in this project.
+
+##### Sensors
+
+The Power Management Subsystem must power the sensors as well. The Sensors being the eyes and ears of the robot must be turned ON in order for our team to complete the specifications and constraints listed above. As seen in the block diagram, every sensor (except for the camera) will be powered by the 5VDC rail from the first battery and grounded appropriately. We will make sure each sensor consumes an adequate current for the amount supplied by the rail. 
 
 #### Resources
 
@@ -315,7 +386,8 @@ At least 2 batteries are needed for this solution that follows the specification
 | :- | :- | :- | :- |
 |Lithium Iron Phosphate Battery|$91.43|2|$182.86|
 |Lithium Iron Phosphate Battery Charger|$129.27|1|$129.27|
-|Total|||$312.13|
+|DC-DC Buck Converter|$9.80|2|$19.60|
+|Total|||$331.73|
 
 #### Skills
 
@@ -324,8 +396,6 @@ A more in-depth block diagram of the power management/distribution subsystem wil
 ## Ethical, Professional, and Standards Considerations
 
 The project will have an impact on the outreach of Tennessee Tech, with the team representing the school in this competition both technically and professionally. If the team can perform well, it will build on the image of the College of Engineering for prospective students, encouraging them to attend the university and be engaged in similar endeavors in the future. In preparing for the competition, the team will follow the IEEE Code of Ethics for respectful collaboration and safe design practice. To maintain a healthy relationship among team members while also holding each other accountable, each member completes evaluations for themselves and for the others on the team, providing opportunity for self-reflection of progress and for checking in on the progress of others. 
-
-The robot movement will need to comply with Game Manual specifications. There are specific rules in place for the safety of the team and the referees/technicians at the competition. Specification 10 details the need for the robot to cease operation of all units after the given 3 minutes of play. Therefore, the motor control programming and mechanisms will need to have measures in place to quickly and safely halt the robot and any actions it is performing toward the end of the time of play. 
 
 The Game Manual provided structures for the competition to follow IEEE guidelines and general electrical standards. Resources mentioned such as datasheets and procedures correlated with clean power transmission will be followed closely. For example, the E-stop mentioned in the rules are for the safety of the competitors, judges, and audience in the case of a motor malfunction.
 
@@ -341,18 +411,32 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 
 ## Timeline
 
+![Gantt Chart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/b604abb1fec65f27243d6ec17d9f0e17d8ff95c7/Reports/Photos/Conceptual%20Design/Conceptual%20Design%20Gantt%20Chart%201%20Page.svg)
+
 ## Overall Budget
 |Item|Cost per Item|Quantity|Total Cost for Item|
 | :- | :- | :- | :- |
+|Reflectance Array|$10|1|$10|
+|Inerital Measurement Unit|$400|1|$400|
+|LiDAR|$45|3|$135|
+|Photoresistor|$4|1|$4|
+|Hall Effect Sensor|$4|1|$4|
+|Brushed Motors (12-24V)|~$60.00|2|$120.00|
+|Motor Drivers (L298N H-bridge module)|$10.00|2|$20.00|
+|Optical Encoders|$20.00|2|$40.00|
 |Jetson Nano | $260|1|$260
 |RGBD Camera|$272|1|$272|
-|Total|||$???|
+|Lithium Iron Phosphate Battery|$91.43|2|$182.86|
+|Lithium Iron Phosphate Battery Charger|$129.27|1|$129.27|
+|DC-DC Buck Converter|$9.80|2|$19.60|
+|Total|||$1596.73|
+
 ## Statement of Contributions
-  - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications)
+  - Sean Borchers - Motor Control Subsystem Information (Excluding Main Specifications), Power Management (only specifications)
   - Alex Cruz - Navigation and Master Control (everything except specifications), Motor Control (only specifications)
   - Sam Hunter - Camera(all except specifications), General Sensors(specifications)
-  - Alejandro Moore - Power Management Subsystem Information
-  - Dakota Moye - General Senors (except specifications), Camera (only specification), Operation Flowchart
+  - Alejandro Moore - Power Management Subsystem Information, Navaigation and Master Control (only Specifications)
+  - Dakota Moye - General Senors (except specifications), Camera (only specification), Operational Flowchart, High Level Robot Autonomous Operation Flowchart
 
 ## Works Cited
 1.	“Mining Mayhem – Game Manual 1.” Version 1.1, Apr. 2024. Accessed: Sep. 2024. [Online]. Available: https://docs.google.com/document/d/1hTvIeRj649eyGU8oWLR_yD-mYgayySX7tRQBbetUCqc/edit 
@@ -379,3 +463,12 @@ Furthermore, if using non-visble lasers, lasers will need to be safe for human i
 22.	“Progeny.co.uk,” Progeny Access Control, 2015. https://progeny.co.uk/back-emf-suppression/#:~:text=The%20diode%20does%20a%20very,a%20one%20volt%20or%20so
 23.	“Differences Between Optical and Magnetic Incremental Encoders Mekre Mesganaw & Isaac Lara Position Sensing.” Accessed: Oct. 19, 2024. [Online]. Available: https://www.ti.com/lit/ab/slya061/slya061.pdf?ts=1729347629954&ref_url=https%253A%252F%252Fwww.google.com%252F
 24.	"Intel RealSense Product Family D400 Series." intelrealsense.com. Rev. 012, Mar. 2020. Accessed: Oct. 2024. [Online]. Available: https://www.intelrealsense.com/wp-content/uploads/2022/03/Intel-RealSense-D400-Series-Datasheet-March-2022.pdf
+25.	"QTR-8A and QTR-8RC Reflectance Sensor Array User's Guide." pololu.com. Accessed: Oct. 2024. [Online]. Available: https://www.pololu.com/docs/pdf/0J12/QTR-8x.pdf
+26.	I. Wu, “Power Supplies for Jetson Nano Developer Kit: The Definitive Guide,” Piveral, Jun. 07, 2021. https://piveral.com/jetson-nano-power-supply-guide/ (accessed Oct. 26, 2024).
+27.	"Accurate Motion Tracking: Inertial Measurement Units." pnisensor.com. Accessed: Oct. 2024. [Online]. Available: https://www.pnisensor.com/accurate-motion-tracking-inertial-measurement-units/
+28.	"Inertial Sensors IMU." microstrain.com. Accessed: Oct. 2024. [Online]. Available: https://www.microstrain.com/inertial/IMU
+29.	"IMU-Position-Tracking." github.com. Accessed: Oct. 2024. [Online]. Available: https://github.com/john2zy/IMU-Position-Tracking
+30.	"DC-DC Buck Converter" kuriosity.sg. Accessed: Nov. 2024. [Online]. Available: https://kuriosity.sg/collections/dc-buck-converter/products/dc-dc-step-down-buck-converter-with-display-3-2-40v-to-1-25-35v-10w-3a-lm2596
+31.	"How to power multiple 12V motors using a 30V Battery?" quora.com. Accessed: Nov. 2024 [Online]. Available: https://www.quora.com/How-do-I-use-a-30V-battery-to-power-multiple-12V-motors
+32.	Arduino Forum, “Motor Driver For Servo,” Arduino Forum, Jun. 08, 2016. https://forum.arduino.cc/t/motor-driver-for-servo/390796 (accessed Nov. 05, 2024).
+33.	A. Staff, “What is a Servo Motor: Definition, Origins, Components, Types & Applications,” ADVANCED Motion Controls, May 23, 2024. https://www.a-m-c.com/servomotor/.
