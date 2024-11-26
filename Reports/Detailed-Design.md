@@ -61,50 +61,48 @@ For each of the mechanisms that involve servo motors, the input going into the m
 
 ## 3D Model of Custom Mechanical Components 
 
-[INSERT IMAGE]
+![Model_Drivetrain](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/9deccc79205ce5f38ae658b8f7e458ed510e71b9/Reports/Photos/Model_Drivetrain.png)
 This is a 3D model of the drivetrain for the robot, placed at the center of the overall robot frame. There are two drive wheels attached to brushed DC motors that enable the robot to move forward, backward, and rotate at a point. This model was constructed by Cooper Nelson on the Mechanical Engineering Team. 
 
-[INSERT IMAGE]
+![Model_Auger](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/9deccc79205ce5f38ae658b8f7e458ed510e71b9/Reports/Photos/Model_Auger.png)
 This is a 3D model of the Auger and Hopper (staging area) for the astral material to be picked up from the Roller collection, one by one, and taken up to the top. After reaching the top, the material will be deposited into the sorting area. This was designed by Caleb Sullivan on the Mechanical Engineering Team. 
 
-[INSERT IMAGE]
+![Model_Roller](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/9deccc79205ce5f38ae658b8f7e458ed510e71b9/Reports/Photos/Model_Roller.png)
 This is a 3D model of the Roller/Sweeper mechanism, with an astral material piece at the front for reference. The material will get swept into the Roller, in a similar fashion as with a vacuum cleaner. This model was constructed by Caleb Sullivan on the Mechanical Engineering Team.  
 
 ## Buildable Schematic
 The following diagram connections were informed by [6], [8], [9], [10], and [11].  
 
 ### Drivetrain Subsystem
-
+![Drivetrain2](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/9deccc79205ce5f38ae658b8f7e458ed510e71b9/Reports/Photos/Drivetrain2.png)
 ### Servo Motor Mechanisms
-
+![ServoMotors](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/9deccc79205ce5f38ae658b8f7e458ed510e71b9/Reports/Photos/ServoMotors.png)
 ### Auger and Roller Mechanisms
-
+![Auger_Roller](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/9deccc79205ce5f38ae658b8f7e458ed510e71b9/Reports/Photos/Auger_Roller.png)
 ### Container Lift Mechanism Using Linear Actuators
-
+![LinearActuators](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/9deccc79205ce5f38ae658b8f7e458ed510e71b9/Reports/Photos/LinearActuators.png)
 ## Operational Flowchart
 ### Drivetrain PID Loop
-[INSERT IMAGE]
+![OperationalFlowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/9deccc79205ce5f38ae658b8f7e458ed510e71b9/Reports/Photos/OperationalFlowchart.png)
 The operations of this flowchart were informed by [5].
 
 ## BOM
-*Items in BOLD will be purchased by the Electrical Engineering Team. Other items will come from the Mechanical Team.
-
-![Gantt Chart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/b604abb1fec65f27243d6ec17d9f0e17d8ff95c7/Reports/Photos/Conceptual%20Design/Conceptual%20Design%20Gantt%20Chart%201%20Page.svg)
+Items with an asterisk (*Part Name) will be purchased by the Electrical Engineering Team. Other items will come from the Mechanical Team.
 
 |Part|Manufacturer|Part Number|Distributor|Distributor Part Number|Quantity|Price per Item|url|
 | :- | :- | :- | :- | :- | :- | :- | :- |
 |12V 50:1 Metal DC Geared-Down Motor 37Dx70L mm, with 64 CPR Encoder |CQRobot |CQR37D12V64EN-F |Amazon |ASIN: B08ZK7KNJW |2 |$33.99 |https://www.amazon.com/CQRobot-Ocean-6V-3W-20RPM-40-oz-12V-6W-40RPM-70/dp/B08ZK7KNJW/ref=sr_1_4?crid=38Y3CY1LT0YV0&dib=eyJ2IjoiMSJ9.BJInkt-mOvbyqE9rPeW5wzLtQvkRXPWz5iX5EqsGIX-S6k0LMyT6MN2WSTMazatJnzVB2sg6_rBBrgHcgQ_r5Ogm0jqRmWbpA8eLjoaKIsg7Jk9DcjW49A4Y3hu6E3x1Hv2-JO4EBvhhBa_gzpnUWwRhwE65ZetaJG3KfLtXdMNyEbeSOt5-fj-th6s2zJD28hAa7inJo4Tmj8JBafQvimgANokXgq4Pb78ep_7li1lW4a2o32BF9UcYLGARGdyxDcdF-qnXK11sxsskJ_sVptY9KB1AUIok3Jgtbowg6jM.3EWeHV1v6uEWDgtNmLtADC-KscInyWKtzwH9-ltXZVg&dib_tag=se&keywords=dc%2Bmotor%2Bwith%2Bencoder&qid=1728485580&sprefix=dc%2Bmotor%2Bwith%2Bencoder%2Caps%2C87&sr=8-4&th=1|
-|Pololu Dual VNH5019 Motor Driver Shield for Arduino |Pololu |2507 |Pololu |N/A |1|$59.95 |https://www.pololu.com/product/2507|
-|Arduino Mega |Arduino |2152366 |Amazon |ASIN: ‎ B0046AMGW0 |1|$43.56 (Will borrow from lab) |https://www.amazon.com/ARDUINO-MEGA-2560-REV3-A000067/dp/B0046AMGW0/ref=asc_df_B0046AMGW0?mcid=7091fc990cb33b948372fc448382ff81&tag=hyprod-20&linkCode=df0&hvadid=693392565994&hvpos=&hvnetw=g&hvrand=5593089195493827462&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1025954&hvtargid=pla-516265455074&psc=1|
+|*Pololu Dual VNH5019 Motor Driver Shield for Arduino |Pololu |2507 |Pololu |N/A |1|$59.95 |https://www.pololu.com/product/2507|
+|*Arduino Mega |Arduino |2152366 |Amazon |ASIN: ‎ B0046AMGW0 |1|$43.56 (Will borrow from lab) |https://www.amazon.com/ARDUINO-MEGA-2560-REV3-A000067/dp/B0046AMGW0/ref=asc_df_B0046AMGW0?mcid=7091fc990cb33b948372fc448382ff81&tag=hyprod-20&linkCode=df0&hvadid=693392565994&hvpos=&hvnetw=g&hvrand=5593089195493827462&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1025954&hvtargid=pla-516265455074&psc=1|
 |9g Micro Servo Motor 10 pack (Sorting and Beacon) |Miuzei |N/A |Amazon |ASIN: B072V529YD |1 |$18.99 |https://www.amazon.com/Micro-Helicopter-Airplane-Remote-Control/dp/B072V529YD/ref=asc_df_B072V529YD?mcid=26014c223ff03f518209407be7b87cb0&tag=hyprod-20&linkCode=df0&hvadid=693442482467&hvpos=&hvnetw=g&hvrand=14249445501973615169&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1025954&hvtargid=pla-568736295296&psc=1|
 |35kg Servo Motor (Lifting) |ZOSKAY |35 |Amazon |ASIN: B07S9XZYN2 |2 |$28.99 |https://www.amazon.com/ZOSKAY-Coreless-Digital-Stainless-arduino/dp/B07S9XZYN2/ref=asc_df_B07S9XZYN2/?tag=hyprod-20&linkCode=df0&hvadid=693398985551&hvpos=&hvnetw=g&hvrand=9283053899120098340&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1025954&hvtargid=pla-1132196099251&mcid=58bf84c290c03c38a1f2ee34f8d58ee1&th=1|
 |High-Speed 0.6"/sec Linear Actuator 12v |Rtisgunpro |MN |Amazon |ASIN: ‎ B09X994MGX |2 |$18.99 |https://www.amazon.com/High-Speed-Actuator-actuators-Cabinets-Automation/dp/B09X994MGX/ref=sr_1_5?crid=1VQ1IAOFPQL5H&dib=eyJ2IjoiMSJ9.9vA-uKal6zgPplWh71fkUWrXjIgHIQ2sZRb4GzRhSJGvMjLZPTAkdsvKkT3tCS_N2xlbI8ykjulrQ8LoiKutLNfrHx89ZdUQAv2G_aUU0t2bxKPndRvlZcfsJCxaUFM5jO0tfuDnVq2q1XCD7cruumfhwH1hG26nIDDGe9WKK3Wyth7pDDJ3mk4uXIlh1c8w53Q_wJH5HJu2E9LD_QOyyvhgb6l9z6nZ4cwf4fdioHA.R_liDHu-85GNSdjx_JRxk_EfoCpAv_Y1sLQF6AgbyHY&dib_tag=se&keywords=small%2Blinear%2Bactuator&qid=1729094388&sprefix=small%2Blinear%2Bactuator%2Caps%2C88&sr=8-5&th=1|
 |Auger Greartisan DC 12V 200RPM Turbo Worm Geared Motor |Greartisan |JSX40-370 |Amazon |ASIN: B08K7HNXTM |1 |$14.99 |https://www.amazon.com/Greartisan-120RPM-Turbine-Reduction-JSX69-370/dp/B08K7HNXTM/ref=sr_1_6?crid=297B969J8J3GK&dib=eyJ2IjoiMSJ9.DmvE-0S-1vqMUtwrJu4RBTeijdliVi4GlUbSQcZpcpsVUkzn4zoJz3sHf0bKjegf6YnKT7lXt41almv6zCPcKVmeYkJOeWigW-Z3LS3Ehosy2yxVlGbInlJ0mbcyNyfRGas-f4ugUQ0N-5NthmtmXlCsw54A9XdjyVLZv80Qu9MRwtaREp8TvVw1ff6WM6cLv1TGfUlAeDl6I4J1CKz2gG9zMHzmDx-KRd4KGQZwwAHBU5czotHYPCUxUOrFDu9kaYtc31JyTF_7OLa1bPMCCSn_EGrJlBWVIUcpyqa-7D4.PgNxnbaXbRU4FKi_T0Uns1Gf1GcyQfZyRNdh0Izl42k&dib_tag=se&keywords=right%2Bangle%2Bdc%2Bmotor&qid=1730907935&sprefix=right%2Bangle%2Bdc%2Bmotor%2Caps%2C103&sr=8-6&th=1|
 |Greartisan DC 12V 200RPM Turbo Worm Geared Motor with Mounting Bracket |Greartisan |JSX40-370 |Amazon |ASIN: B0D1KCX2GX |1|$24.99 |https://www.amazon.com/Greartisan-200RPM-Geared-Mounting-Bracket/dp/B0D1KCX2GX|
-|4 PACK L298N Motor Drive Controller Board DC Dual H-Bridge |AITRIP |N/A |Amazon |ASIN: B07WS89781 |1|$9.99 |https://www.amazon.com/Controller-H-Bridge-Stepper-Control-Mega2560/dp/B07WS89781/ref=asc_df_B07WS89781?mcid=42d0e88eaa493b9fb52053e1b3be29a5&tag=hyprod-20&linkCode=df0&hvadid=693508669574&hvpos=&hvnetw=g&hvrand=11400189813213800201&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1025954&hvtargid=pla-881401609127&th=1|
+|*4 PACK L298N Motor Drive Controller Board DC Dual H-Bridge |AITRIP |N/A |Amazon |ASIN: B07WS89781 |1|$9.99 |https://www.amazon.com/Controller-H-Bridge-Stepper-Control-Mega2560/dp/B07WS89781/ref=asc_df_B07WS89781?mcid=42d0e88eaa493b9fb52053e1b3be29a5&tag=hyprod-20&linkCode=df0&hvadid=693508669574&hvpos=&hvnetw=g&hvrand=11400189813213800201&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1025954&hvtargid=pla-881401609127&th=1|
 |HiLetgo 10pcs Micro Limit Switch |HiLetgo |3-01-1546 |Amazon |ASIN: ‎ B07X142VGC |1|$5.99 |https://www.amazon.com/gp/product/B07X142VGC/ref=sw_img_1?smid=A30QSGOJR8LMXA&psc=1|
 |2Pcs Thin Film Pressure Sensor |Walfront |Walfront9snmyvxw2|Amazon |ASIN: B07T1CHY58 |2|$9.78 |https://www.amazon.com/dp/B07T1CHY58/ref=sspa_dk_detail_0?psc=1&pd_rd_i=B07T1CHY58&pd_rd_w=zlszL&content-id=amzn1.sym.a2c35b81-48c8-45f6-82ba-746f41586c3a&pf_rd_p=a2c35b81-48c8-45f6-82ba-746f41586c3a&pf_rd_r=GE9RGFF0BBAD7MN92ASS&pd_rd_wg=keNW6&pd_rd_r=b796f1c5-01db-4ffc-b09e-d7b5a409e1db&s=appliances&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWxfdGhlbWF0aWM|
-|Electronics Kit Compatible with Arduino |ELEGOO |EL-CK-003 |Amazon |ASIN: B09YRJQRFF |1|$15.99 |https://www.amazon.com/ELEGOO-Electronics-Potentiometer-tie-Points-Breadboard/dp/B09YRJQRFF/ref=sr_1_7?dib=eyJ2IjoiMSJ9.k2vYgAjJWNGKglAlIkbAgmNMmq0P2bXob5_sCJdIZxkkEiNVwg9N45kaXKx17Qie-XBoei14fdK6Fz7pzBAsQh37AvliYf2gRnOeHWhWKn1Y0aVkf-3KWNG68exhf_1XBrrye7gfiwIDO2U4Dvpeq8t8BCpZb0IT_MquAR1l4pTJqv_EZSIEDr6m-05-wGOMPWByHKuReuGqiyoq0A2RUnv76fJXjjSBYkYiEAROABVg_YTXVGhrHcD5plgwk2nDX8Pv390J895DQHs2w1uji36ySBcOhWaSy3muiPV1Amg.g6WZU5xtV00D_jDWeh-Fe-HRdF0cg_xgzKNNXAugUs8&dib_tag=se&keywords=circuit%2Bkit&qid=1732596631&sr=8-7&th=1|
+|*Electronics Kit Compatible with Arduino |ELEGOO |EL-CK-003 |Amazon |ASIN: B09YRJQRFF |1|$15.99 |https://www.amazon.com/ELEGOO-Electronics-Potentiometer-tie-Points-Breadboard/dp/B09YRJQRFF/ref=sr_1_7?dib=eyJ2IjoiMSJ9.k2vYgAjJWNGKglAlIkbAgmNMmq0P2bXob5_sCJdIZxkkEiNVwg9N45kaXKx17Qie-XBoei14fdK6Fz7pzBAsQh37AvliYf2gRnOeHWhWKn1Y0aVkf-3KWNG68exhf_1XBrrye7gfiwIDO2U4Dvpeq8t8BCpZb0IT_MquAR1l4pTJqv_EZSIEDr6m-05-wGOMPWByHKuReuGqiyoq0A2RUnv76fJXjjSBYkYiEAROABVg_YTXVGhrHcD5plgwk2nDX8Pv390J895DQHs2w1uji36ySBcOhWaSy3muiPV1Amg.g6WZU5xtV00D_jDWeh-Fe-HRdF0cg_xgzKNNXAugUs8&dib_tag=se&keywords=circuit%2Bkit&qid=1732596631&sr=8-7&th=1|
 
 ## Analysis
 ### Wheel Speed
