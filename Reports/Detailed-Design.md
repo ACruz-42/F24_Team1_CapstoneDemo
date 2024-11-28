@@ -33,6 +33,8 @@ Since both Navigation and Master Control and the detection and image processing 
 ## Buildable Schematic
 
 ## FlowChart
+A quick note for the flowchart, the robot will start and then it will go about the tasks shown in the flow chart, these tasks will continue until some kind of interrupt occurs, either all astral material will be collected, or the robot will run out  of time and will need to sort the shipping containers without collection all astral material.
+![Operational Flowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/Object-and-Line-Detection-Edits/Reports/Photos/FlowchartObjectandLineDetection.drawio)
 
 ## Analysis
 ### The Camera
