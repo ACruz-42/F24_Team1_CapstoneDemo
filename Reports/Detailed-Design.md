@@ -4,23 +4,25 @@ The function of this subsystem is to provide the location of the astral material
 
 ## Specifications and Constraints 
 ### Specifications
-The robot shall act autonomously [S1].
-The camera shall detect the Nebulite [S2-vii].
-The camera shall detect the Geodinium [S2-viii].
-The robot shall be able to detect the walls of the arena, walls of the cave, and cave entrance. Rule S03 states that if the robot causes field damage, the team will be penalized. Detecting walls stops the robot from causing damage by moving into it. The camera will be the only sensor on the front and will need to do the listed objectives [S4].
-The camera shall read April Tags to help with Specifications 1, 2-v, 2-vii, 2-viii, and 2-ix [C1].
+1. The robot shall act autonomously [S1].
+2. The camera shall detect the Nebulite [S2-vii].
+3. The camera shall detect the Geodinium [S2-viii].
+4. The robot shall be able to detect the walls of the arena, walls of the cave, and cave entrance. Rule S03 states that if the robot causes field damage, the team will be penalized. Detecting walls stops the robot from causing damage by moving into it. The camera will be the only sensor on the front and will need to do the listed objectives [S4].
+5. The camera shall read April Tags to help with Specifications 1, 2-v, 2-vii, 2-viii, and 2-ix [C1].
 
 ### Constraints
 1. The camera will be able to work in both light and dark conditions
+2. In order to keep costs down the robot will only have 1 RGBD camera
+3. The robot will be able detect the white lines on the game field
 
 
 
 ## Proposed Solution
-In order to meet the specifications and constraints the robot will need an RGBD camera, this camera will be able to pick out the RGB values of the astral matrials and lines on the game field against the dark background of the game field.
-The camera will also be able to pick out the depth, or distance from the camera, of the astral material, the shipping containers, and the walls of the game field.
-The information from the camera and the other sensors as detailed by the sensor subsystem detail design will be used by an object detection algorithm to the robot where the objects are on the game field, mainly the astral material, walls, and shipping containers.
-The image data from the camera will also be used by a line detection algorithm to find the white lines on the game field to assist in navigation and sorting of the shipping containers.
-Finally the image data will undergo an image processing algorithm which will allow it to read the april tags, much in the same way a phone can read a qr code from a picture or screenshot.
+In order to meet the specifications and constraints the robot will need an RGBD camera, this camera will be able to pick out the RGB values of the astral matrials and lines on the game field against the dark background of the game field, this will help meet Specifications 2 and 3 and contraint 3.
+The camera will also be able to pick out the depth, or distance from the camera, of the astral material, the shipping containers, and the walls of the game field, this will help meet Specifications 1, 2, and 3.
+The information from the camera and the other sensors as detailed by the sensor subsystem detail design will be used by an object detection algorithm to the robot where the objects are on the game field, mainly the astral material, walls, and shipping containers, this will help meet Specifications 1, 2, 3, and 4.
+The image data from the camera will also be used by a line detection algorithm to find the white lines on the game field to assist in navigation and sorting of the shipping containers, this will help meet constraint 3.
+Finally the image data will undergo an image processing algorithm which will allow it to read the april tags, much in the same way a phone can read a qr code from a picture or screenshot, this will help meet specification 5.
 
 ## Interface with Other Systems
 The camera will connect to the Jetson nano using a USB-C 3.1 Gen 1, this connection will transfer the image data, which includes including RGB values and depth values, the camera will also be powered through this connection and will take a 5V supply. 
@@ -64,5 +66,18 @@ The camera will come as a fully built and developed device and as such full cred
 The detection and image processing algorithms will also be simplified versions of generic algorithms and as such proper credit will be given for any code or methods that are taken from other sources.
 Finally the subsystem will have user manual explaining the subsystems function and operation in a way that others can clearly understand the operation of the subsystem.
 
-## Refrences 
+## BOM
+| Manufacturer   | Part Number   | Distributor   | Part Number   | Quantity   | URL  |Price |
+|------------|------------|------------|------------|------------|------------|-|
+| Intel| 82635AWGDVKPMP| Intel| 82635AWGDVKPMP| 1|[Intel Realsense D435](https://store.intelrealsense.com/buy-intel-realsense-depth-camera-d435.html?_ga=2.115091842.488370469.1732555865-1273271566.1726263535)|314.00 USD|
 
+## Refrences 
+[1]“OpenCV: Hough Line Transform,” docs.opencv.org. https://docs.opencv.org/3.4/d9/db0/tutorial_hough_lines.html  
+
+[2]“Intel ® RealSense TM Product Family D400 Series Datasheet Intel ® RealSenseTM Vision Processor D4, Intel ® RealSenseTM,” 2024. Available: https://www.intelrealsense.com/wp-content/uploads/2024/10/Intel-RealSense-D400-Series-Datasheet-October-2024.pdf?_ga=2.12134836.184176440.1732746469-1273271566.1726263535  
+
+[3]“What is Object Detection in Computer Vision?,” GeeksforGeeks, May 10, 2024. https://www.geeksforgeeks.org/what-is-object-detection-in-computer-vision/
+‌
+
+‌
+‌
