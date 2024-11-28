@@ -33,6 +33,7 @@ The camera will also aid in locating the walls of the game field, and will be re
 Since both Navigation and Master Control and the detection and image processing algorithms will all be housed on the Jetson Nano so all communication betweeen these algorithms will be done internally.
 
 ## Buildable Schematic
+![Buildable schematic](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/Object-and-Line-Detection-Edits/Reports/Photos/Buildable%20Diagram.svg)
 
 ## FlowChart
 A quick note for the flowchart, the robot will start and then it will go about the tasks shown in the flow chart, these tasks will continue until some kind of interrupt occurs, either all astral material will be collected, or the robot will run out  of time and will need to sort the shipping containers without collection all astral material.
