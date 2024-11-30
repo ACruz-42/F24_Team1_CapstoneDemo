@@ -98,12 +98,13 @@ This digital low can be used to count the materials.
 
 The GL125 series photoresistors will be used for their robustness and straightforward application.
 They have a maximum voltage of 250 V, much larger than anything the robot will be using.
+The photoresistors have a peak response to green light, so a green LED will be used for each of the counting photoresistors.
 It has a monomial response that is easily calibrated with software or hardware.
 Calibration will be necessary to remove the noise from the environment [6].
 
 ### Hall Effect Sensor
 There are two different materials that will be collected by the robot.
-One of the materials produces a magnetic, while the other does not.
+One of the materials produces a magnetic field, while the other does not.
 Hall Effect sensors can be used to detect the magnetic field produced by the magnetic materials.
 The materials will be deposited on a gate to be measured.
 While on this gate, three Hall Effect sensors will be placed along three different orthogonal axes.
