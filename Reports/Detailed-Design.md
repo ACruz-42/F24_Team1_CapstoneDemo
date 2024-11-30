@@ -139,6 +139,17 @@ $\frac{0.57\ s}{1\ segment}\cdot 58\ segments=33.06\ s$
 
 As demonstrated through these calculations, when a balance of half the potential torque and half the potential speed is available, the robot still traverses the field twice in about 33 seconds.  
 
+### Battery Life and Speed Relationship
+In order to determine the longevity of the robot using the motor specifications, one must consider the number of matches that will be played and the battery usage per match. Game Manual 1 states that there will be three qualifying matches and three elimination rounds on the path to first place. It will be assumed that the robot is operating for a full three minutes in each and that the motors will be operating with a worst-case, heavy load current of 5.5A, the stall current. According to [15], the discharge time for a battery is equal to the estimated battery capacity in amp-hours divided by the current draw (amps) from the electrical load. The two motors are the electrical load in this case, each with a maximum 5.5A of current draw for a total of 11A. Six matches, at 3 minutes each, equals 18 minutes or 0.3 hours. Multiply this necessary discharge time of 0.3 hours by the 5.5A maximum to get the necessary battery capacity for the two motors, which equals 1.65 ah. This desired capacity is a small fraction of the available capacity for the 24V batteries being considered, with 100ah or more being a commonly used threshold. Therefore, the battery loss from round to round should not be an issue with regard to the motors. 
+
+It is still important to consider the fact that the speed will drop as the available battery voltage decreases. If the voltage were reduced to 6V instead of the full 12V for the motors, the listed no-load speed would be 100 RPM, which would double the time estimate for the no-load, field segment calculations. Doubling the time estimate for the original no-load speed would result in 34 seconds, which meets Specification 3. Overall, the trend for the relationship between speed and voltage can be seen from [16], with the equation below: 
+
+$RPM=V \cdot Kv\$
+
+RPM=linear wheel speed, V=test voltage, Kv=(No-Load RPM / No-Load Voltage)
+
+During testing, voltage to the motors can be measured using a multimeter, and the relative speed can be calculated using the test voltage and the process above. Exact voltage to speed data can then be extracted and used to make adjustments and assess what motor performance range is available. 
+
 ### PID Parameter Calculation  
 As far as PID tuning is concerned for the Drivetrain motor control, the operational flow chart serves as a visual for how the closed-loop feedback control would look. The algorithm for the PID values is demonstrated here [14]:  
 
@@ -162,3 +173,7 @@ The PID control loop will be represented using Arduino, with parameters for the 
 12.	“Speed vs Torque,” Power Electric. https://www.powerelectric.com/motor-blog/speed-vs-	torque 
 13.	“Motor Calculations Calculating Mechanical Power Requirements.” Available: 	https://pages.mtu.edu/~wjendres/ProductRealization1Course/DC_Motor_Calculations.pdf 
 14.	K. J. Astrom, “PID Control,” 2002. Available: 						https://www.cds.caltech.edu/~murray/courses/cds101/fa02/caltech/astrom-ch6.pdf
+15. D. Power, “How To Calculate Battery Run Time,” Lithium ion Battery Manufacturer and Supplier in China-DNK Power. https://www.dnkpower.com/how-to-calculate-battery-run-time/
+‌
+16. “Voltage To Rpm Calculator - Calculator Academy,” Calculator Academy, Feb. 2024. https://calculator.academy/voltage-to-rpm-calculator/ (accessed Nov. 30, 2024).
+‌
