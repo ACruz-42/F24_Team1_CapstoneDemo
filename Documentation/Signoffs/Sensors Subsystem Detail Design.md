@@ -3,45 +3,52 @@
 The goal of this subsystem is to be able to provide information to the robot for multiple different types of data.
 The information needed to provide includes position of the robot, number of materials collected, number of materials deposited, state of start LED, and whether the collected material is magnetic or not.
 
-The position data is provided as feedback to the motor control.
-The number of materials provides information about whether the tasks have been completed or not.
+The position data is provided as feedback to the navigation control.
+The number of materials provides information to the sorting control.
 The type of material provides information to the chute control.
 The state of the start LED provides information on whether the robot should start or not.
+The start LED will provide the start signal to the main controller, which is a Jetson Nano.
+
+For each separate sensor, noise needs to be accounted for, and calibrations have to be set.
+The noise and calibration will be acted on before it is sent to a higher controller.
+Each sensor needs its information to be properly directed and processed.
+The information needs to be in a format that is easily transferable and easy to act on.
+For the sensors that need sensor fusion, this will be done before the data is sent to a higher controller.
  
 ## Specifications and Constraints
 Specifications:
-1.	The robot's sensors shall be able to find the walls of the game field and the cave.
-2.	The robot's sensors shall be able to detect when the start LED turns on.
-3.	The robot's sensors shall be able to detect the magnetic fields of the Geodinium.
-4.	The robot's sensors shall be able to work effectively despite background interference in the competition environment.
+1.	The robot's distance measurement sensor shall be able to find the walls of the game field and the cave.
+2.	The robot's light detector shall be able to detect when the start LED turns on.
+3.	The robot's magnetic sensors shall be able to detect the magnetic fields of the Geodinium.
+4.	All of the robot's sensors shall be able to work effectively despite background interference in the competition environment.
 
 Constraints:
 1.	The robot shall be able to count the number of materials collected and deposited.
 2.	The robot shall know its current position.
-3.	The robot's general sensor subsystem shall have a user manual that explains functionality and design intent.
+3.	The distance sensor shall detect a maximum of 8 ft, or 2.4 m.
+4.	The magnetic sensor shall provide a signal that is larger than the resolution of the Arduino's Analog-to-Digital Converter.
+5.	The light detector shall provide a signal visible through the background noise.
+7.	The robot's general sensor subsystem shall have a user manual that explains functionality and design intent.
 
 ## Overview of Proposed Solution
 To meet the listed specifications and constraints, a suite of sensors is composed to solve each of the problems individually.
 This suite includes a Light Detection and Ranging device (LiDAR), photoresistors, Hall Effect sensors, and an Inertial Measurement Unit (IMU).
 The LiDAR provides direct feedback for position.
 It will provide the distance between the robot and the walls of the arena.
-This meets specification 1.
-This also helps with constraint 2.
+This meets specification 1 and helps with constraint 2.
+The Hall Effect sensors will be used to detect the magnetic field from the magnetic materials.
+This meets specification 3.
+The IMU will be used to get position and will be the main solution for constraint 2.
 The photoresistors will be used to detect the presence of light.
 One photoresistor will be used to detect when the start LED has turned on.
 This meets specification 2.
 The other photoresistors will be used with their own LEDs to count the number of materials.
 This meets constraint 1.
-The Hall Effect sensors will be used to detect the magnetic field from the magnetic materials.
-This meets specification 3.
-The IMU will be used to get position through integration of acceleration.
-This will be the main solution for constraint 3.
 For specification 4, the sensors most prone to noise from the environment will be the photoresistors.
 They will need to be properly calibrated to make sure that they do not send a signal when they are not supposed to.
 
 ## Interface with Other Subsystems
-The IMU and LiDAR will provide positional feedback to the main controller, which is a Jetson Nano.
-This positional feedback will be used to set the motor controllers with feedback.
+The IMU and LiDAR will provide positional feedback to the navigation control.
 The photoresistor for the start LED will turn on the robot so that it can start completing its goals.
 This will require activating the controllers, so that they can start running their scripts.
 Each of the controllers will then properly set up and begin running the other subsystems.
@@ -140,6 +147,14 @@ It is powered with 3.3 V and uses 3.3 V GPIO.
 It connects over I2C and will connect directly to the Jetson Nano.
 It will need to be on an I2C bus, given that the LiDAR is also connected.
 Code is provided to start collecting data as soon as the sensor has been connected [9-10].
+
+## Sensor Characteristics
+|Sensor|Sensing Range|Interface|Typical Voltage|Typical Current|
+| :- | :- | :- | :- | :- |
+|LiDAR|0.5 m to 10 m|3.3 V I2C|5 V|85 mA|
+|Photoresistor|1 Lux to 100 Lux|Analog|5 V|Depends on incident light|
+|Hall Effect|-1000 to +1000 Gauss|Analog|5 V|3.5 mA|
+|IMU|-2.5 m/s to +2.5 m/s|3.3 V I2C|3.3 V|1 mA|
 
 ## Ethics
 The Sensor Subsystem uses multiple devices that have been developed by outside sources.
