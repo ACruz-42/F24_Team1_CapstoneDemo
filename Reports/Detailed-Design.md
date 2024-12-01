@@ -52,16 +52,17 @@ The object detection algorithm will work similarly to many generic object detect
 This will make it easy to pick out the astral material as all the algorithm will have to do is search for that specific RGB value and the seperate each little "ball" of that color, then the algorithm will go to the depth data of the image and look at the place where it found the propor color and find the depth of that area.
 Since the camera will be at a fixed place on the robot we will be able define a constant axis at the front of the robot, then using the values of RGB and depth we will be able find the angle of the astral material compared to the axis at the front of the robot and then use the depth to find the distance from the axis which will give each astral material a polar coordinate value. 
 This polar coordinate value can then be transformed into cartesian coordinates on the robots internal grid system.[3]
+One valuable tool that will help with this process is openCV, which is a large open source computer vision and machine learning software library[5]. Using libraries from openCV will simplify the above process greatly as there are already useful libraries written that can search for specific monochromatic colors like the ones we will need for the astral material[6].
 
 ### Line Detection Algorithm 
 The line detection algorithm will work much the same to the object detection algorithm in that it will take an image as input and will use a simplified version of a generic line detection algorithm to pick out the white lines against the dark background of the game field.
 Since the lines on the game field are in fixed positions the robot can use the shape and composition of these lines to determine where they belong on the game field and therefore where it is in comparison to them.
-Since the lines on the game field are in fixed positions the robot can use the surrounding context such as walls to determine how far away the lines are, or in other words, the depth of the lines.[1]
+Since the lines on the game field are in fixed positions the robot can use the surrounding context such as walls to determine how far away the lines are, or in other words, the depth of the lines. Similar to with object detection we can make use of openCV where preexisting libraries exist using methods such as the hough transform to find all the lines in an image[1]. 
 
 ### Image Processing for April Tags
 The image processing algorithm for the april tags will activate once Master Control sends a signal that the robot is in position, it will then scan the image much in the same way the the detection algorithms did, except it will be looking for the april tags, which should be easy to locate as it will be a box of white and black.
 Once the april tag has been located it will look at the specific pixels and decode them into a number, much like a QR code scanner.
-it will then send the value to Master Control along with the locations of the lines from the line detection algorithm to tell the master control which telemetry zone to put the shipping containers in.[4]
+it will then send the value to Master Control along with the locations of the lines from the line detection algorithm to tell the master control which telemetry zone to put the shipping containers in[4]. As april tags are becoming more commonly used in robotics there are also preexisting libraries that can aid in reading them, that will yet again come from openCV[7]. 
 
 ### Image Processing for the Walls
 The image processing for the walls is a simple algorithm that will measure the distance between the robot and the walls and will alert the robot if it gets too close to a wall.
@@ -84,6 +85,15 @@ Finally the subsystem will have user manual explaining the subsystems function a
 [3]“What is Object Detection in Computer Vision?,” GeeksforGeeks, May 10, 2024. https://www.geeksforgeeks.org/what-is-object-detection-in-computer-vision/  
 ‌  
 [4]X. Ling, “How to Optimize QR Recognition Performance by Image Preprocessing and Parameter Tuning,” DEV Community, Sep. 13, 2021. https://dev.to/yushulx/how-to-optimize-qr-recognition-performance-by-image-preprocessing-and-parameter-tuning-24p8 (accessed Nov. 28, 2024).
+
+[5]OpenCV, “About OpenCV,” OpenCV, 2018. https://opencv.org/about/
+
+[6]“Real time object color detection using OpenCV,” GeeksforGeeks, Oct. 14, 2021. https://www.geeksforgeeks.org/real-time-object-color-detection-using-opencv/
+
+[7]A. Rosebrock, “AprilTag with Python,” PyImageSearch, Nov. 02, 2020. https://pyimagesearch.com/2020/11/02/apriltag-with-python/
+‌
+‌
+‌
 ‌
 ‌
 ‌
