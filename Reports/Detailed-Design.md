@@ -1,6 +1,6 @@
 # Detailed Design for Object and Line Detetion
 ## Function of Subsystem
-The function of this subsystem is to provide the location of the astral materials and lines on the game feild, as well as read the april tags to Master Control so that this so that Master Control can make decisions about where to go and what to do next. 
+The function of this subsystem is to provide the location of the astral materials, lines, and walls on the game field, as well as read the april tags and then provide this information to Master Control, so that Master Control can plot an effecient path to pick up all astral material, as well as sort the shipping containers at the end of the match, while unsuring the robot does not collide with anything from the front.
 
 ## Specifications and Constraints 
 ### Specifications
@@ -45,7 +45,7 @@ A quick note for the flowchart, the robot will start and then it will go about t
 
 ## Analysis
 ### The Camera
-The camera will be an Intel Realsense D435 RGBD camera, it functions using stereoscopic depth technology which will be needed as infrared projection technology cannot be used in conjuction with the infrared camera inside the cave. The camera will take a 5V voltage supply that will be transfered through a USB-C 3.1 Gen 1 connection which will also be used to transfer the image data to the Jetson Nano. This connection has a maximum information transfer rate of 5 GB per second. The cameras depth values will be greater than 98% accurate at 2 meters. The camera will send both the RGB values of the picture as well as the depth values of the picture to the Jetson Nano where these values will be used by various algorithms as described below[2].
+The camera will be an Intel Realsense D435 RGBD camera, this camera was chosen for its wide FOV of 87° × 58°, as well as its depth range of .3 m to 3 m. Also this camera uses stereoscopic depth technology which is needed as infrared projection technology cannot be used in conjuction with the infrared camera that is part of the game field in the cave. The camera will take a 5V voltage supply that will be transfered through a USB-C 3.1 Gen 1 connection which will also be used to transfer the image data to the Jetson Nano. This connection has a maximum information transfer rate of 5 GB per second. The cameras depth values will be greater than 98% accurate at 2 meters. The camera will send both the RGB values of the picture as well as the depth values of the picture to the Jetson Nano where these values will be used by various algorithms as described below[2].
 
 ### Object Detection Algorithm
 The object detection algorithm will work similarly to many generic object detection algorithms, in that it will take an image and will scan through the pixels to find specific patterns and differences is RGB values, however it will be much simpler than most object detection values as we will be mainly trying to detect one type of object with a known size and more importantly a known RGB value and a known shape, which will be against a dark background.
@@ -65,7 +65,7 @@ Once the april tag has been located it will look at the specific pixels and deco
 it will then send the value to Master Control along with the locations of the lines from the line detection algorithm to tell the master control which telemetry zone to put the shipping containers in[4]. As april tags are becoming more commonly used in robotics there are also preexisting libraries that can aid in reading them, that will yet again come from openCV[7]. 
 
 ### Image Processing for the Walls
-The image processing for the walls is a simple algorithm that will measure the distance between the robot and the walls and will alert the robot if it gets too close to a wall.
+The image processing for the walls is a simple algorithm that will measure the distance between the robot and the walls and will alert the robot if it gets too close to a wall. Due to the way the collection system for the astral material is being designed the camera will be the only forward facing sensor and as such will be responsible for making sure the robot does not collide with anything from the front.
 
 ## Ethics 
 The camera will come as a fully built and developed device and as such full credit for camera design will be given to those responsible, the camera will also have an infrared projector which will aid in depth sensing capabilities, this infrared projector is safe for use in close proximities to humans. 
