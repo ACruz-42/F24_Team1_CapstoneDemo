@@ -114,6 +114,18 @@ The following diagram connections were informed by [6], [8], [9], [10], and [11]
 ![OperationalFlowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/9deccc79205ce5f38ae658b8f7e458ed510e71b9/Reports/Photos/OperationalFlowchart.png)
 The operations of this flowchart were informed by [5].
 
+### Sorting and Collecting Operations - Overall Chart
+![OperationalFlowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/ed4166ef673e096269876650f60eacf872209840/Reports/Photos/Operational_Flowchart_2-Page-2.drawio%20(1).png)
+
+### Sorting and Collecting Operations - Individual Process Charts
+![OperationalFlowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/ed4166ef673e096269876650f60eacf872209840/Reports/Photos/Operational_Flowchart_2-Page-1.drawio.png)
+##
+![OperationalFlowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/ed4166ef673e096269876650f60eacf872209840/Reports/Photos/Operational_Flowchart_2-Page-1.drawio%20(1).png)
+##
+![OperationalFlowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/ed4166ef673e096269876650f60eacf872209840/Reports/Photos/Operational_Flowchart_2-Page-1.drawio%20(2).png)
+##
+![OperationalFlowchart](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/ed4166ef673e096269876650f60eacf872209840/Reports/Photos/Operational_Flowchart_2-Page-1.drawio%20(3).png)
+
 ## BOM
 Items with an asterisk (*Part Name) will be purchased by the Electrical Engineering Team. Other items will come from the Mechanical Team.
 
