@@ -14,6 +14,7 @@ class EventType(Enum):
     LOAD = "load"
     FIND_PATH = "find_path"
     BEACON = "beacon"
+    POLAR = "polar"
     CUSTOM = "custom"
 
 
@@ -30,6 +31,7 @@ class Event(SignalEmitter):
         self.event_success = False # This is exclusively used for the loading events
         self.event_number = -1
         self.backwards = False
+        self.angle = 0
 
     def __str__(self):
         return f"Event(type={self.event_type}, data={self.data})"

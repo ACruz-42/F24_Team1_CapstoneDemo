@@ -10,7 +10,7 @@ class EventHandler(SignalEmitter):
     """
     Handles a queue of events and sends them to the Arduino.
     """
-    def __init__(self, arduino_comms: ArduinoCommunicator, testing = False):
+    def __init__(self, arduino_comms: ArduinoCommunicator, testing=False):
         SignalEmitter.__init__(self)
         self.event_queue = queue.Queue()  # Queue to hold events
         self.arduino_comms = arduino_comms  # Arduino communication handler
@@ -25,7 +25,6 @@ class EventHandler(SignalEmitter):
 
         self.testing = testing
         self.test_signal = self.add_signal("testing")
-
 
     def add_event(self, event: Event):
         """
@@ -68,6 +67,8 @@ class EventHandler(SignalEmitter):
                     await self._handle_find_path_event(event)
                 case EventType.BEACON:
                     await self._handle_beacon_event(event)
+                case EventType.POLAR:
+                    await self._handle_polar(event)
                 case __:
                     self.logger.warning(f"Unhandled event type: {event.event_type}")
 
@@ -317,12 +318,11 @@ class EventHandler(SignalEmitter):
         except Exception as e:
             self.logger.error(f"Error during intermediate rotation: {e}")
 
-    async def _move_to_target(self, target_pos, transform_data, move_backwards = False):
+    async def _move_to_target(self, target_pos, transform_data, move_backwards=False):
         """Move to the target position."""
         # Recalculate current position after rotation
         current_pos = self.request_transform.emit()[0]
         move_amount = current_pos.position.distance_to(target_pos.position)
-
 
         if self._should_move_backwards(transform_data) and move_backwards:
             move_amount *= -1
@@ -346,8 +346,6 @@ class EventHandler(SignalEmitter):
         except Exception as e:
             self.logger.error(f"Error during movement: {e}")
             return False
-
-
 
     async def _handle_rotation(self, transform_data, moved):
         """Handle rotation to the target angle."""
@@ -373,6 +371,16 @@ class EventHandler(SignalEmitter):
                 self.event_completed.emit(rotate_event)
         except Exception as e:
             self.logger.error(f"Error during final rotation: {e}")
+
+    async def _handle_polar(self, event):
+        current_transform = self.request_transform.emit()[0]
+        target_transform = event.data
+        while not self._is_close_enough(current_transform, target_transform):
+            event.angle = current_transform.get_shortest_rotation_to(target_transform)
+            self.arduino_comms.send_event(event)
+            await asyncio.sleep(0.1)
+        self.event_completed.emit(event)
+        event.mark_finished()
 
     async def start(self):
         """
@@ -400,6 +408,13 @@ class EventHandler(SignalEmitter):
         """Determine if movement should be backwards based on transform data."""
         # This makes the assumption that if the transform_data is negative, we want to move backwards.
         return transform_data.position.x < 0 or transform_data.position.y < 0
+
+    @staticmethod
+    def _is_close_enough(current_pos, target_pos, close_enough_distance=1):
+        if current_pos.position.distance_to(target_pos) <= close_enough_distance:
+            return True
+        else:
+            return False
 
     @staticmethod
     async def test():

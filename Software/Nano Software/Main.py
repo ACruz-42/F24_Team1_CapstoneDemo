@@ -30,11 +30,11 @@ class Rover:
     POS_LOG_FILE = LOG_DIR / f"robot_path_{timestamp}.csv"
     NANO_LOG_FILE = LOG_DIR / f"main_log_{timestamp}.log"
 
-
     def __init__(self):
         # Position from OTOS
         self.position = self.get_initial_transform().get_position()  # Current position
         self.rotation = self.get_initial_transform().rotation  # Current rotation in degrees
+        self.light_detected = True # TODO: Change once light is implemented
         self.LOG_DIR.mkdir(parents=True, exist_ok=True)
 
         # Position from encoder feedback
@@ -51,7 +51,8 @@ class Rover:
             self.arduino_comms = ArduinoCommunicator(port="COM4", baud_rate=115200)
         else:
             self.arduino_comms = ArduinoCommunicator(port="/dev/ttyACM0", baud_rate=115200)
-        self.arduino_comms.connect()
+        self.arduino_comms.light_detected.connect(self._on_light_detected)
+
         self.feedback_pos = self.get_initial_transform().get_vector3()
 
         # Initialize EventHandler
@@ -63,6 +64,7 @@ class Rover:
 
         # Initialize StateMachine
         self.state_machine = StateMachine()
+        self.state_machine.request_light_detected.connect(self._on_request_light_detected)
 
         # Initialize OTOS:
         if not sys.platform.startswith('win'):
@@ -78,8 +80,6 @@ class Rover:
         self.event_handler.current_event_number += 1
 
         self.testing = False
-
-
 
     def _set_up_logger(self):
         self.logger = logging.getLogger("Nano")
@@ -150,7 +150,6 @@ class Rover:
         if feedback_angle:
             self.encoder_transform.rot = self.clamp_angle(self.encoder_transform.rot + feedback_angle)
         if feedback_distance:
-            feedback_distance
             distance = self.pos_from_distance_and_angle(feedback_distance, self.encoder_transform.rot)
             self.encoder_transform.x += distance.x
             self.encoder_transform.y += distance.y
@@ -163,7 +162,8 @@ class Rover:
         """
 
         self.logger.info(f"Rover received event completion: {event}")
-        if event.event_type == EventType.MOVE or event.event_type == EventType.ROTATE or event.event_type == EventType.ABSOLUTE_ROTATE:
+        if event.event_type == EventType.MOVE or event.event_type == EventType.ROTATE or event.event_type == \
+                EventType.ABSOLUTE_ROTATE:
             self.update_theoretical_position(event)
             self.update_position()
 
@@ -178,6 +178,11 @@ class Rover:
             case __:
                 self.logger.error(f"Unrecognized _on_container_loaded {container}")
 
+    def _on_light_detected(self) -> None:
+        self.light_detected = True
+
+    def _on_request_light_detected(self) -> None:
+        return self.light_detected
 
     def get_rover_transform(self) -> Transform:
         return Transform(Vector3(self.position.x, self.position.y, self.rotation))
@@ -209,7 +214,6 @@ class Rover:
         self.position.y = otos_data.y
         self.rotation = self.clamp_angle(otos_data.rot)
 
-
         self.log_position_to_csv(self.theoretical_transform, otos_data, self.encoder_transform)
 
     def update_theoretical_position(self, event: Event) -> None:
@@ -219,7 +223,6 @@ class Rover:
         self.logger.debug("update_theoretical position -")
         event_data = event.data
 
-
         if event.event_type == EventType.MOVE:
             offset_pos = self.pos_from_distance_and_angle(event_data, self.theoretical_transform.rot)
             self.theoretical_transform.x += offset_pos.x
@@ -228,7 +231,6 @@ class Rover:
             self.theoretical_transform.rot = self.clamp_angle(self.theoretical_transform.rot + event_data)
         self.logger.debug(f"theoretical_transform - x:{self.theoretical_transform.x}, "
                           f"y:{self.theoretical_transform.y}, rot:{self.theoretical_transform.rot}")
-
 
     def process_transform(self, transform: Transform) -> None:
         if not transform.position == Vector2.ZERO():
@@ -260,7 +262,7 @@ class Rover:
             if write_header:
                 writer.writerow(["timestamp", "event_number",
                                  "theoretical_x", "theoretical_y",  "theoretical_rot",
-                                 "OTOS_x","OTOS_y", "OTOS_rot",
+                                 "OTOS_x", "OTOS_y", "OTOS_rot",
                                  "encoder_x", "encoder_y", "encoder_rot"])
             writer.writerow([datetime.now().isoformat(), self.event_handler.current_event_number,
                              t_transform.x, t_transform.y, t_transform.rot,
@@ -286,9 +288,9 @@ class Rover:
 
     @staticmethod
     def get_initial_transform() -> Transform:
-        return Transform(Vector3(0,0,0))
+        return Transform(Vector3(0, 0, 0))
 
-    async def run(self, testing = False) -> None:
+    async def run(self, testing=False) -> None:
         """
         Main loop
         """

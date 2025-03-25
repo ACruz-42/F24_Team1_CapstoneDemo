@@ -3,6 +3,7 @@ from Event import *
 
         # If used for manual tests, input desired inches (no need to multiply by 30)
         # self.move_to assumed starting position is 31.16666 and 41.16666 aka (935 / 30 + 6), (1235 / 30 + 6)
+
 class ShowcaseState(State):
     async def enter(self):
         await super().enter()
@@ -52,8 +53,10 @@ class ShowcaseState(State):
 class WaitState(State):
     async def enter(self):
         await super().enter()
-        # wait for light
+        while not self.request_light_detected.emit()[0]:
+            await asyncio.sleep(0.1)
         self.done.emit()
+
 
 class SenseState(State):
     async def enter(self):
@@ -64,6 +67,7 @@ class SenseState(State):
 
         self.done.emit()
 
+
 class BeaconState(State):
     async def enter(self):
         await super().enter()
@@ -73,23 +77,11 @@ class BeaconState(State):
         # plant beacon
 
         await self.rover_wait(1)
-        await self.move_to(9.5, 35,True)
+        await self.move_to(-21.8, 18.8, True)
         await self.rover_wait(1)
-        await self.rotate_to(180)
+        await self.rotate_to(0)
         await self.rover_wait(1)
-        await self.move_to(self.STARTING_X, self.STARTING_Y, True)
-
-        # These are test commands to get the right position
-        # await self.rotate_left(60)
-        # await self.rover_wait(0.1)
-        # await self.move_forward(16.5)
-        # await self.rover_wait(0.5)
-        # await self.rotate_right(70)
-        # await self.rover_wait(0.1)
-        # await self.move_forward(10.5, True)
-        # await self.rover_wait(0.1)
-        # await self.rover_wait(6)  # simulating beacon placement
-        # await self.rover_wait(0.1)
+        await self.rover_wait(0)  # TODO: add simple beacon command to state
 
         #self.done.emit()
 
@@ -102,11 +94,13 @@ class GCSCState(State):
         # move_back
         # send load csc event
 
-        await self.move_back(11)
-        await self.rover_wait(0.5)
-        await self.rotate_left(60)
-        await self.rover_wait(0.1)
-        await self.move_back(14.5)
+        await self.rover_wait(1)
+        await self.move_to(15, 5.7)
+        await self.rover_wait(1)
+        await self.rotate_to(270)
+        await self.move_back(5)  # TODO: check if this is good
+        await self.load_gsc()
+        await self.rover_wait(1)
 
         # self.done.emit()
 
@@ -115,19 +109,13 @@ class NCSCState(State):
     async def enter(self):
         await super().enter()
 
-        # while loop contingent on csc load
-        # go in front of csc (with front facing away)
-        # move_back
-        # send load csc event
-
-        ready_position = Event(EventType.TRANSFORM, Transform(Vector3(750, 728, 0), True))
-        self.transform_request.emit(ready_position)
-
-        ready_rotation = Event(EventType.TRANSFORM, Transform(Vector3(0, 0, 180), True))
-        self.transform_request.emit(ready_rotation)
-
-        pick_up_position = Event(EventType.TRANSFORM, Transform(Vector3(0, -300, 0)))
-        self.transform_request.emit(pick_up_position)
+        await self.rover_wait(1)
+        await self.move_to(-6.8, 33.3, True)
+        await self.rover_wait(1)
+        await self.rotate_to(180)
+        await self.move_back(5)  # TODO: check if this is good
+        await self.load_nsc()
+        await self.rover_wait(1)
 
         self.done.emit()
 
@@ -140,14 +128,13 @@ class CavePrepState(State):
         # rotate to align with cave
         # move forward into cave
 
-        ready_position = Event(EventType.TRANSFORM, Transform(Vector3(1410, 761, 0), True))
-        self.transform_request.emit(ready_position)
-
-        ready_rotation = Event(EventType.TRANSFORM, Transform(Vector3(0, 0, 90), True))
-        self.transform_request.emit(ready_rotation)
-
-        enter_cave_position = Event(EventType.TRANSFORM, Transform(Vector3(950, 0, 0)))
-        self.transform_request.emit(enter_cave_position)
+        await self.rover_wait(1)
+        await self.move_to(35.3, 33.8, True)
+        await self.rover_wait(1)
+        await self.rotate_to(90)
+        await self.move_forward(5)
+        await self.load_nsc()
+        await self.rover_wait(1)
 
         self.done.emit()
 

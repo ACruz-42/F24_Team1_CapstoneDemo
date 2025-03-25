@@ -2,12 +2,12 @@ from typing import List
 from RoverStates import *
 import asyncio
 from datetime import datetime
-
 class StateMachine(SignalEmitter):
     def __init__(self):
         SignalEmitter.__init__(self)
         self.logger = None
         self.transform_requested = self.add_signal("transform_requested")
+        self.request_light_detected = self.add_signal("request_light_detected")
         self.current_state: State = None
         self.current_index: int = 0
         self.time = datetime.now()
@@ -20,8 +20,7 @@ class StateMachine(SignalEmitter):
         self.expanded = False
         self.loading_zone = -1
 
-
-        self.testing = False # For testing purposes, do not set to True
+        self.testing = False  # For testing purposes, do not set to True
 
     async def start(self):
         """
@@ -34,6 +33,7 @@ class StateMachine(SignalEmitter):
             async def transition_to_next(): await self.transition_to(self.current_index + 1)
             self.current_state.done.connect(transition_to_next)
             self.current_state.transform_request.connect(self.transform_requested.emit)
+            self.current_state.request_light_detected.connect(self.request_light_detected.emit)
             await self.current_state.enter()
 
     async def transition_to(self, index: int):
@@ -46,6 +46,7 @@ class StateMachine(SignalEmitter):
         if self.current_state:
             self.current_state.done.disconnect_all()
             self.current_state.transform_request.disconnect_all()
+            self.current_state.request_light_detected.disconnect_all()
             await self.current_state.exit()
 
         self.current_index = index
@@ -55,7 +56,6 @@ class StateMachine(SignalEmitter):
         self.current_state.transform_request.connect(self.transform_requested.emit)
 
         await self.current_state.enter()
-
 
     @staticmethod
     def test():

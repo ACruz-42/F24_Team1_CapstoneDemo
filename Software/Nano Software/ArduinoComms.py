@@ -30,6 +30,7 @@ class ArduinoCommunicator(SignalEmitter):
         self.read_thread = None
         self.waiting = False
         self.stopped = self.add_signal("stopped")
+        self.light_detected = self.add_signal("light_detected")
         self.ready_for_command = True
 
     def _set_up_logger(self):
@@ -104,6 +105,8 @@ class ArduinoCommunicator(SignalEmitter):
                         elif "event_failed" in response:
                             self.arduino_logger.error("Event failed - Read from Arduino:")
                             self.message_queue.put(response)
+                        elif "light" in response:
+                            self.light_detected.emit()
                         else:
                             self.arduino_logger.warning(f"Unknown - Arduino message not recognized: {response}")
                 except Exception as e:
@@ -214,8 +217,10 @@ class ArduinoCommunicator(SignalEmitter):
             message = f"expand_robot,"
         elif event.event_type == EventType.BEACON:
             message = f"Beacon,"
+        elif event.event_Type == EventType.POLAR:
+            message = f"Polar,{event.data},{event.angle}"
         elif event.event_type == EventType.CUSTOM:
-            message = f"custom,{event.data}"
+            message = f"custom,"
         else:
             self.arduino_logger.error(f"Unknown event type: {event.event_type}")
             return None

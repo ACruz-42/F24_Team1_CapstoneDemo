@@ -133,12 +133,14 @@ class Transform(SignalEmitter):
 class State(SignalEmitter):
     STARTING_X = 0
     STARTING_Y = 0
+
     def __init__(self):
         SignalEmitter.__init__(self)
         self.entered_state = self.add_signal("entered_state")
         self.exited_state = self.add_signal("exited_state")
         self.done = self.add_signal("done")
         self.transform_request = self.add_signal("transform_request")
+        self.request_light_detected = self.add_signal("request_light_detected")
 
     async def enter(self):
         self.entered_state.emit(self)
@@ -250,7 +252,7 @@ class State(SignalEmitter):
             if load_event.event_success:
                 completed = True
 
-    async def load_nsc(self, wait = True) -> None:
+    async def load_nsc(self, wait = True) -> None:  # TODO: change this so that it relocates to starting pos
         completed = False
         while not completed:
             load_event = Event(EventType.LOAD, 1)
