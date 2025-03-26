@@ -1,0 +1,1125 @@
+#include <PID_v1.h>
+#include <Servo.h>
+#include <TimerOne.h>
+#include <ezButton.h>
+
+/* HOW TO USE:
+  1) create global motor variable
+  2) initialize motor variable in setup()
+  3) enable motor
+  4) set the pid tunings
+  5) use move() to move the motor (open loop)
+  6) use PIDmove() to move the motor (closed loop)
+
+*/
+int jimithy;
+double temp;
+int iterate=0;
+String data;
+unsigned long t;
+unsigned long t_prev = 0;
+unsigned long matchTime;
+int targetCount1, targetCount2;
+volatile double encoderCount = 0; //input to pid
+//int move = -1;
+float length = 0;
+bool expand = false;
+bool extend = false;
+bool retract = true;
+bool serial = true;
+bool translated = false;
+bool rotated = false;
+bool pressureDetected;
+bool int_state = false;
+unsigned long previousMillis;
+const long interval = 8000;
+
+// Encoder Movement and Rotation
+const float D = 4.0;  // Wheel diameter (in inches)
+const float wheelbase = 11.0;  // Distance between the wheels (in inches)
+const int CPR = 16*30;  // Encoder counts per revolution (assuming quadrature) (64 pulses)*30:1 gear ratio
+float dpc = (PI * D) / CPR; // Distance per count
+int encoderCountLeftStart;
+int encoderCountRightStart;
+int encoderCountLeftEnd;
+int encoderCountRightEnd;
+int encoderCountLeftNew;
+int encoderCountRightNew;
+float actualLength;
+
+// Photoresistors: A7, A11, A12
+// Start Photoresistor: A7
+// Ambient Photoresistors: A11, A12
+
+// ************ CSC ARM DEFINITIONS ************
+
+// Define pins for pressure sensors and current sensor
+const int presG = A2;
+const int presN = A3;
+ezButton limG(31, INTERNAL_PULLUP);
+ezButton limN(2, INTERNAL_PULLUP);
+const int currentSGPin = A4; // Sensor signal wire
+const int currentSNPin = A5; // Sensor signal wire
+float voltageSG, currentSG, voltageSN, currentSN;
+const float sensorOffset = 2.5; // Zero current output (2.5V for ACS712)
+const float sensitivity = 0.1;  // 100mV per A for 20A ACS712
+//const int releasePin = 10; // Button or sensor to signal release
+const int presThreshold = 100;
+
+// CSC Servo pins 
+const int GSCServoPin = 44;
+const int NSCServoPin = 40; 
+const int SortServoPin = 42; // SPECIFY
+const int sensorPin = A0; // Photoresistor
+const int threshold = 500; // division for magnetic representation
+
+// Beacon Servo pins
+const int beaconBasePin = 33;
+const int beaconWristPin = 43; // SPECIFY
+
+Servo GSCServo, NSCServo, SortServo, BaseServo, WristServo;
+const int initialAngleGSC = 125; // 30
+const int desiredAngleGSC = 115; // 20
+const int initialAngleNSC = 140; // 30
+const int desiredAngleNSC = 150; // 40
+const int initialAngleBase = 180;
+const int desiredAngleBase = 40;
+const int initialAngleWrist = 0;
+const int desiredAngleWrist = 0;
+
+// Actuator motor driver pins
+const byte actM1PWMPin = 4, actM1DirPin1 = 36, actM1DirPin2 = 37; // PUT IN PIN 4 (PWM) - left/GSC motor
+const byte actM2PWMPin = 5, actM2DirPin1 = 23, actM2DirPin2 = 22; // PUT IN PIN 5 (PWM) - right/NSC motor
+
+// Auger driver pins
+const byte augerPWMPin = 6, augerDirPin1 = 34, augerDirPin2 = 30;
+
+// Sweeper, Sweeper Arm driver pins
+const byte sweepPWMPin = 7, sweepDirPin1 = 53, sweepDirPin2 = 52;
+const byte sweepArmPWMPin = 8, sweepArmDirPin1 = 48, sweepArmDirPin2 = 49;
+
+int encoder_something = 0;
+
+// DM PID variables
+volatile int lastLeftEncoderCount = 0;
+volatile int lastRightEncoderCount = 0;
+volatile float leftSpeed = 0;
+volatile float rightSpeed = 0;
+bool leftSpeedUp = false;
+bool leftSpeedDown = false;
+bool rightSpeedUp = false;
+bool rightSpeedDown = false;
+/*
+
+******* L298N Pin Locations for Above Arduino Pins *******
+
+// Actuator motor driver pins
+const byte actM1PWMPin = 4 to top_left_ENA, actM1DirPin1 = 36 to top_left_IN1, actM1DirPin2 = 37 to top_left_IN2; // left/GSC motor
+const byte actM2PWMPin = 5 to bottom_ENB, actM2DirPin1 = 23 to bottom_IN3, actM2DirPin2 = 22 to bottom_IN4; // right/NSC motor
+
+// Auger driver pins
+const byte augerPWMPin = 6 to top_left_ENB, augerDirPin1 = 34 to top_left_IN3, augerDirPin2 = 30 to top_left_IN4;
+
+// Sweeper, Sweeper Arm driver pins
+const byte sweepPWMPin = 7 to bottom_ENA, sweepDirPin1 = 53 to bottom_IN1, sweepDirPin2 = 52 to bottom_IN2;
+const byte sweepArmPWMPin = 8 to top_right_ENB, sweepArmDirPin1 = 48 top_right_IN3, sweepArmDirPin2 = 49 top_right_IN4;
+
+*/
+
+enum State { read_nano, busy, bad_case, end_forward, end_back, end_right, end_left, stop, expand_robot, move_forward, move_back, rotate_right, rotate_left, GSC_load, NSC_load, GSC_unload, NSC_unload, Beacon, retract_act };
+State move = read_nano;
+int moveInt = 0;
+
+// Variables needed for start LED
+float ambientSensorVoltage1 = 1.0;   // pin for ambient photoresistor
+float ambientSensorVoltage2 = 1.0;   // pin for ambient photoresistor
+float startLEDSensorVoltage = 0.0;   // pin for start LED photoresistor
+
+// ************* CSC ARM FUNCTIONS **************
+
+void moveActuatorG(int speed, bool extend) {
+    digitalWrite(actM1DirPin1, extend);
+    digitalWrite(actM1DirPin2, !extend);
+    analogWrite(actM1PWMPin, speed);
+    delay(2000);
+    stopActuators();
+}
+
+void moveActuatorN(int speed, bool extend) {
+    digitalWrite(actM2DirPin1, extend);
+    digitalWrite(actM2DirPin2, !extend);
+    analogWrite(actM2PWMPin, speed);
+    delay(2000);
+    stopActuators();
+}
+
+void stopActuators() {
+    analogWrite(actM1PWMPin, LOW);
+    analogWrite(actM2PWMPin, LOW);
+}
+
+// ************* DRIVETRAIN FUNCTIONS **************
+
+struct Drivemotor{
+  public:
+  //static Drivemotor* instance;   // Static instance pointer for ISR
+  //pins
+  byte enPin; //enable
+  byte dir1Pin; //direction
+  byte dir2Pin;
+  byte pwmPin; //speed
+  byte Apin = 0; //feedback
+  byte Bpin = 0;
+
+  //variables 
+  //stuff for encoder and interrupt
+  volatile double encoderCountSpeed = 0; // input to pid
+  volatile double encoderCount; //input to pid
+  bool BpinState = 0;
+  
+  double setpoint = 0; //setpoint for pid
+  double output = 0;//figure out pid controll connections. perhaps pid init funciton
+  int maxSpeed = 255;
+
+  PID pid;
+
+  Drivemotor() :  pid(&encoderCountSpeed, &output, &setpoint, 1, 0, 0, DIRECT) {}
+
+  //functions
+  void initialize(int en,int d1,int d2,int pwm,int a,int b){
+    enPin = en;
+    dir1Pin = d1;
+    dir2Pin = d2;
+    pwmPin = pwm;
+    Apin = a;
+    Bpin = b;
+
+    //define pinmode
+    pinMode(enPin,OUTPUT);
+    pinMode(dir1Pin,OUTPUT);
+    pinMode(dir2Pin,OUTPUT);
+    pinMode(pwmPin,OUTPUT);
+    pinMode(Apin,INPUT_PULLUP); //maybe just regular inputs?
+    pinMode(Bpin,INPUT_PULLUP);
+    //attachInterrupt(digitalPinToInterrupt(Apin),ISRfunction,RISING);
+    pid.SetMode(AUTOMATIC);
+  }
+
+  void enable(){
+    digitalWrite(enPin, HIGH);
+  }
+
+  void disable(){
+    digitalWrite(enPin, LOW);
+  }
+
+  void setMaxSpeed(int s){
+    maxSpeed = s;
+  }
+
+  void move(int mag, int dir){
+    switch(dir){
+      case -1:
+        digitalWrite(dir1Pin,LOW);
+        digitalWrite(dir2Pin,HIGH);
+        break;
+      case 0:
+        digitalWrite(dir1Pin,LOW);
+        digitalWrite(dir2Pin,LOW);
+        break;
+      case 1:
+        digitalWrite(dir1Pin,HIGH);
+        digitalWrite(dir2Pin,LOW);
+        break;
+    }
+
+    if(mag > maxSpeed){
+      mag = maxSpeed;
+    }
+    analogWrite(pwmPin,mag);
+  }
+
+  void PIDmove(double s){
+    setpoint = s;
+    pid.SetOutputLimits(-255,255);
+    pid.Compute();
+    
+    //Serial.print(output);
+    //Serial.print(" debug - PID output ");
+
+    //constrain and separate output
+    int mag = abs(output);
+    int dir = output/mag; //forward or reverse
+    /*Serial.print("mag: ");
+    Serial.println(mag);
+    Serial.print("dir: ");
+    Serial.println(dir);*/
+    move(mag, dir);
+  }
+};
+
+Drivemotor leftDrive;
+Drivemotor rightDrive;
+
+void updateSpeed(){
+  leftDrive.encoderCountSpeed = (leftDrive.encoderCount - lastLeftEncoderCount) * 60 / (1 * CPR);   // 1 was 0.01 for every 10ms sample rate
+  rightDrive.encoderCountSpeed = (rightDrive.encoderCount - lastRightEncoderCount) * 60 / (1 * CPR); // Gives RPM
+  lastLeftEncoderCount = leftDrive.encoderCount;
+  lastRightEncoderCount = rightDrive.encoderCount;
+
+  if (leftSpeedUp == true){
+    leftSpeed += 10;
+  } else if (leftSpeedDown == true){
+    leftSpeed -= 10;
+  }
+  
+  if (rightSpeedUp == true){
+    rightSpeed += 10;
+  } else if (rightSpeedDown == true){
+    rightSpeed -= 10;
+  }
+}
+
+void leftEncoder() {
+  if (encoder_something == 1) // 1 is move_forward
+  {
+        leftDrive.encoderCount++;
+        //Serial.print("leftDrive.encoderCount: ");
+        //Serial.println(leftDrive.encoderCount);
+  }
+  if (encoder_something == 2) // 2 is move_back
+  {
+        leftDrive.encoderCount--;
+  }
+  if (encoder_something == 3) // 3 is rotate_right
+  {
+        leftDrive.encoderCount++;
+  }
+  if (encoder_something == 4) // 4 rotate_left
+  {
+        leftDrive.encoderCount--;
+  }
+  //Serial.print("leftDrive.encoderCount: ");
+  //Serial.println(leftDrive.encoderCount);
+
+  /***********
+  if (digitalRead(leftDrive.Apin) == digitalRead(leftDrive.Bpin)) {
+    leftDrive.encoderCount++;
+    Serial.println("increment left");
+  } else {
+    leftDrive.encoderCount--;
+    Serial.println("decrement left");
+  }**********/
+  
+}
+
+void rightEncoder() {
+  if (encoder_something == 1) // 1 is move_forward
+  {
+        rightDrive.encoderCount++;
+        //Serial.print("leftDrive.encoderCount: ");
+        //Serial.println(leftDrive.encoderCount);
+  }
+  if (encoder_something == 2) // 2 is move_back
+  {
+        rightDrive.encoderCount--;
+  }
+  if (encoder_something == 3) // 3 is rotate_right
+  {
+        rightDrive.encoderCount--;
+  }
+  if (encoder_something == 4) // 4 rotate_left
+  {
+        rightDrive.encoderCount++;
+  }
+  /*
+  if (digitalRead(rightDrive.Apin) == digitalRead(rightDrive.Bpin)) {
+    rightDrive.encoderCount++;
+    Serial.println("increment right");
+  } else {
+    rightDrive.encoderCount--;
+    Serial.println("decrement right");
+  }*/
+}
+
+int targetCountF1(float length) {
+  return length / dpc;  // Return the target encoder counts for forward distance
+}
+
+int targetCountF2(float length) {
+  return length / dpc;  // Return the target encoder counts for forward distance
+}
+
+int targetCountFR1(float length) {
+  // Formula for the number of encoder counts required for the target rotation (length)
+  float targetDistance = PI * length * wheelbase / 360.0;
+  return targetDistance / dpc;
+}
+
+int targetCountFR2(float length) {
+  // Formula for the number of encoder counts required for the target rotation (length)
+  float targetDistance = PI * length * wheelbase / 360.0;
+  return targetDistance / dpc;
+}
+
+float getLengthTraveled(float encoderCountLeft, float encoderCountRight) {
+  // Calculate the change in encoder count for each motor
+  //int deltaEncoderCountLeft = encoderCountLeftEnd - encoderCountLeftStart;
+  //int deltaEncoderCountRight = encoderCountRightEnd - encoderCountRightStart;
+  
+  // Calculate the actual distance moved for each motor
+  float distanceLeft = encoderCountLeft * dpc;
+  float distanceRight = encoderCountRight * dpc;
+  
+  // Return the average distance traveled (to handle any difference between the motors)
+  return (distanceLeft + distanceRight) / 2.0;
+}
+
+float getRotationInDegrees(float encoderCountLeft, float encoderCountRight) {
+  // Calculate the change in encoder count for each motor
+  //int deltaEncoderCountLeft = encoderCountLeftEnd - encoderCountLeftStart;
+  //int deltaEncoderCountRight = encoderCountRightEnd - encoderCountRightStart;
+  
+  // Calculate the angular distance moved for each motor (in radians)
+  float angleLeft = (encoderCountLeft * dpc) / wheelbase;  // radians
+  float angleRight = (encoderCountRight * dpc) / wheelbase; // radians
+
+  // Compute the net rotation (accounting for differential motion)
+  float avgAngleRad = (angleLeft - angleRight);
+
+  // Convert radians to degrees
+  float avgAngleDeg = avgAngleRad * (180.0 / PI);
+
+  return avgAngleDeg;
+}
+
+
+void setup() {
+  Serial.begin(115200);
+  //Serial1.begin(115200); // Baud rate with Nano - NOT NEEDED
+  // put your setup code here, to run once:
+  leftDrive.initialize(26,10,11,9,20,21);
+  attachInterrupt(digitalPinToInterrupt(leftDrive.Apin),leftEncoder,RISING);
+  leftDrive.maxSpeed = 255;
+  leftDrive.enable();
+  leftDrive.pid.SetTunings(0.8,0,0);//1.5,2,0.07); // 1.85 for ultimate gain // was ki 4.44 // was kp 1.5 //1.11,4.44,0.07
+
+  rightDrive.initialize(27,12,13,3,18,19);
+  attachInterrupt(digitalPinToInterrupt(rightDrive.Apin),rightEncoder,RISING);
+  rightDrive.maxSpeed = 255;
+  rightDrive.enable();
+  rightDrive.pid.SetTunings(0.8,0,0);//1.5,2,0.07); // 1.85 for ultimate gain // was ki 4.44
+
+  // Set Actuator motor driver pins
+  pinMode(actM1PWMPin, OUTPUT);
+  pinMode(actM1DirPin1, OUTPUT);
+  pinMode(actM1DirPin2, OUTPUT);
+  pinMode(actM2PWMPin, OUTPUT);
+  pinMode(actM2DirPin1, OUTPUT);
+  pinMode(actM2DirPin2, OUTPUT);
+
+  // Set sweeper and sweeper arm driver pins
+  pinMode(sweepPWMPin, OUTPUT);
+  pinMode(sweepDirPin1, OUTPUT);
+  pinMode(sweepDirPin2, OUTPUT);
+  pinMode(sweepArmPWMPin, OUTPUT);
+  pinMode(sweepArmDirPin1, OUTPUT);
+  pinMode(sweepArmDirPin2, OUTPUT);
+
+  // Set Auger driver pins
+  pinMode(augerPWMPin, OUTPUT);
+  pinMode(augerDirPin1, OUTPUT);
+  pinMode(augerDirPin2, OUTPUT);
+
+  GSCServo.attach(GSCServoPin);
+  NSCServo.attach(NSCServoPin);
+  pinMode(currentSGPin, INPUT);
+  pinMode(currentSNPin, INPUT);
+  limG.setDebounceTime(1); // set debounce time to 50 milliseconds
+  limN.setDebounceTime(1); // set debounce time to 50 milliseconds
+
+  SortServo.attach(SortServoPin);
+  pinMode(sensorPin, INPUT);
+  SortServo.write(0); 
+  GSCServo.write(initialAngleGSC);
+  NSCServo.write(initialAngleNSC);
+
+  BaseServo.attach(beaconBasePin);
+  WristServo.attach(beaconWristPin);
+  BaseServo.write(initialAngleBase);
+  WristServo.write(initialAngleWrist);  
+
+  // DM Timer used for PWM
+  Timer1.initialize(10000);
+  Timer1.attachInterrupt(updateSpeed); // update encoderCountSpeed every 0.01 seconds
+
+  matchTime = millis();  // Start tracking match time
+}
+
+// Used for the Start LED *******************************
+
+float average_analogRead(int pinNumber){
+  int sum = 0;
+  float average = 0.0;
+
+  analogRead(pinNumber);   // used to switch adc to specific pinNumber
+
+  for(int i = 0; i < 5; i++){
+    sum += analogRead(pinNumber);
+  }
+
+  average = sum / 1023.0;   // does average and convert to volts at the same time (multiply and divide by 5.0)
+  return average;
+}
+
+// MAIN *********************************************************************************
+
+void loop() {
+
+limG.loop(); // MUST call the loop() function first
+limN.loop(); // MUST call the loop() function first
+
+/*
+  // Start_LED
+
+  while((startLEDSensorVoltage < ambientSensorVoltage2) && (startLEDSensorVoltage < ambientSensorVoltage1)){
+    // Do nothing while we wait for the led to increase
+
+    ambientSensorVoltage1 = average_analogRead(A0);   // pin for ambient photoresistor
+    ambientSensorVoltage2 = average_analogRead(A1);   // pin for ambient photoresistor
+    startLEDSensorVoltage = average_analogRead(A2);   // pin for start LED photoresistor
+
+    // Debug below
+    Serial.print("Desired sensor then ambient ones: ");
+    Serial.print(startLEDSensorVoltage);
+    Serial.print(" ");
+    Serial.print(ambientSensorVoltage1);
+    Serial.print(" ");
+    Serial.println(ambientSensorVoltage2);
+    delay(250);
+  }
+*/
+  // SortServo
+  int sensorValue = 501;// analogRead(sensorPin);
+   // Make servo go to 30 degrees 
+   if(sensorValue < threshold){
+    SortServo.write(30); 
+   }
+   // Make servo go to 150 degrees 
+   if(sensorValue >= threshold){
+    SortServo.write(150); 
+   }
+
+
+  if (millis()-matchTime >= 180000)
+  {
+    digitalWrite(52, LOW); //M1EN
+    digitalWrite(50, LOW); //M2EN
+
+    digitalWrite(sweepDirPin1, LOW);
+    digitalWrite(sweepDirPin2, LOW);
+    analogWrite(sweepPWMPin, 0);
+
+    digitalWrite(sweepArmDirPin1, LOW);
+    digitalWrite(sweepArmDirPin2, LOW);
+    analogWrite(sweepArmPWMPin, 0); 
+
+    digitalWrite(augerDirPin1, LOW);
+    digitalWrite(augerDirPin2, LOW);
+    analogWrite(augerPWMPin, 0); 
+
+    while(1) {}
+  }
+
+  if (expand == true) {
+    digitalWrite(sweepDirPin1, HIGH);
+    digitalWrite(sweepDirPin2, LOW);
+    analogWrite(sweepPWMPin, 170);  // 2/3 speed (8V)
+
+    digitalWrite(sweepArmDirPin1, HIGH);
+    digitalWrite(sweepArmDirPin2, LOW);
+    analogWrite(sweepArmPWMPin, 255);  // Full speed
+
+    digitalWrite(augerDirPin1, HIGH);
+    digitalWrite(augerDirPin2, LOW);
+    analogWrite(augerPWMPin, 170);  // 2/3 speed (8V)
+  }
+
+
+
+
+  if (moveInt == 1) {
+    encoder_something = 1;
+    if (leftDrive.encoderCount >= targetCount1 && rightDrive.encoderCount >= targetCount2) {
+        encoderCountLeftNew = leftDrive.encoderCount;  // Update with new left encoder count
+        encoderCountRightNew = rightDrive.encoderCount; // Update with new right encoder count                          
+        move = end_forward;
+    }
+    else {
+        move = busy;
+    }
+  }
+  if (moveInt == 2) {
+    encoder_something = 2;
+    if (abs(leftDrive.encoderCount) >= targetCount1 && abs(rightDrive.encoderCount) >= targetCount2) {       
+        encoderCountLeftNew = leftDrive.encoderCount;  // Update with new left encoder count
+        encoderCountRightNew = rightDrive.encoderCount; // Update with new right encoder count    
+        move = end_back;
+    }
+    else {
+        move = busy;
+    }
+  }
+  if (moveInt == 3) {
+    encoder_something = 3;
+    if (abs(leftDrive.encoderCount) >= targetCount1 && abs(rightDrive.encoderCount) >= targetCount2) {   
+        encoderCountLeftNew = leftDrive.encoderCount;  // Update with new left encoder count
+        encoderCountRightNew = rightDrive.encoderCount; // Update with new right encoder count    
+        move = end_right;
+    }
+    else {
+        move = busy;
+    }
+  }
+  if (moveInt == 4) {
+    encoder_something = 4;
+    if (abs(leftDrive.encoderCount) >= targetCount1 && abs(rightDrive.encoderCount) >= targetCount2) {
+        encoderCountLeftNew = leftDrive.encoderCount;  // Update with new left encoder count
+        encoderCountRightNew = rightDrive.encoderCount; // Update with new right encoder count    
+        move = end_left;
+    }
+    else {
+        move = busy;
+    }
+  }
+  /*
+    ALL CASES:
+
+    read_Nano
+    stop
+    expand_robot (initiate roller swing down, turn on sweeper, extend actuators)
+    move_forward
+    move_back
+    rotate_right
+    rotate_left
+    GSC_load
+    NSC_load
+    GSC_unload
+    NSC_unload
+    Beacon
+    busy
+    end_forward
+    end_back
+    end_right
+    end_left
+    bad_case
+
+  */
+/*Serial.print("debug - leftspeed: ");
+Serial.println(leftSpeed);
+Serial.print("debug - rightspeed: ");
+Serial.println(rightSpeed);*/
+  switch (move) {
+      case read_nano: // read from Nano
+          if (Serial.available()) { //Serial.available()  // Check if Nano has sent data
+            //serial = false;
+            //iterate++;
+            if (iterate == 1){
+              data = "move_forward,50";//Serial.readStringUntil('\n');  // Read until newline
+            }
+            if (iterate == 2){
+              data = "expand_robot,12";//Serial.readStringUntil('\n');  // Read until newline
+            }
+            if (iterate == 3){
+              data = "rotate_right,500";//Serial.readStringUntil('\n');  // Read until newline
+            }
+            if (iterate == 4){
+              data = "GSC_load,500";//Serial.readStringUntil('\n');  // Read until newline
+            }
+            if (iterate == 5){
+              data = "move_forward,50";//Serial.readStringUntil('\n');  // Read until newline
+            }
+            if (iterate >= 6){
+              data = "read_nano,0";//Serial.readStringUntil('\n');  // Read until newline
+              serial = false;
+            }
+            data = Serial.readStringUntil('\n');//Serial.readStringUntil('\n');  // Read until newline
+            int commaIndex = data.indexOf(','); // Find comma position
+
+            if (commaIndex != -1) {  // Ensure data format is correct
+              String moveString = data.substring(0, commaIndex);
+              length = data.substring(commaIndex + 1).toFloat();
+
+              if (moveString == "read_nano") move = read_nano;
+              else if (moveString == "stop") move = stop;
+              else if (moveString == "expand_robot") move = expand_robot;
+              else if (moveString == "move_forward") move = move_forward;
+              else if (moveString == "move_back") move = move_back;
+              else if (moveString == "rotate_right") move = rotate_right;
+              else if (moveString == "rotate_left") move = rotate_left;
+              else if (moveString == "GSC_load") move = GSC_load;
+              else if (moveString == "NSC_load") move = NSC_load;
+              else if (moveString == "GSC_unload") move = GSC_unload;
+              else if (moveString == "NSC_unload") move = NSC_unload;
+              else if (moveString ==  "retract_act") move = retract_act;
+              else if (moveString == "Beacon") move = Beacon;
+              else move = bad_case; // Default case if unknown
+              //else move = read_nano; // Default case if unknown
+
+              leftDrive.encoderCountSpeed = 0;
+              rightDrive.encoderCountSpeed = 0;
+              leftDrive.encoderCount = 0;
+              rightDrive.encoderCount = 0;
+              lastLeftEncoderCount = 0;
+              lastRightEncoderCount = 0;
+              leftSpeed = 0;
+              rightSpeed = 0;
+
+              if (move == move_forward || move == move_back) {
+                targetCount1 = targetCountF1(length);
+                targetCount2 = targetCountF2(length);
+              }
+              if (move == rotate_right || move == rotate_left) {
+                targetCount1 = targetCountFR1(length);
+                targetCount2 = targetCountFR2(length);
+              }
+            }
+          }
+          break;
+
+      case stop: // stop
+          delay(500); // Stop for 0.5 second
+          Serial.print("stop,");
+          Serial.println(actualLength);
+          move = read_nano;
+          break;
+      
+      case expand_robot: // expand_robot
+          //moveActuatorG(100, true);  // Move actuator in the extend direction
+          //moveActuatorN(100, true);
+          digitalWrite(actM1DirPin1, HIGH);
+          digitalWrite(actM1DirPin2, LOW);
+          analogWrite(actM1PWMPin, 255);  // Full speed
+          digitalWrite(actM2DirPin1, HIGH);
+          digitalWrite(actM2DirPin2, LOW);
+          analogWrite(actM2PWMPin, 255);  // Full speed
+
+          digitalWrite(sweepDirPin1, HIGH);
+          digitalWrite(sweepDirPin2, LOW);
+          analogWrite(sweepPWMPin, 170);  // 2/3 speed (8V)
+
+          digitalWrite(sweepArmDirPin1, HIGH);
+          digitalWrite(sweepArmDirPin2, LOW);
+          analogWrite(sweepArmPWMPin, 255);  // Full speed
+
+          digitalWrite(augerDirPin1, HIGH);
+          digitalWrite(augerDirPin2, LOW);
+          analogWrite(augerPWMPin, 170);  // 2/3 speed (8V)
+
+          delay(4000); // Run for 4 seconds
+          expand = true;
+
+          stopActuators();
+          // expand roller/sweeper, activate auger
+          //GSCServo.write(initialAngleGSC);
+          //NSCServo.write(initialAngleNSC);
+          Serial.print("event_completed,expand_robot,");
+          Serial.println(actualLength);
+          move = stop;
+          break;
+
+      case move_forward: // move_forward
+          digitalWrite(26, HIGH); //M1EN
+          digitalWrite(27, HIGH); //M2EN
+          // Read initial encoder counts for both motors
+          encoderCountLeftStart = leftDrive.encoderCount;
+          encoderCountRightStart = rightDrive.encoderCount;
+          //leftDrive.move(120, 1); // set move duty cycle
+          //rightDrive.move(120, 1);
+          Timer1.restart();     // reset timer for PID control
+          leftSpeed = 20;
+          rightSpeed = 20; // units in RPM
+          leftDrive.PIDmove(leftSpeed);
+          rightDrive.PIDmove(rightSpeed);
+          moveInt = 1;
+          break;
+
+      case move_back: // move_back
+          digitalWrite(26, HIGH); //M1EN
+          digitalWrite(27, HIGH); //M2EN
+          // Read initial encoder counts for both motors
+          encoderCountLeftStart = leftDrive.encoderCount;
+          encoderCountRightStart = rightDrive.encoderCount;
+          //leftDrive.move(120, -1);  // set move duty cycle
+          //rightDrive.move(120, -1);
+          Timer1.restart();     // reset timer for PID control
+          leftSpeed = -20;
+          rightSpeed = -20; // units in RPM
+          leftDrive.PIDmove(leftSpeed);
+          rightDrive.PIDmove(rightSpeed);
+          moveInt = 2;
+          break;
+
+      case rotate_right: // rotate_right
+          digitalWrite(26, HIGH); //M1EN
+          digitalWrite(27, HIGH); //M2EN
+          // Read initial encoder counts for both motors
+          encoderCountLeftStart = leftDrive.encoderCount;
+          encoderCountRightStart = rightDrive.encoderCount;
+          //leftDrive.move(120, 1);  // set move duty cycle
+          //rightDrive.move(120, -1);
+          Timer1.restart();     // reset timer for PID control
+          leftSpeed = 20;
+          rightSpeed = -20; // units in RPM
+          leftDrive.PIDmove(leftSpeed);
+          rightDrive.PIDmove(rightSpeed);
+          moveInt = 3;
+          break;
+
+      case rotate_left: // rotate_left
+          digitalWrite(26, HIGH); //M1EN
+          digitalWrite(27, HIGH); //M2EN
+          // Read initial encoder counts for both motors
+          encoderCountLeftStart = leftDrive.encoderCount;
+          encoderCountRightStart = rightDrive.encoderCount;
+          //leftDrive.move(120, -1);  // set move duty cycle
+          //rightDrive.move(120, 1);
+          Timer1.restart();     // reset timer for PID control
+          leftSpeed = -20;
+          rightSpeed = 20; // units in RPM
+          leftDrive.PIDmove(leftSpeed);
+          rightDrive.PIDmove(rightSpeed);
+          moveInt = 4;
+          break;
+
+      case GSC_load: // GSC_load
+          pressureDetected = false;
+          previousMillis = millis();  // Start timer immediately
+
+          while (true) {
+              unsigned long currentMillis = millis(); // Continuously update time
+
+              // Check timeout condition
+              if (currentMillis - previousMillis >= interval) {
+                  break; // Exit while loop and trigger expansion
+              }
+
+              // Read pressure sensor
+              int pressureG = analogRead(presG);
+
+              // If pressure is detected, stop and proceed
+              if (pressureG >= presThreshold && limG.getStateRaw() == 0) {
+                  Serial.println(" debug - limG.isPressed()");
+                  Serial.println(limG.getStateRaw());
+                  pressureDetected = true;
+                  break; // Exit while loop to proceed with lifting
+              }
+
+              // Continue retracting actuator
+              digitalWrite(actM1DirPin1, LOW);
+              digitalWrite(actM1DirPin2, HIGH);
+              analogWrite(actM1PWMPin, 255);  // Full-speed retract
+          }
+
+          // Stop the actuator
+          digitalWrite(actM1DirPin1, LOW);
+          digitalWrite(actM1DirPin2, LOW);
+          analogWrite(actM1PWMPin, 0);
+          delay(1000);
+
+          // If pressure was reached, lift
+          if (pressureDetected) {
+              GSCServo.write(desiredAngleGSC);
+              delay(5000);
+              Serial.print("event_completed,GSC_load,");
+              Serial.println(actualLength);
+          } else {
+              // If timeout happened, expand instead
+              digitalWrite(actM1DirPin1, HIGH);
+              digitalWrite(actM1DirPin2, LOW);
+              analogWrite(actM1PWMPin, 255);  // Full-speed extend
+              delay(7000);
+              Serial.print("event_failed,GSC_load,");
+              Serial.println(actualLength);
+          }
+
+          move = stop;
+          break;
+
+      case NSC_load: // NSC_load
+          pressureDetected = false;
+          previousMillis = millis();  // Start timer immediately
+
+          while (true) {
+              unsigned long currentMillis = millis(); // Continuously update time
+
+              // Check timeout condition
+              if (currentMillis - previousMillis >= interval) {
+                  break; // Exit while loop and trigger expansion
+              }
+
+              // Read pressure sensor
+              int pressureN = analogRead(presN);
+
+              // If pressure is detected, stop and proceed
+              if (pressureN >= presThreshold && limN.getStateRaw() == 0) {
+                  pressureDetected = true;
+                  break; // Exit while loop to proceed with lifting
+              }
+
+              // Continue retracting actuator
+              digitalWrite(actM2DirPin1, LOW);
+              digitalWrite(actM2DirPin2, HIGH);
+              analogWrite(actM2PWMPin, 255);  // Full-speed retract
+          }
+
+          // Stop the actuator
+          digitalWrite(actM2DirPin1, LOW);
+          digitalWrite(actM2DirPin2, LOW);
+          analogWrite(actM2PWMPin, 0);
+          delay(1000);
+
+          // If pressure was reached, lift
+          if (pressureDetected) {
+              NSCServo.write(desiredAngleNSC);
+              delay(5000);
+              Serial.print("event_completed,NSC_load,");
+              Serial.println(actualLength);
+          } else {
+              // If timeout happened, expand instead
+              digitalWrite(actM2DirPin1, HIGH);
+              digitalWrite(actM2DirPin2, LOW);
+              analogWrite(actM2PWMPin, 255);  // Full-speed extend
+              delay(7000);
+              Serial.print("event_failed,NSC_load,");
+              Serial.println(actualLength);
+          }
+
+          move = stop;
+          break;
+
+      case GSC_unload: // GSC_unload
+          GSCServo.write(initialAngleGSC);
+          moveActuatorG(100, true);
+          Serial.print("event_completed,GSC_unload,");
+          Serial.println(actualLength);
+          move = stop;
+          break;
+
+      case NSC_unload: // NSC_unload
+          NSCServo.write(initialAngleNSC);
+          moveActuatorN(100, true);
+          Serial.print("event_completed,NSC_unload,");
+          Serial.println(actualLength);
+          move = stop;
+          break;
+
+      case retract_act:
+          digitalWrite(actM1DirPin1, LOW);
+          digitalWrite(actM1DirPin2, HIGH);
+          analogWrite(actM1PWMPin, 255);  // Full-speed retract
+
+          digitalWrite(actM2DirPin1, LOW);
+          digitalWrite(actM2DirPin2, HIGH);
+          analogWrite(actM2PWMPin, 255);  // Full-speed retract
+          break;
+
+      case Beacon: // Beacon
+          BaseServo.write(desiredAngleBase);
+          delay(4000); // 4 second delay
+          WristServo.write(desiredAngleWrist);
+          delay(2000); // 2 second delay
+          WristServo.write(initialAngleWrist);
+          delay(2000); // 2 second delay
+          BaseServo.write(initialAngleBase);
+          delay(4000); // 4 second delay
+          Serial.print("event_completed,Beacon,");
+          Serial.println(actualLength);
+          move = stop;
+          break;
+
+      case busy:
+            // DM code for PID update
+            if(leftDrive.encoderCountSpeed != leftSpeed){
+              /*Serial.print(leftSpeed);
+              Serial.print(" debug - right Speed");
+              Serial.print(leftSpeed);
+              Serial.println(" debug - left Speed");*/
+              leftDrive.PIDmove(leftSpeed);
+              rightDrive.PIDmove(rightSpeed);
+            }
+
+
+            // ramp up and down at beginning and end of each move
+            // 1.15 gotten by distance it takes to speed to 0 from 100 in decrements of 10 per 10ms
+            // 12 gotten by degrees it takes to speed to 0 from 100 in decrements of 10 per 10ms
+            // (100+90+80+70+60+50+40+30+20+10)*0.01/60*4pi * [1 OR /11*360/pi]
+            // Both target counts are 44 = (100+90+80+70+60+50+40+30+20+10)*0.01/60*480
+            //noInterrupts();
+
+            // decide if we want to speed up
+            if (abs(leftSpeed) < 100 && ((targetCount1 - abs(leftDrive.encoderCount)) > targetCountF1(1.152*1) || (targetCount1 - abs(leftDrive.encoderCount)) > targetCountFR1(12*1))){ // computing same number twice but helps with debugging
+              
+              if(leftSpeed > 0){    // determine acceleration direction in left
+              leftSpeedUp = true;
+              leftSpeedDown = false;
+              } else{
+                leftSpeedDown = true;
+                leftSpeedUp = false;
+              }
+
+              if(rightSpeed > 0){    // determine acceleration direction in right
+              rightSpeedUp = true;
+              rightSpeedDown = false;
+              } else{
+                rightSpeedDown = true;
+                rightSpeedUp = false;
+              }
+
+            // decide if we want to speed down
+            } else if (abs(leftSpeed) > 20 && ((targetCount1 - abs(leftDrive.encoderCount)) < targetCountF1(1.152*1) || (targetCount1 - abs(leftDrive.encoderCount)) < targetCountFR1(12*1))){ // putting OR here won't cause an always true (computing same numbers twice)
+              
+              if(leftSpeed < 0){    // determine acceleration direction in left
+              leftSpeedUp = true;
+              leftSpeedDown = false;
+              } else{
+                leftSpeedDown = true;
+                leftSpeedUp = false;
+              }
+
+              if(rightSpeed < 0){    // determine acceleration direction in right
+              rightSpeedUp = true;
+              rightSpeedDown = false;
+              } else{
+                rightSpeedDown = true;
+                rightSpeedUp = false;
+              }
+
+            // else keep speed the same
+            } else{
+              leftSpeedDown = false;
+              leftSpeedUp = false;
+              rightSpeedDown = false;
+              rightSpeedUp = false;
+            }
+            //interrupts();
+            
+            /*
+            Serial.print(leftSpeedUp);
+            Serial.print(" left speed up ");
+            Serial.print(rightSpeedUp);
+            Serial.print(" right speed up ");
+            Serial.print(leftSpeedDown);
+            Serial.print(" left speed d0wn ");
+            Serial.print(rightSpeedDown);
+            Serial.print(" right speed down ");
+            Serial.print(moveInt);
+            Serial.println(" moveInt");
+            */
+          break;
+
+      case end_forward:
+          leftSpeedDown = false;
+          leftSpeedUp = false;
+          rightSpeedDown = false;
+          rightSpeedUp = false;
+          leftSpeed = 0;
+          rightSpeed = 0;
+          if(leftDrive.encoderCountSpeed != leftSpeed){
+            /*Serial.print(leftSpeed);
+            Serial.print(" debug - right Speed");
+            Serial.print(leftSpeed);
+            Serial.println(" debug - left Speed");*/
+            leftDrive.PIDmove(leftSpeed);
+            rightDrive.PIDmove(rightSpeed);
+          }
+          if(abs(leftDrive.encoderCountSpeed) <= 0){
+            move = stop;
+          }
+          // Calculate the total rotation (in degrees)
+          actualLength = getLengthTraveled(leftDrive.encoderCount, rightDrive.encoderCount);
+          Serial.print("event_completed,move_forward,");
+          Serial.println(actualLength);
+          moveInt = 0;
+          break;
+
+      case end_back:
+          leftSpeedDown = false;
+          leftSpeedUp = false;
+          rightSpeedDown = false;
+          rightSpeedUp = false;
+          leftSpeed = 0;
+          rightSpeed = 0;
+          if(leftDrive.encoderCountSpeed != leftSpeed){
+            /*Serial.print(leftSpeed);
+            Serial.print(" debug - right Speed");
+            Serial.print(leftSpeed);
+            Serial.println(" debug - left Speed");*/
+            leftDrive.PIDmove(leftSpeed);
+            rightDrive.PIDmove(rightSpeed);
+          }
+          if(abs(leftDrive.encoderCountSpeed) <= 0){
+            move = stop;
+          }
+          // Calculate the total rotation (in degrees)
+          actualLength = abs(getLengthTraveled(leftDrive.encoderCount, rightDrive.encoderCount));
+          Serial.print("event_completed,move_back,");
+          Serial.println(actualLength);
+          moveInt = 0;
+          break;
+
+      case end_right:
+          leftSpeedDown = false;
+          leftSpeedUp = false;
+          rightSpeedDown = false;
+          rightSpeedUp = false;
+          leftSpeed = 0;
+          rightSpeed = 0;
+          if(leftDrive.encoderCountSpeed != leftSpeed){
+            /*Serial.print(leftSpeed);
+            Serial.print(" debug - right Speed");
+            Serial.print(leftSpeed);
+            Serial.println(" debug - left Speed");*/
+            leftDrive.PIDmove(leftSpeed);
+            rightDrive.PIDmove(rightSpeed);
+          }
+          if(abs(leftDrive.encoderCountSpeed) <= 0){
+            move = stop;
+          }
+          // Calculate the total rotation (in degrees)
+          actualLength = abs(getRotationInDegrees(leftDrive.encoderCount, rightDrive.encoderCount));
+          Serial.print("event_completed,rotate_right,");
+          Serial.println(actualLength);
+          moveInt = 0;
+          break;
+
+      case end_left:
+          leftSpeedDown = false;
+          leftSpeedUp = false;
+          rightSpeedDown = false;
+          rightSpeedUp = false;
+          leftSpeed = 0;
+          rightSpeed = 0;
+          if(leftDrive.encoderCountSpeed != leftSpeed){
+            /*Serial.print(leftSpeed);
+            Serial.print(" debug - right Speed");
+            Serial.print(leftSpeed);
+            Serial.println(" debug - left Speed");*/
+            leftDrive.PIDmove(leftSpeed);
+            rightDrive.PIDmove(rightSpeed);
+          }
+          if(abs(leftDrive.encoderCountSpeed) <= 0){
+            move = stop;
+          }
+          // Calculate the total rotation (in degrees)
+          actualLength = abs(getRotationInDegrees(leftDrive.encoderCount, rightDrive.encoderCount));
+          Serial.print("event_completed,rotate_left,");
+          Serial.println(actualLength);
+          moveInt = 0;
+          break;
+
+      case bad_case:
+          move = read_nano;
+          Serial.println("debug bad command");
+  }
+}
