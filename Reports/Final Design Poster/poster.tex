@@ -1,0 +1,198 @@
+% Gemini theme
+% https://github.com/anishathalye/gemini
+
+\documentclass[final]{beamer}
+
+% ====================
+% Packages
+% ====================
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[size=custom,width=106.68,height=60.96,scale=0.85]{beamerposter}
+\usetheme{custom}
+\usecolortheme{tntech}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgf}
+\usepackage{multicol}
+\usepackage{mathtools}
+
+% ====================
+% Lengths
+% ====================
+
+% If you have N columns, choose \sepwidth and \colwidth such that
+% (N+1)*\sepwidth + N*\colwidth = \paperwidth
+\newlength{\sepwidth}
+\newlength{\colwidth}
+\setlength{\sepwidth}{0.025\paperwidth}
+\setlength{\colwidth}{0.3\paperwidth}
+
+\newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+
+\newcommand{\minus}{\scalebox{0.75}[1.0]{$-$}}
+\newcommand{\smallequals}{\scalebox{0.75}[1.0]{$=$}}
+\newcommand{\sectionHeading}[1]{\vskip2.0ex \textbf{#1} \vskip0.25ex}
+
+% ====================
+% Title
+% ====================
+
+\logotitle{\includegraphics[height=5.0cm]{tntechgold.png}}
+\title{SECON 2025 Hardware Competition Robot}
+\author{Sean Borchers, Alex Cruz, Samuel Hunter, and Dakota Moye}
+\institute[shortinst]{Tennessee Technological University}
+
+% ====================
+% Body
+% ====================
+
+\pgfplotsset{compat=1.16}
+\begin{document}
+
+\begin{frame}[t]
+\begin{columns}[t]
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+  \begin{block}{Introduction}
+
+    \sectionHeading{Problem}
+    
+        Build an autonomous robot for SECON.
+    
+    \sectionHeading{Constraints}
+    
+        Follow the rules
+
+  \end{block}
+
+  \begin{block}{Design}
+    \begin{itemize}
+    
+      \item \textbf{Navigation}
+        \begin{itemize}
+          \item The robot navigates autonomously using orientation sensing.
+        \end{itemize}
+        
+      \item \textbf{Control}
+        \begin{itemize}
+          \item Lower-level control controls motors.
+        \end{itemize}
+      
+      \item \textbf{Camera}
+        \begin{itemize}
+          \item The camera detects objects and symbols.
+        \end{itemize}
+      
+      \item \textbf{Sensors}
+        \begin{itemize}
+          \item Sensors detect orientation, magnetic fields, and light levels.
+        \end{itemize}
+    
+    \end{itemize}
+  
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+    Put team picture here.
+    % \begin{figure}
+    %   \centering
+    %   \includegraphics[width=20.0cm]{Neuron.png}
+    %   \caption{Neuron Diagram}
+    % \end{figure}
+
+  \begin{block}{Experimentation}
+
+    Robo does everything to a degree.
+
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+  \begin{block}{Conclusion}
+    Put BOM and final thoughts here.
+
+    % start example table
+
+    % \begin{columns}[t]
+    %   \begin{column}{0.4\colwidth}
+
+    %     \begin{table}[ht]
+    %       % increase table row spacing, adjust to taste
+    %       \caption{Gen 1 ANN Model Assumptions}
+    %       \label{Table:Gen1ANNAssumptions}
+    %       \centering
+    %       % Some packages, such as MDW tools, offer better commands for making tables
+    %       % than the plain LaTeX2e tabular which is used here.
+    %       \resizebox{\columnwidth}{!}{%
+    %       \begin{tabular}{ c l }
+    %         \toprule
+    %         \textbf{Number} & \textbf{Assumption}\\
+    %         \midrule
+    %         1 & Firing Frequency Encoding\\
+
+    %         2 & Steady State\\
+
+    %         3 & Unity Static Firing Rate\\
+
+    %         4 & Learned Inhibition\\
+
+    %         5 & Unconditional Weighting\\
+    %        \bottomrule
+    %       \end{tabular}}
+    %     \end{table}
+    %   \end{column}
+
+    %   \begin{column}{0.4\colwidth}
+    %     \begin{table}[ht]
+    %       % increase table row spacing, adjust to taste
+    %       \caption{Gen 2 ANN Model Assumptions}
+    %       \label{Table:Gen2ANNAssumptions}
+    %       \centering
+    %       % Some packages, such as MDW tools, offer better commands for making tables
+    %       % than the plain LaTeX2e tabular which is used here.
+    %       \resizebox{\columnwidth}{!}{%
+    %       \begin{tabular}{ c l }
+    %         \toprule
+    %         \textbf{Number} & \textbf{Assumption}\\
+    %         \midrule
+    %         1 & Firing Frequency Encoding\\
+
+    %         2 & Steady State\\
+
+    %         3 & Learned Inhibition\\
+
+    %         4 & Unconditional Weighting\\
+    %         & \\
+    %         \bottomrule
+    %       \end{tabular}}
+    %     \end{table}
+    %   \end{column}
+
+    % \end{columns}
+
+    % end example table
+    
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+\end{columns}
+\end{frame}
+
+\end{document}
