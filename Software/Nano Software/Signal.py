@@ -40,7 +40,7 @@ class Signal:
         for synchronous functions.
         """
         # I made the below because I think it might be useful, but not necessary atm
-        self.logger.debug(f"Signal {self.name} called")
+        #self.logger.debug(f"Signal {self.name} called")
         results = []
         #self.logger.debug(f"Signal {self.name} emitted with {str(*args)} and {str(**kwargs)}")
         for callable_obj in self.connections:

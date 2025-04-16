@@ -6,7 +6,8 @@ from Signal import *
 class EventType(Enum):
     TRANSFORM = "transform"
     MOVE = "move"
-    ABSOLUTE_MOVE = "absolute_move"
+    PRECISE_MOVE = "precise_move"
+    RELATIVE_MOVE = "relative_move"
     ROTATE = "rotate"
     ABSOLUTE_ROTATE = "absolute_rotate"
     MANEUVER = "maneuver"
@@ -14,7 +15,8 @@ class EventType(Enum):
     LOAD = "load"
     FIND_PATH = "find_path"
     BEACON = "beacon"
-    POLAR = "polar"
+    PACKET = "packet"
+    RETRACT = "retract"
     CUSTOM = "custom"
 
 

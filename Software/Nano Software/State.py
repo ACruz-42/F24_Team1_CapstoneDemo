@@ -1,8 +1,12 @@
 from dataclasses import dataclass
+from types import coroutine
+
 from Event import *
 import asyncio
 import math
 import logging
+import time
+from control import *
 
 
 @dataclass
@@ -30,6 +34,10 @@ class Vector2:
 
     def __truediv__(self, divisor: int):
         return Vector2(self.x / divisor, self.y / divisor)
+
+    def __eq__(self, other):
+        print("test")
+        return (self.x == other.x) and (self.y == other.y)
 
     @staticmethod
     def ZERO():
@@ -126,7 +134,7 @@ class Transform(SignalEmitter):
             direct_rotation += 360
         while direct_rotation > 180:
             direct_rotation -= 360
-        logging.debug(f"Shortest rotation to target rotation: {direct_rotation}")
+        logger.debug(f"Shortest rotation to target rotation: {direct_rotation}")
         return direct_rotation
 
 
@@ -136,26 +144,56 @@ class State(SignalEmitter):
 
     def __init__(self):
         SignalEmitter.__init__(self)
+        self.starting_time = 0
+        self.ending_time = 99999
         self.entered_state = self.add_signal("entered_state")
         self.exited_state = self.add_signal("exited_state")
         self.done = self.add_signal("done")
         self.transform_request = self.add_signal("transform_request")
         self.request_light_detected = self.add_signal("request_light_detected")
+        self.request_loading_zone = self.add_signal("request_loading_zone")
+        self.april_tag_found = self.add_signal("april_tag_found")
+        self.request_emergency_exit = self.add_signal("request_emergency_exit")
+        self.request_path = self.add_signal("request_path")
+        self.mark_point = self.add_signal("mark_point")
+        self.request_current_transform = self.add_signal("request_current_transform")
+        self.logger = logging.getLogger("Nano")
+
+
+        self.COMMAND_LIST = {"expand_rover": self.expand_rover, "load_gsc": self.load_gsc, "load_nsc": self.load_nsc,
+                        "unleash_beacon": self.unleash_beacon, "read_april_tags": self.read_april_tags,
+                        "get_material_positions": self.get_material_positions,
+                        "get_wall_distance": self.get_wall_distance}
+
 
     async def enter(self):
         self.entered_state.emit(self)
-        logger = logging.getLogger("Nano")
-        logger.info("Entered State: " + str(self.__class__.__name__))
+        self.logger.info("Entered State: " + str(self.__class__.__name__))
+        if await self.exit_if_over_time(self.ending_time):
+            return
 
     async def exit(self):
         self.exited_state.emit(self)
-        logger = logging.getLogger("Nano")
-        logger.info("Exited State: " + str(self.__class__.__name__))
+        self.logger.info("Exited State: " + str(self.__class__.__name__))
 
-    async def update(self, delta: float):
-        pass
+    async def check_timer(self, time_limit: int) -> bool:
+       if (time.time() - self.starting_time) >= time_limit:
+           return True
+       else:
+           return False
 
-    async def move_forward(self, distance: float, wait=False) -> None:
+    async def emergency_exit(self):
+        self.request_emergency_exit.emit()
+        self.done.emit()
+
+    async def exit_if_over_time(self, time_limit: int) -> bool:
+        if await self.check_timer(time_limit):
+            await self.emergency_exit()
+            return True
+        else:
+            return False
+
+    async def move_forward(self, distance: float, wait=True) -> None: # TODO: FIX FOR NEW SYSTEM
         """
         Moves the robot the specified distance forward in inches
         """
@@ -170,26 +208,68 @@ class State(SignalEmitter):
         if wait:
             await move_forward.event_finished.wait()  # This is related to  AsyncIO
 
-    async def move_back(self, distance: float, wait=False) -> None:
+    async def move_back(self, distance: float, wait=True) -> None: # TODO: FIX FOR NEW SYSTEM
         """
         Moves the robot the specified distance backwards in inches
         """
         await self.move_forward(-distance, wait)
 
-    async def move_to(self, x: float, y: float, wait=False) -> None:
+    async def move_to(self, x: float, y: float, wait=True) -> None:
         """
         Moves to an absolute position on the grid
         :param x: Desired x position on grid (in inches)
         :param y: Desired y position on grid (in inches)
         :param wait: Should the robot wait to issue the next command after this function?
         """
-        position = Vector2(x, y)
-        move_event = Event(EventType.TRANSFORM, Transform(Vector3(position.x, position.y, 0), True))
+        target_position = Transform(Vector3(x,y,0))
+        current_position: Transform = self.request_current_transform.emit()[0][0]
+        target_angle = current_position.get_rotation_to_target(target_position.get_position())
+
+        if not self._rot_is_close_enough(target_angle, current_position.rotation):
+            await self.rotate_to(target_angle)
+
+        move_event = Event(EventType.MOVE, target_position)
         self.transform_request.emit(move_event)
         if wait:
-            await move_event.event_finished.wait()  # This is related to  AsyncIO
+            await move_event.event_finished.wait()  # This is related to AsyncIO
 
-    async def rotate_right(self, angle: float, wait=False) -> None:
+    async def precise_move_to(self, x: float, y: float, wait=True) -> None:
+        """
+        Moves to an absolute position on the grid
+        :param x: Desired x position on grid (in inches)
+        :param y: Desired y position on grid (in inches)
+        :param wait: Should the robot wait to issue the next command after this function?
+        """
+        target_position = Transform(Vector3(x,y,0))
+        current_position: Transform = self.request_current_transform.emit()[0][0]
+        target_angle = current_position.get_rotation_to_target(target_position.get_position())
+
+        if not self._rot_is_close_enough(target_angle, current_position.rotation):
+            await self.rotate_to(target_angle)
+
+        move_event = Event(EventType.PRECISE_MOVE, target_position)
+        self.transform_request.emit(move_event)
+        if wait:
+            await move_event.event_finished.wait()  # This is related to AsyncIO
+
+    async def move_event(self, duration, wait = True) -> None:
+        # idk smth about moving forward and backward based on the positive or negative duration in seconds
+
+        move_event = Event(EventType.RELATIVE_MOVE, duration)
+        self.transform_request.emit(move_event)
+        if wait:
+            await move_event.event_finished.wait()  # This is related to AsyncIO
+
+
+    async def move_to_gsc(self) -> None:
+        await self.move_to(0,0) # TODO: change this
+        await self.rotate_to(270)
+
+    async def move_to_nsc(self) -> None:
+        await self.move_to(-1.0,24)
+        await self.rotate_to(180)
+
+    async def rotate_right(self, angle: float, wait=True) -> None: # TODO: FIX FOR NEW SYSTEM
         """
         Moves the robot the specified angle right in degrees
         """
@@ -204,21 +284,21 @@ class State(SignalEmitter):
         if wait:
             await rotate_right.event_finished.wait()  # This is related to  AsyncIO
 
-    async def rotate_left(self, angle: float, wait=False) -> None:
+    async def rotate_left(self, angle: float, wait=True) -> None: # TODO: FIX FOR NEW SYSTEM
         """
         Moves the robot the specified angle left in degrees
         """
         await self.rotate_right(-angle, wait)
 
-    async def rotate_to(self, angle: int, wait=False) -> None:
+    async def rotate_to(self, angle: float, wait=True) -> None:
         """
         Rotates the robot to a given 'absolute' angle. (0 is starting rotation, 90 is towards cave)
         :param angle: Angle in degrees
         :param wait: Wait for event to finish before queueing next event
         :return: None
         """
-        logging.debug(f"Rotating to {angle}")
-        absolute_rotate = Event(EventType.ABSOLUTE_ROTATE, angle)
+        self.logger.debug(f"Rotating to {angle}")
+        absolute_rotate = Event(EventType.ROTATE, angle)
         self.transform_request.emit(absolute_rotate)
         if wait:
             await absolute_rotate.event_finished.wait()
@@ -228,7 +308,7 @@ class State(SignalEmitter):
         Waits a period of time before moving again. Needs previous command to have wait=true
         :param seconds: Wait time in seconds
         """
-        logging.debug(f"Waiting {seconds} seconds")
+        self.logger.debug(f"Waiting {seconds} seconds")
         await asyncio.sleep(seconds)
 
     async def expand_rover(self, wait = True) -> None:
@@ -242,36 +322,62 @@ class State(SignalEmitter):
         if wait:
             await expand_event.event_finished.wait()
 
-    async def load_gsc(self, wait = True) -> None:
-        completed = False
-        while not completed:
-            load_event = Event(EventType.LOAD, 0)
-            self.transform_request.emit(load_event)
-            if wait:
-                await load_event.event_finished.wait()
-            if load_event.event_success:
-                completed = True
+    async def retract_rover(self):
+        retract_event = Event(EventType.RETRACT, 0)
+        self.transform_request.emit(retract_event)
+        await retract_event.event_finished.wait()
 
-    async def load_nsc(self, wait = True) -> None:  # TODO: change this so that it relocates to starting pos
-        completed = False
-        while not completed:
-            load_event = Event(EventType.LOAD, 1)
-            self.transform_request.emit(load_event)
-            if wait:
-                await load_event.event_finished.wait()
-            if load_event.event_success:
-                completed = True
-
-    async def find_path(self, iteration,  wait = True) -> None:
-        pathfind_event = Event(EventType.FIND_PATH, iteration)
-        self.transform_request.emit(pathfind_event)
+    async def load_gsc(self, wait = True) -> bool:
+        load_event = Event(EventType.LOAD, 0)
+        self.transform_request.emit(load_event)
         if wait:
-            await pathfind_event.event_finished.wait()
+            await load_event.event_finished.wait()
 
-            """
-            expand_robot
-            GSC_load
-            NSC_load
-            event_failed,GSC_load,
-            """
+    async def load_nsc(self, wait = True) -> bool:
+        load_event = Event(EventType.LOAD, 1)
+        self.transform_request.emit(load_event)
+        if wait:
+            await load_event.event_finished.wait()
 
+    async def unleash_beacon(self, wait = True) -> None:
+        beacon_event = Event(EventType.BEACON, 0)
+        self.transform_request.emit(beacon_event)
+        if wait:
+            await beacon_event.event_finished.wait()
+
+    async def read_april_tags(self) -> int:
+        april_tag = control(0, 0, 1)
+
+        if april_tag < 0:
+            await self.move_forward(3, True)
+            april_tag = control(0, 0, 1)
+            # The below statement makes sure that we're not going to overrun on time, even if we bug out.
+            while april_tag < 0 and not await self.exit_if_over_time(self.ending_time-15):
+                await self.rotate_left(10, True)
+                april_tag = control(0, 0, 1) if control(0, 0, 1) > 0 else april_tag
+                await self.rotate_right(10, True)
+                april_tag = control(0, 0, 1) if control(0, 0, 1) > 0 else april_tag
+
+        return control(0, 0, 1)
+
+
+    @staticmethod
+    async def get_material_positions() -> list:
+        return control(0, 1, 0)
+
+    @staticmethod
+    async def get_wall_distance() -> int:
+        return control(1, 0, 0)
+
+    @staticmethod
+    def _rot_is_close_enough(current_rot, target_rot, close_enough_rotation=5):
+        target_rotation_plus = target_rot + 360
+        target_rotation_minus = target_rot - 360
+        if abs(current_rot - target_rot) <= close_enough_rotation:
+            return True
+        elif abs(current_rot - target_rotation_plus) <= close_enough_rotation:
+            return True
+        elif abs(current_rot - target_rotation_minus) <= close_enough_rotation:
+            return True
+        else:
+            return False

@@ -12,13 +12,10 @@ from EventHandler import EventHandler
 from StateMachine import StateMachine
 from Event import Event, EventType
 from State import Vector2, Vector3, Transform
+from MotorControl import InputPacket, OutputPacket
 
 
-# TODO: Make timer placeholder and final pos placeholder and get_pos placeholders (imu, wall, ultrasonic sensors)
-# TODO: signal from arduino that checks against current pos
-# TODO: work on timer
-# TODO: account for event timeout
-# TODO: fix stop dependency
+# TODO: Consider end of game packet needs (Some kind of flag in output_packet?)
 
 
 class Rover:
@@ -30,11 +27,14 @@ class Rover:
     POS_LOG_FILE = LOG_DIR / f"robot_path_{timestamp}.csv"
     NANO_LOG_FILE = LOG_DIR / f"main_log_{timestamp}.log"
 
+    PATH_DIR = Path.home() / "Desktop/RobotPath"
+    PATH_FILE = PATH_DIR / f"robot_path.csv"
+
     def __init__(self):
         # Position from OTOS
         self.position = self.get_initial_transform().get_position()  # Current position
         self.rotation = self.get_initial_transform().rotation  # Current rotation in degrees
-        self.light_detected = True # TODO: Change once light is implemented
+        self.light_detected = False
         self.LOG_DIR.mkdir(parents=True, exist_ok=True)
 
         # Position from encoder feedback
@@ -46,25 +46,64 @@ class Rover:
         self.logger = logging.getLogger("Nano")
         self._set_up_logger()
 
+        # Set up packet
+        self.input_packet = InputPacket()
+        self.output_packet = OutputPacket()
+
+        # Connect packet signals
+        def _on_sweeper_flag_changed(flag):
+            return
+            # if not self.output_packet.game_started: return
+            # self.output_packet.set_sweeper_flag(-1 if flag else 1) # 1 is truth-y (acts as True)
+        self.input_packet.sweeper_flag_changed.connect(_on_sweeper_flag_changed)
+
+        def _on_auger_flag_changed(flag):
+            return
+            # if self.output_packet.game_started: return
+            # self.output_packet.set_auger_flag(-1 if flag else 1)
+        self.input_packet.auger_flag_changed.connect(_on_auger_flag_changed)
+
+        self.input_packet.start_led_switch_changed.connect(self._on_light_detected)
+        self.input_packet.gsc_pressure_sensor_changed.connect(self._on_gsc_pressure_sensor_changed)
+        self.input_packet.nsc_pressure_sensor_changed.connect(self._on_nsc_pressure_sensor_changed)
+        self.input_packet.gsc_limit_switch_changed.connect(self._on_gsc_limit_switch_changed)
+        self.input_packet.nsc_limit_switch_changed.connect(self._on_nsc_limit_switch_changed)
+
+        self.input_packet.gsc_limit_switch_changed.connect(self.log_point_to_csv)
+
+
+
         # Initialize Arduino communication
         if sys.platform.startswith('win'):  # Specifically startswith, because Darwin is mac, and has win in it
-            self.arduino_comms = ArduinoCommunicator(port="COM4", baud_rate=115200)
+            self.arduino_comms = ArduinoCommunicator(port="COM4", output_packet=self.output_packet, baud_rate=115200)
         else:
-            self.arduino_comms = ArduinoCommunicator(port="/dev/ttyACM0", baud_rate=115200)
-        self.arduino_comms.light_detected.connect(self._on_light_detected)
+            self.arduino_comms = ArduinoCommunicator(port="/dev/ttyACM0", output_packet=self.output_packet, baud_rate=115200)
+        self.arduino_comms.connect()
+        self.arduino_comms.packet_received.connect(self.input_packet.receive_packet)
 
         self.feedback_pos = self.get_initial_transform().get_vector3()
 
         # Initialize EventHandler
-        self.event_handler = EventHandler(self.arduino_comms)
+        self.event_handler = EventHandler(self.arduino_comms, input_packet = self.input_packet,
+                                          output_packet=self.output_packet)
         self.event_handler.feedback_received.connect(self._on_feedback_received)
         self.event_handler.event_completed.connect(self._on_event_completed)
-        self.event_handler.request_transform.connect(self.get_rover_transform)
+        self.event_handler.request_transform.connect(self.poll_OTOS)
         self.event_handler.container_loaded.connect(self._on_container_loaded)
+        def _on_output_packet_request(): return self.output_packet
+        self.event_handler.request_output_packet.connect(_on_output_packet_request)
 
         # Initialize StateMachine
         self.state_machine = StateMachine()
         self.state_machine.request_light_detected.connect(self._on_request_light_detected)
+        self.state_machine.path_requested.connect(self._on_path_requested)
+        self.state_machine.point_marked.connect(self._on_point_marked)
+        self.state_machine.reset_tracking.connect(self._on_reset_Track)
+        self.state_machine.current_transform_requested.connect(self.poll_OTOS)
+
+        self.event_handler.move_to_gsc.connect(self.state_machine.pass_move_to_gsc)
+        self.event_handler.move_to_nsc.connect(self.state_machine.pass_move_to_nsc)
+        self.event_handler.expand_rover.connect(self.state_machine.pass_expand_rover)
 
         # Initialize OTOS:
         if not sys.platform.startswith('win'):
@@ -101,7 +140,7 @@ class Rover:
         self.logger.info("Nano Logger finished setup.")
 
     def _set_up_OTOS(self) -> None:
-        # if not self.OTOS:  # For debugging, TODO: turn off later
+        # if not self.OTOS:  # For debugging,
         #     return
         # Check if it's connected
         if not self.OTOS.is_connected():
@@ -118,6 +157,9 @@ class Rover:
 
         # Reset the tracking algorithm - this resets the position to the origin,
         # but can also be used to recover from some rare tracking errors
+        self.OTOS.resetTracking()
+
+    def _on_reset_Track(self) -> None:
         self.OTOS.resetTracking()
 
     def _on_feedback_received(self, feedback_string: str):
@@ -178,28 +220,50 @@ class Rover:
             case __:
                 self.logger.error(f"Unrecognized _on_container_loaded {container}")
 
-    def _on_light_detected(self) -> None:
-        self.light_detected = True
+    def _on_light_detected(self, flag) -> None:
+        self.light_detected = flag
+        self.output_packet.game_started = True
 
-    def _on_request_light_detected(self) -> None:
+    def _on_request_light_detected(self) -> bool:
         return self.light_detected
+
+    def _on_landing_zone_position_found(self, new_position: int) -> None:
+        self.landing_zone_position = new_position
+
+    def _on_landing_zone_position_requested(self) -> int:
+        return self.landing_zone_position
+
+    def _on_path_requested(self) -> list:
+        return self.read_path_from_csv(self.PATH_FILE)
+
+    def _on_point_marked(self) -> None:
+        self.log_point_to_csv(self.PATH_FILE)
 
     def get_rover_transform(self) -> Transform:
         return Transform(Vector3(self.position.x, self.position.y, self.rotation))
 
-    def poll_OTOS(self) -> Vector3:
+    def _on_gsc_pressure_sensor_changed(self, pressure) -> None:
+        self.input_packet.gsc_pressure_sensor = pressure
+
+    def _on_nsc_pressure_sensor_changed(self, pressure) -> None:
+        self.input_packet.nsc_pressure_sensor = pressure
+
+    def _on_gsc_limit_switch_changed(self, pressure) -> None:
+        self.input_packet.gsc_limit_switch = pressure
+
+    def _on_nsc_limit_switch_changed(self, pressure) -> None:
+        self.input_packet.nsc_limit_switch = pressure
+
+    def poll_OTOS(self) -> Transform:
         """
         Returns OTOS' current position converted to internal robot grid
         internal robot grid is clockwise rot
         while OTOS is counterclockwise
         Returns Vector3.
         """
-        if not self.OTOS:
-            return Vector3(self.theoretical_transform.x, self.theoretical_transform.y, self.theoretical_transform.rot)
         data = self.OTOS.getPosition()
-        self_transform = Vector3(data.x, data.y, -data.h)
-        self_transform = self_transform + self.get_initial_transform().get_vector3()
-        self_transform.rot = self.clamp_angle(self_transform.rot)
+        self_transform = Transform(Vector3(data.x, data.y, -data.h))
+        self_transform.rotation = self.clamp_angle(self_transform.rotation)
         return self_transform
 
     def update_position(self) -> None:
@@ -208,8 +272,8 @@ class Rover:
         """
         self.logger.debug("update_position started - ")
         otos_data = self.poll_OTOS()
+        otos_data = otos_data.get_vector3()
         self.logger.debug(f"otos_data - x:{otos_data.x}, y:{otos_data.y}, rot:{otos_data.rot}")
-
         self.position.x = otos_data.x
         self.position.y = otos_data.y
         self.rotation = self.clamp_angle(otos_data.rot)
@@ -246,7 +310,6 @@ class Rover:
             rotation_event.event_finished.connect(transform.position_reached.emit)
             self.event_handler.add_event(rotation_event)
 
-        # TODO: Some kind of check to make sure there's not two connections to transform.position_reached
 
     def log_position_to_csv(self, t_transform: Vector3, o_transform: Vector3, e_transform: Vector3):
         """
@@ -269,6 +332,29 @@ class Rover:
                              o_transform.x, o_transform.y, o_transform.rot,
                             e_transform.x, e_transform.y, e_transform.rot])
         self.logger.info("Position logged.")
+
+    def log_point_to_csv(self, path_file: Path) -> None:
+        """
+        Logs the current position into a spreadsheet for later recollection and recreation.
+        """
+        return
+        # otos_transform = self.poll_OTOS()
+        # with open(self.PATH_FILE, mode='a', newline='') as file:
+        #     writer = csv.writer(file)
+        #     writer.writerow([otos_transform.position.x, otos_transform.position.y, otos_transform.rotation])
+        # self.logger.info("Position logged.")
+
+    def read_path_from_csv(self, path_file: Path) -> list:
+        command_list = []
+        with open(path_file, newline='') as file:
+            for row in file:
+                if len(row) == 2:
+                    command_list.append(Vector2(row[0], row[1]))
+                if len(row) == 3:
+                    command_list.append(Vector3(row[0], row[1], row[2]))
+                else:
+                    command_list.append(row)
+        return command_list
 
     @staticmethod
     def clamp_angle(angle: float, lower_angle: float = 0, upper_angle: float = 360) -> float:
@@ -312,7 +398,7 @@ class Rover:
 
 
 if __name__ == "__main__":
-    time.sleep(30)
+    time.sleep(20)
     rover = Rover()
     # Start the rover
     asyncio.run(rover.run())

@@ -1,16 +1,22 @@
 from typing import List
 from RoverStates import *
 import asyncio
+import time
 from datetime import datetime
 class StateMachine(SignalEmitter):
     def __init__(self):
         SignalEmitter.__init__(self)
         self.logger = None
         self.transform_requested = self.add_signal("transform_requested")
+        self.current_transform_requested = self.add_signal("current_transform_requested")
         self.request_light_detected = self.add_signal("request_light_detected")
-        self.current_state: State = None
+        self.request_emergency_exit = self.add_signal("request_emergency_exit")
+        self.path_requested = self.add_signal("request_path")
+        self.point_marked = self.add_signal("point_marked")
+        self.reset_tracking = self.add_signal("reset_tracking")
+        self.current_state: State | None = None
         self.current_index: int = 0
-        self.time = datetime.now()
+        self.starting_time = time.time()
         # self.state_list: List = [WaitState, SenseState, BeaconState, GCSCState, NCSCState, CavePrepState,
         #                              CaveVacuumState, MaterialPickupState]
         self.state_list: List = [ShowcaseState]
@@ -20,7 +26,7 @@ class StateMachine(SignalEmitter):
         self.expanded = False
         self.loading_zone = -1
 
-        self.testing = False  # For testing purposes, do not set to True
+        self.testing = False  # Intended for testing purposes, do not set to True
 
     async def start(self):
         """
@@ -34,6 +40,10 @@ class StateMachine(SignalEmitter):
             self.current_state.done.connect(transition_to_next)
             self.current_state.transform_request.connect(self.transform_requested.emit)
             self.current_state.request_light_detected.connect(self.request_light_detected.emit)
+            self.current_state.april_tag_found.connect(self._on_april_tag_found)
+            self.current_state.reset_tracking.connect(self.reset_tracking.emit)
+            self.current_state.request_current_transform.connect(self.current_transform_requested.emit)
+            self.current_state.starting_time = self.starting_time
             await self.current_state.enter()
 
     async def transition_to(self, index: int):
@@ -47,6 +57,12 @@ class StateMachine(SignalEmitter):
             self.current_state.done.disconnect_all()
             self.current_state.transform_request.disconnect_all()
             self.current_state.request_light_detected.disconnect_all()
+            self.current_state.april_tag_found.disconnect_all()
+            self.current_state.request_loading_zone.disconnect_all()
+            self.current_state.request_emergency_exit.disconnect_all()
+            self.current_state.mark_point.disconnect_all()
+            self.current_state.request_path.disconnect_all()
+            self.current_state.request_current_transform.disconnect_all()
             await self.current_state.exit()
 
         self.current_index = index
@@ -54,8 +70,43 @@ class StateMachine(SignalEmitter):
         async def transition_to_next(): await self.transition_to(self.current_index + 1)
         self.current_state.done.connect(transition_to_next)
         self.current_state.transform_request.connect(self.transform_requested.emit)
+        self.current_state.april_tag_found.connect(self._on_april_tag_found)
+        self.current_state.request_loading_zone.connect(self._on_loading_zone_requested)
+        self.current_state.request_emergency_exit.connect(self.request_emergency_exit.emit)
+        self.current_state.mark_point.connect(self.point_marked.emit)
+        self.current_state.request_path.connect(self.path_requested.emit)
+        self.current_state.request_current_transform.connect(self.current_transform_requested.emit)
+        self.current_state.starting_time = self.starting_time
+
 
         await self.current_state.enter()
+
+    async def pass_move_to_gsc(self):
+        await self.current_state.move_to_gsc()
+
+    async def pass_move_to_nsc(self):
+        await self.current_state.move_to_nsc()
+
+    async def pass_expand_rover(self):
+        await self.current_state.expand_rover()
+
+    async def _on_april_tag_found(self, tag_number: int) -> None:
+        self.loading_zone = tag_number
+
+    async def _on_loading_zone_requested(self) -> Vector3:
+        match self.loading_zone:
+            case 0:
+                return Vector3(0,0,0)
+            case 1:
+                return Vector3(0,0,0)
+            case 2:
+                return Vector3(0,0,0)
+            case 3:
+                return Vector3(0,0,0)
+            case 4:
+                return Vector3(0,0,0)
+            case __:
+                return Vector3(0,0,0)
 
     @staticmethod
     def test():

@@ -17,8 +17,9 @@ class ArduinoCommunicator(SignalEmitter):
     LOG_DIR = Path.home() / "Desktop" / "Logs"
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     ARDUINO_LOG_FILE = LOG_DIR / f"arduino_log_{timestamp}.log"
+    CONTROL_LOOP_DURATION = 0.1
 
-    def __init__(self, port: str, baud_rate: int = 9600):
+    def __init__(self, output_packet, port: str, baud_rate: int = 9600):
         SignalEmitter.__init__(self)
         self.arduino_logger = None
         self._set_up_logger()
@@ -31,7 +32,9 @@ class ArduinoCommunicator(SignalEmitter):
         self.waiting = False
         self.stopped = self.add_signal("stopped")
         self.light_detected = self.add_signal("light_detected")
+        self.packet_received = self.add_signal("packet_received")
         self.ready_for_command = True
+        self.output_packet = output_packet
 
     def _set_up_logger(self):
         self.LOG_DIR.mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
@@ -60,12 +63,12 @@ class ArduinoCommunicator(SignalEmitter):
         """
         try:
             self.ser = serial.Serial(self.port, self.baud_rate, timeout=1)
-            time.sleep(2)  # Wait for Arduino to initialize
+            time.sleep(1)  # Wait for Arduino to initialize
             self.arduino_logger.debug(f"Connected to Arduino on {self.port}")
 
             # Start the message reading thread
             self.running = True
-            self.read_thread = threading.Thread(target=self._read_messages)
+            self.read_thread = threading.Thread(target=self.run_control_loop)
             self.read_thread.start()
         except Exception as e:
             self.arduino_logger.error(f"Failed to connect to Arduino: {e}")
@@ -81,168 +84,88 @@ class ArduinoCommunicator(SignalEmitter):
             self.ser.close()
             self.arduino_logger.debug("Disconnected from Arduino.")
 
-    def _read_messages(self):
-        """
-        Continuously read messages from the Arduino and add them to the message queue.
-        """
-        while self.running:
+    def run_control_loop(self):
+        while True:
+            self.ser.write(str(self.output_packet).encode())
+            self.arduino_logger.debug(f"Output packet: {str(self.output_packet)}")
+            self.ser.flush()
+            response = self.ser.readline().decode().strip()
+            if response:
+                if "debug" in response:
+                    self.arduino_logger.debug(response)
+                    return
+                serialized_packet = response.split(",")
+                if len(serialized_packet) == 7:
+                    self.arduino_logger.debug(f"Packet received: {response}")
+                    self.packet_received.emit(serialized_packet)
+                else:
+                    self.arduino_logger.warning(f"Message not recognized: {response}")
+
+
+    async def control_loop(self) -> None:
+        event_task = asyncio.create_task(self._read_packet())
+        state_task = asyncio.create_task(self._send_packet())
+        # Wait for both tasks to complete (they won't unless canceled)
+        await asyncio.gather(event_task, state_task)
+
+
+    async def _read_packet(self) -> None:
+        while True:
             if self.ser and self.ser.is_open:
-                response = None
-                try:
-                    response = self.ser.readline().decode().strip()  # Read response
-                    if response:
-                        if "debug" in response:
-                            self.arduino_logger.debug(f"Debug - Read from Arduino: {response}")
-                        elif "error" in response:
-                            self.arduino_logger.error(f"Error - Read from Arduino: {response}")
-                        elif "stop" in response:
-                            self.arduino_logger.debug(f"Stop - Read from Arduino: {response}")
-                            self.stopped.emit()
-                            self.ready_for_command = True
-                        elif "event_completed" in response:
-                            self.arduino_logger.debug(f"Event_Completed - Read from Arduino: {response}")
-                            self.message_queue.put(response)  # Add message to queue
-                        elif "event_failed" in response:
-                            self.arduino_logger.error("Event failed - Read from Arduino:")
-                            self.message_queue.put(response)
-                        elif "light" in response:
-                            self.light_detected.emit()
-                        else:
-                            self.arduino_logger.warning(f"Unknown - Arduino message not recognized: {response}")
-                except Exception as e:
-                    if response:
-                        self.arduino_logger.error(f"Cause of error: {response}")
-                    self.arduino_logger.error(f"Error reading from Arduino: {e}")
+                response = self.ser.readline().decode().strip()  # Read response
+                if response:
+                    if "debug" in response:
+                        self.arduino_logger.debug(response)
+                        return
+                    serialized_packet = response.split(",")
+                    if len(serialized_packet) == 7:
+                        self.arduino_logger.debug(f"Packet received: {response}")
+                        self.packet_received.emit(serialized_packet)
+                    else:
+                        self.arduino_logger.warning(f"Message not recognized: {response}")
             else:
-                time.sleep(0.1)  # Sleep if the serial connection is not open
+                await asyncio.sleep(0.01)  # Sleep if the serial connection is not open
+
+    async def _send_packet(self) -> None:
+        if self.ser is None or not self.ser.is_open:
+            self.arduino_logger.error("Serial connection not open.")
+            return
+
+        while True:
+            self.ser.write((str(self.output_packet) + '\n').encode())  # Send message
+            self.arduino_logger.debug(f"Sent to Arduino: {str(self.output_packet)}")
+            await asyncio.sleep(0.1)
+
 
     def send_message(self, message: str, wait_for_completion=False) -> Optional[str]:
         """
         Send a message to the Arduino.
         If wait_for_completion is True, wait until an "event_completed" response is received.
         """
-        time.sleep(0.1)
-        while not self.ready_for_command:
-            time.sleep(0.1)
-        self.ready_for_command = False
-        if  self.ser is None or not self.ser.is_open:
+        if self.ser is None or not self.ser.is_open:
             self.arduino_logger.error("Serial connection not open.")
             return None
 
         try:
             self.ser.write((message + '\n').encode())  # Send message
             self.arduino_logger.debug(f"Sent to Arduino: {message}")
-
-            if wait_for_completion:
-                # Wait for the "event_completed" response
-                self.waiting = True
-                completion_response = None
-                timeout = time.time() + 30  # 30 second timeout
-
-                # Create a temporary queue for messages we process while waiting
-                temp_queue = queue.Queue()
-
-                while time.time() < timeout and not completion_response:
-                    try:
-                        # Use get_nowait() to avoid blocking
-                        if not self.message_queue.empty():
-                            response = self.message_queue.get_nowait()
-                            print("Got response: ", response)
-                            if "event_completed" in response:
-                                self.arduino_logger.debug(f"event_completed parsed in main thread: {response}")
-                                completion_response = response
-                            elif "event_failed" in response:
-                                self.arduino_logger.error(f"event_failed parsed in main thread: {response}")
-                                completion_response = response
-                            else:
-                                # If not the completion message, store it to put back later
-                                temp_queue.put(response)
-                        else:
-                            # No messages, sleep a bit
-                            time.sleep(0.1)
-                    except queue.Empty:
-                        # Queue was empty, sleep a bit
-                        time.sleep(0.1)
-
-                # Put back any messages we processed that weren't the completion message
-                while not temp_queue.empty():
-                    self.message_queue.put(temp_queue.get())  # TODO: empty queue at some point
-
-                self.waiting = False
-
-                if completion_response:
-                    return completion_response
-                else:
-                    self.arduino_logger.warning(f"Timeout waiting for event_completed")
-                    return None
-
             return message
+
         except Exception as e:
             self.arduino_logger.error(f"Error sending message: {e}")
-            self.waiting = False
             return None
 
-    def send_event(self, event, wait_for_response=True) -> Optional[str]:
-        """
-        Send an event to the Arduino as a serial message.
-        """
-        #self.arduino_logger.debug(f"sending event: {str(event)}")
-        if self.waiting:
-            self.arduino_logger.warning("Already waiting for a response, cannot send another event")
-            return None
+    def send_packet(self, packet) -> None:
+        self.send_message(str(packet))
 
-        if event.event_type == EventType.TRANSFORM:  # TODO: add logging, this should not happen
-            self.arduino_logger.warning("Transform event passed through EventHandler unexpectedly.")
-            return None
-        elif event.event_type == EventType.MOVE:
-            if event.data > 0:
-                message = f"move_forward,{abs(event.data)}"
-            else:
-                message = f"move_back,{abs(event.data)}"
-        elif event.event_type == EventType.ABSOLUTE_MOVE:
-            pass
-        elif event.event_type == EventType.ROTATE:
-            if event.data > 0:
-                message = f"rotate_right,{event.data}"
-            else:
-                message = f"rotate_left,{abs(event.data)}"
-        elif event.event_type == EventType.MANEUVER:
-            pass  # This might be a thing in the future, but is not right now.
-        elif event.event_type == EventType.LOAD:
-            if event.data == 0:
-                message = f"GSC_load,"
-            elif event.data == 1:
-                message = f"NSC_load,"
-        elif event.event_type == EventType.EXPAND:
-            message = f"expand_robot,"
-        elif event.event_type == EventType.BEACON:
-            message = f"Beacon,"
-        elif event.event_Type == EventType.POLAR:
-            message = f"Polar,{event.data},{event.angle}"
-        elif event.event_type == EventType.CUSTOM:
-            message = f"custom,"
-        else:
-            self.arduino_logger.error(f"Unknown event type: {event.event_type}")
-            return None
-
-        event.mark_finished()
-        return self.send_message(message, wait_for_completion=wait_for_response)
-
-    def get_messages(self) -> List[str]:
-        """
-        Retrieve all messages from the message queue.
-        """
-        messages = []
-        while not self.message_queue.empty():
-            messages.append(self.message_queue.get())
-        return messages
-
-    async def test(self):
-        while True:
-            self._read_messages()
 
 
 if __name__ == "__main__":
-    arduino_comms = ArduinoCommunicator(port="COM5", baud_rate=115200)
-    arduino_comms.connect()
-    asyncio.run(arduino_comms.test())
+    ser = serial.Serial("/dev/ttyACM0",baudrate=115200,timeout=1)
+    print(ser)
+
+    # while True:
+    #     packet = "30,30,0,0,0,0,0,0,0,0\n"
+    #     ser.write(packet.encode())
+    #     ser.flush()
+    #     response = ser.readline().decode().strip()
