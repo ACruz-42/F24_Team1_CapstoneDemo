@@ -64,8 +64,8 @@
     \sectionHeading{Problem}
     
         The Institute of Electrical and Electronics Engineers (IEEE) hosts a yearly hardware competition at its Southeast Conference (SECON). Tennessee Technological University assembled a team to compete in the 2025 Hardware Competition with the objective of designing and constructing an autonomous robot. This robot would need to collect and sort randomly distributed material spread across a field over a 3-minute time frame. The material is sorted based on whether it is magnetic or not. The sorted material is stored in two plastic containers on the field, which are then sent to designated pads. The goal of the design process was to focus on reliably obtaining as many points as possible and having an extensive testing period to reduce runtime inconsistencies.
-    
-    \sectionHeading{Constraints}
+
+    \sectionHeading{Primary Constraints}
     
 1. The robot must fit within a 12x12x12 inch space at the starting position.
 
@@ -75,45 +75,16 @@
 
 4. The robot emergency stop button must be clearly visible and accessible.
 
-5. The robot must not damage the field.
+5. The power system of the robot must be 30 volts or less.
 
-6. The power system of the robot must be 30 volts or less.
-
-
-  \end{block}
-
-  \begin{figure}
+\begin{figure}
       \centering
       \includegraphics[width=20.0cm]{Mining Mayhem Field Opposite Corner.png}
       \caption{Game Field to compete on.}
     \end{figure}
 
-  \begin{block}{Design}
-    \begin{itemize}
-    
-      \item \textbf{Navigation}
-        \begin{itemize}
-          \item The robot navigates autonomously using orientation sensing.
-        \end{itemize}
-        
-      \item \textbf{Motor Control}
-        \begin{itemize}
-          \item The motor control subsystem includes the design and operation of the motors for the robot wheels, arms, and other mechanisms that move based on sensor input and navigational commands. This subsystem would be considered lower-level robot control, as it explicitly includes details about certain motor speeds and directions for when specific conditions are met during play.
-        \end{itemize}
-      
-      \item \textbf{Camera}
-        \begin{itemize}
-          \item The camera detects objects and symbols.
-        \end{itemize}
-      
-      \item \textbf{Sensors}
-        \begin{itemize}
-          \item The sensors subsystem is able to detect orientation, magnetic fields, and light levels. This information is then provided to the controllers for processing. The sensors subsystem is always active for when the controller needs information. Orientation sensor provides information about the robot's current position which way it is facing. The magnetic sensors detect if there is a magnetic field in specific materials. The light sensors detect a difference in light levels.
-        \end{itemize}
-    
-    \end{itemize}
-  
   \end{block}
+
 
     % \begin{figure}
     %   \centering
@@ -141,11 +112,38 @@
       \caption{Micah Rentschler, Sean Borchers, Caleb Sullivan, Alex Cruz, Cooper Nelson, Phoenix Sims, Sam Hunter, Dakota Moye, Nick Moulton}
     \end{figure}
 
+    \begin{block}{Design}
+    \begin{itemize}
+    
+      \item \textbf{Navigation}
+        \begin{itemize}
+          \item The robot navigates autonomously using orientation sensing.
+        \end{itemize}
+        
+      \item \textbf{Motor Control}
+        \begin{itemize}
+          \item The motor control subsystem includes the design and operation of the motors for the robot wheels, arms, and other mechanisms that move based on sensor input and navigational commands. This subsystem would be considered lower-level robot control, as it explicitly includes details about certain motor speeds and directions for when specific conditions are met during play.
+        \end{itemize}
+      
+      \item \textbf{Camera}
+        \begin{itemize}
+          \item The camera detects objects and symbols.
+        \end{itemize}
+      
+      \item \textbf{Sensors}
+        \begin{itemize}
+          \item The sensors subsystem is able to detect orientation, magnetic fields, and light levels. This information is then provided to the controllers for processing. The sensors subsystem is always active for when the controller needs information. Orientation sensor provides information about the robot's current position which way it is facing. The magnetic sensors detect if there is a magnetic field in specific materials. The light sensors detect a difference in light levels.
+        \end{itemize}
+    
+    \end{itemize}
+
     \begin{figure}
       \centering
       \includegraphics[width=20.0cm]{High_Block_Diagram.png}
       \caption{High Level Block Diagram.}
     \end{figure}
+  
+  \end{block}
 
 \end{column}
 
@@ -154,16 +152,23 @@
 \begin{column}{\colwidth}
 
     \begin{block}{Experimentation}
+    \item \textbf{Capabilities}
+        \begin{itemize}
+          \item The robot can start within a 12x12x12 inch space and expand upon activating a start LED.
+          \item The robot can navigate autonomously by translational and rotational motion.
+          \item The robot can sweep material at its front and send it up an auger for sorting.
+          \item The robot can pick up and carry containers used for the material.
+          \item The robot can hold a beacon and place it at a position along the field wall (as seen in the middle of the shorter wall in Figure 1).
+        \end{itemize}
 
-    Robo does everything to a degree.
-
-  \end{block}
-
-  \begin{figure}
+    \begin{figure}
       \centering
       \includegraphics[width=20.0cm]{Robot_Practice_Field.jpg}
       \caption{Final Robot Product}
     \end{figure}
+
+  \end{block}
+
 
   \begin{block}{Conclusion}
     Put BOM and final thoughts here.
