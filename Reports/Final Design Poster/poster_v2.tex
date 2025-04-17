@@ -19,6 +19,7 @@
 \usepackage{pgf}
 \usepackage{multicol}
 \usepackage{mathtools}
+\usepackage[table]{xcolor}
 
 % ====================
 % Lengths
@@ -132,7 +133,7 @@
       
       \item \textbf{Sensors}
         \begin{itemize}
-          \item The sensors subsystem is able to detect orientation, magnetic fields, and light levels. This information is then provided to the controllers for processing. The sensors subsystem is always active for when the controller needs information. Orientation sensor provides information about the robot's current position which way it is facing. The magnetic sensors detect if there is a magnetic field in specific materials. The light sensors detect a difference in light levels.
+          \item The sensors subsystem is able to detect orientation, magnetic fields, and light levels. This information is then provided to the controllers for processing. Orientation sensor provides information about the robot's current position and which way it is facing. The magnetic sensors detect if there is a magnetic field in specific materials. The light sensors detect a difference in light levels.
         \end{itemize}
     
     \end{itemize}
@@ -173,67 +174,81 @@
   \begin{block}{Conclusion}
     Put BOM and final thoughts here.
 
-    % start example table
+  \begin{columns}[t]
+  
+    \begin{column}{0.3\colwidth}
+      \begin{table}[ht]
+        \begin{center}
+          % \caption{Bill of Materials}
+          \label{tab:table1}
+          \rowcolors{2}{gray!10}{gray!20}
+          \begin{tabular}{l|r} % <-- Alignments: 1st column left and 2nd middle right, with vertical lines in between
+            \toprule
+            \multicolumn{2}{c}{\textbf{Initial ECE Bill of Materials}} \\
+            \midrule
+            \cellcolor{white}\textbf{Subsystem} & \cellcolor{white}\textbf{Cost} \\
+            \midrule
+            Navigation & \$260 \\
+            Motor Control & \$180 \\
+            Camera & \$272 \\
+            Sensors & \$550 \\
+            Power & \$332 \\
+            \cellcolor{white}\textbf{Total} & \cellcolor{white}\$1594 \\
+            \bottomrule
+          \end{tabular}
+        \end{center}
+      \end{table}    
+    \end{column}
 
-    % \begin{columns}[t]
-    %   \begin{column}{0.4\colwidth}
-
-    %     \begin{table}[ht]
-    %       % increase table row spacing, adjust to taste
-    %       \caption{Gen 1 ANN Model Assumptions}
-    %       \label{Table:Gen1ANNAssumptions}
-    %       \centering
-    %       % Some packages, such as MDW tools, offer better commands for making tables
-    %       % than the plain LaTeX2e tabular which is used here.
-    %       \resizebox{\columnwidth}{!}{%
-    %       \begin{tabular}{ c l }
-    %         \toprule
-    %         \textbf{Number} & \textbf{Assumption}\\
-    %         \midrule
-    %         1 & Firing Frequency Encoding\\
-
-    %         2 & Steady State\\
-
-    %         3 & Unity Static Firing Rate\\
-
-    %         4 & Learned Inhibition\\
-
-    %         5 & Unconditional Weighting\\
-    %        \bottomrule
-    %       \end{tabular}}
-    %     \end{table}
-    %   \end{column}
-
-    %   \begin{column}{0.4\colwidth}
-    %     \begin{table}[ht]
-    %       % increase table row spacing, adjust to taste
-    %       \caption{Gen 2 ANN Model Assumptions}
-    %       \label{Table:Gen2ANNAssumptions}
-    %       \centering
-    %       % Some packages, such as MDW tools, offer better commands for making tables
-    %       % than the plain LaTeX2e tabular which is used here.
-    %       \resizebox{\columnwidth}{!}{%
-    %       \begin{tabular}{ c l }
-    %         \toprule
-    %         \textbf{Number} & \textbf{Assumption}\\
-    %         \midrule
-    %         1 & Firing Frequency Encoding\\
-
-    %         2 & Steady State\\
-
-    %         3 & Learned Inhibition\\
-
-    %         4 & Unconditional Weighting\\
-    %         & \\
-    %         \bottomrule
-    %       \end{tabular}}
-    %     \end{table}
-    %   \end{column}
-
-    % \end{columns}
-
-    % end example table
     
+    \begin{column}{0.3\colwidth}
+      \begin{table}[ht]
+        \begin{center}
+          % \caption{Bill of Materials}
+          \label{tab:table1}
+          \rowcolors{2}{gray!10}{gray!20}
+          \begin{tabular}{l|r} % <-- Alignments: 1st column left and 2nd middle right, with vertical lines in between
+            \toprule
+            \multicolumn{2}{c}{\textbf{Final ECE Bill of Materials}} \\
+            \midrule
+            \cellcolor{white}\textbf{Subsystem} & \cellcolor{white}\textbf{Cost} \\
+            \midrule
+            Navigation & \$304.97 \\
+            Motor Control & \$189.44 \\
+            Camera & \$309.67 \\
+            Sensors & \$106.92 \\
+            Power & \$114.72 \\
+            \cellcolor{white}\textbf{Total} & \cellcolor{white}\$1025.72 \\
+            \bottomrule
+          \end{tabular}
+        \end{center}
+      \end{table}    
+    \end{column}
+
+
+    \begin{column}{0.3\colwidth}
+      \begin{table}[ht]
+        \begin{center}
+          % \caption{Bill of Materials}
+          \label{tab:table1}
+          \rowcolors{2}{gray!10}{gray!20}
+          \begin{tabular}{l|r} % <-- Alignments: 1st column left and 2nd middle right, with vertical lines in between
+            \toprule
+            \multicolumn{2}{c}{\textbf{Robot Total Bill of Materials}} \\
+            \midrule
+            \cellcolor{white}\textbf{Subsystem} & \cellcolor{white}\textbf{Cost} \\
+            \midrule
+            Electrical Components & \$1025.72 \\
+            Mechanical Components & \$1015.35 \\
+            \cellcolor{white}\textbf{Total} & \cellcolor{white}\$2041.07 \\
+            \bottomrule
+          \end{tabular}
+        \end{center}
+      \end{table}    
+    \end{column}
+    
+  \end{columns}
+
   \end{block}
 
 \end{column}
