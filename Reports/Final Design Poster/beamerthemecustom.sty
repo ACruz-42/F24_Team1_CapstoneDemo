@@ -40,8 +40,12 @@
 % ====================
 
 \newcommand{\samelineand}{\qquad}
+
 \newcommand\insertlogotitle{}
 \newcommand\logotitle[1]{\renewcommand\insertlogotitle{#1}}
+
+\newcommand\insertlogotitletwo{}
+\newcommand\logotitletwo[1]{\renewcommand\insertlogotitletwo{#1}}
 
 % ====================
 % Elements
@@ -99,9 +103,15 @@
   \begin{beamercolorbox}{headline}
     \begin{columns}
 
+
       \begin{column}{0.0\paperwidth}
-        \vskip7ex
-        \makebox[0.0\paperwidth][l]{\hskip9ex \insertlogotitle}
+        \vspace{7ex}
+        \makebox[\paperwidth][l]{\hspace{9ex} \insertlogotitle}
+      \end{column}
+      
+      \begin{column}{0.0\paperwidth}
+        \vspace{7ex}
+        \makebox[0.98\paperwidth][r]{\insertlogotitletwo}    % hskip not working. adjusted width to taste
       \end{column}
 
       \begin{column}{\paperwidth}
