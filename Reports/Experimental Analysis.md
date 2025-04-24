@@ -24,6 +24,8 @@ This is an experiment that combines constraints 1e and 1f for the purpose of tes
     
 The test involves keeping the robot stationary but providing power to the following motors/servos for material flow: the sweeper motor, the auger motor, the sorting servo, the linear actuator, and the shipping container arm servo. Run the function for grabbing the container via the serial input on the Arduino code until compression by the actuator is successful. Then, turn on the sweeper and auger, and move Geodinium material into the sweeper, one by one, in 10 second intervals. Continue this process until all 18 Geodinum have reached the container and then lift the robot off the ground to see if it can completely support the container when suspended.
 
+![Material Flow Process](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/3c6ee68eb1e3d56e2a33b5806c98de7e203ab06d/Reports/Images%20and%20Sources/Experimental%20Analysis/Material_Flow_Process.jpg)
+
 3.  **Expected Results**:
     
 I would expect the robot to be fully capable of transferring the material and supporting the full load due to results from prior testing. However, there may be some slip on the hold of the shipping container, which would not be ideal as the container will already be positioned close to the ground. A complete success would be no slip, but I expect to at least see some movement.
@@ -54,6 +56,12 @@ Robot Weight: 3.786 kg
 
 
 18 Geodinium pieces were not available, so the total weight of 18 Geodinium (0.72 kg) was simulated by using the available 15 Geodinium plus 13 Nebulite. The same intended material flow process was still used, just for 28 total pieces instead of 18. 
+
+![Container Weight](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/3c6ee68eb1e3d56e2a33b5806c98de7e203ab06d/Reports/Images%20and%20Sources/Experimental%20Analysis/Container_Weight.jpg)
+
+![Robot Plus Container Far](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/3c6ee68eb1e3d56e2a33b5806c98de7e203ab06d/Reports/Images%20and%20Sources/Experimental%20Analysis/Robot_Plus_Container_Far.jpg)
+
+![Full Geodinium Load Equivalent](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/3c6ee68eb1e3d56e2a33b5806c98de7e203ab06d/Reports/Images%20and%20Sources/Experimental%20Analysis/Full_Geodinium_Load_Equivalent.jpg)
 
 | Trial | Order of Material Entry | Number of Material Successfully Transferred (out of 28) | Did Cosmic Shipping Container Remain Supported? |
 | :-- | :-------------------------- | :------------------------------ | :----------------------- |
