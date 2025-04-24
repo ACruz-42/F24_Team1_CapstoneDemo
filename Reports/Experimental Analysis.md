@@ -7,26 +7,81 @@ This experimental analysis revisits the conceptual design of our autonomous robo
 Based on the conceptual design and the outlined competition rules, the most critical requirements and success criteria directly impacting the project's have been split by subsystem for ease of testing.
 
 # Motor Control
-For each documented experiment, you must include:
+
+## Relevant Critical Success Criteria:
+
+1e.  The sorting and collecting motor systems for astral material shall be able to transfer and carry the load of at least one astral material at a time (3D printed icosahedrons, 48.2 g each for Geodinium).
+
+1f.  The Cosmic Shipping Container motors shall be able to carry and support most of the load from a full container of astral material – 18 Geodinium for a total of 867.7 g.
+
+## Experiment One: Astral Material Collection
 
 1.  **Purpose and Justification**:
     
-    -   Explain why the experiment was designed, and how it relates to your critical success criteria.
+This is an experiment that combines constraints 1e and 1f for the purpose of testing the full flow of astral material through the robot. Constraint 1e addresses the need for the robot mechanisms to be able to transfer at least one astral material at a time from the point of collection to the point of the cosmic shipping container. The sweeper motor, auger motor, and sorting servo are involved in this process as the astral material makes its way toward the shipping containers. Constraint 1f addresses the need for the servos and linear actuators involved in the shipping container arm mechanism to be able to hold and fully support a full load of the heaviest configuration of astral material, which is all 18 Geodinium pieces (slightly heavier than the non-magnetic Nebulite). Therefore, this experiment fulfills both requests by properly simulating the flow of material through the robot and testing the support capabilities of the shipping container mechanism. Criteria of success will include the number of pieces that make it to the container and whether the container (after being picked up off the ground) stayed suspended or not. Also, completing a few trials with different material transfer sequences will help provide an overall picture of how the robot would perform given the unpredictable material placement. 
+
 2.  **Detailed Procedure**:
     
-    -   Outline clearly the methods used, ensuring another team could reproduce your experiment.
+The test involves keeping the robot stationary but providing power to the following motors/servos for material flow: the sweeper motor, the auger motor, the sorting servo, the linear actuator, and the shipping container arm servo. Run the function for grabbing the container via the serial input on the Arduino code until compression by the actuator is successful. Then, turn on the sweeper and auger, and move Geodinium material into the sweeper, one by one, in 10 second intervals. Continue this process until all 18 Geodinum have reached the container and then lift the robot off the ground to see if it can completely support the container when suspended.
+
 3.  **Expected Results**:
     
-    -   State your initial hypothesis or expectations clearly before conducting experiments.
+I would expect the robot to be fully capable of transferring the material and supporting the full load due to results from prior testing. However, there may be some slip on the hold of the shipping container, which would not be ideal as the container will already be positioned close to the ground. A complete success would be no slip, but I expect to at least see some movement.
+
 4.  **Actual Results**:
     
-    -   Present data collected during the experiments in an organized, easy-to-interpret format (tables, graphs, charts).
+The following were weights that were considered to determine the full maximum load of Geodinium:
+
+Cosmic shipping container: 0.364 kg 
+
+
+Robot Weight +  shipping container: 4.150 kg
+
+
+Robot Weight: 3.786 kg
+
+
+1 Nebulite: 0.010 kg
+
+
+16 Total Nebulite: 0.16 kg
+
+
+1 Geodinium: 0.040 kg 
+
+
+18 Total Geodinium: 0.72 kg
+
+
+18 Geodinium pieces were not available, so the total weight of 18 Geodinium (0.72 kg) was simulated by using the available 15 Geodinium plus 13 Nebulite. The same intended material flow process was still used, just for 28 total pieces instead of 18. 
+
+| Trial | Order of Material Entry | Number of Material Successfully Transferred (out of 28) | Did Cosmic Shipping Container Remain Supported? |
+| :-- | :-------------------------- | :------------------------------ | :----------------------- |
+| 1   | Nebulite, then Geodinium, then Geodinium glue pieces | 26                      | Yes - lift robot test worked               |
+| 2   | Alternating until Geodinium only, then glue pieces | 24                      | Yes - lift robot test worked               |
+| 3   | Geodinium, then Nebulite, then glue pieces | 12                      | Yes - lift robot test worked               |
+| 4   | Geodinium, then Nebulite, then glue pieces | 26                      | Yes - lift robot test worked               |
+
 5.  **Interpretation and Conclusions**:
     
-    -   Provide a detailed analysis explaining the significance of the results.
-    -   State whether results matched your expectations and explain any discrepancies.
+- Provide a detailed analysis explaining the significance of the results.
 
-When you have complete all of the experiments: clearly summarize whether your experiments demonstrated that your project meets the original success criteria outlined in your conceptual design. If success criteria were not met, discuss the reasons and outline steps for improvement.
+Trial 1 successfully transferred 26 out of the 28 attempted pieces, and when the lift test was attempted, the robot successfully maintained grip on the cosmic shipping container. This means that the robot has the capability to support the weight of nearly a full load of Geodinium pieces, which is the maximum weight configuration. The two that did not make it were stuck on the sorting station chute. These pieces were the last to go through the robot, which may mean the backend of material flow will be less successful.
+
+Trial 2 was still mostly successful with 24 out of 28 transferred. The last 4 that were left to transfer ended up getting stuck on the sorting station platform. This group was composed of two Nebulite and the same two pieces that got stuck on Trial 1, which have an excess of glue on them. The robot did successfully maintain a grip on the cosmic shipping container. This trial continues to support the theory that the last pieces that go through the sorting station will not make it to the shipping container. 
+
+Trial 3 was not successful in material flow, but it did maintain grip on the shipping container. The material pieces were almost halfway through being transferred when an accumulation of material began to build up on the sorting station. Like Trial 2, this build up consisted of 4 pieces. Unlike Trial 2, all 4 were standard Nebulite pieces, and the build up was backed up toward the station entrance rather than being more spread out, which occurred in Trial 2. The build up was followed by another piece that got near the top but couldn’t get to the entrance and caused the auger motor to stall. It seems that the light weight of the Nebulite may have helped cause this buildup, as all four pieces involved were Nebulite. 
+
+A fourth trial was tested in order to provide a larger sample size for the sequence of material that caused the most error. In the same configuration of all Geodinium, followed by all Nebulite, and finally the two remaining glue pieces, every piece was transferred except for the glue pieces. These two were then manually inserted into the container just to confirm the lift test for the full load, and the load was still successfully lifted. 
+
+- State whether results matched your expectations and explain any discrepancies.
+
+These results mostly match my expectations, as most of the material was transferred smoothly and there was very little slip on the container hold. However, the two pieces that did not make it in Trial 1 need to be addressed. These pieces had a significant amount of glue on their exterior, which likely made transport more difficult through the increased friction. These pieces were also the last two. One observation for all trials that I had was that most of the time, material would get stuck on the servo chute platform, but would be pushed into the container by the next one after it. Therefore, if there is a need to push the material stuck on the chute, then it may be unlikely for the robot to transfer every material piece to the respective container. Just all of the ones that lead up to the last couple would be the most reliable. Also, if there is a long sequence of lighter pieces, then a buildup failure will be more likely to occur due to less weight forcing the pieces down the chute.
+
+- When you have complete all of the experiments: clearly summarize whether your experiments demonstrated that your project meets the original success criteria outlined in your conceptual design. If success criteria were not met, discuss the reasons and outline steps for improvement.
+
+
+
 # Sensors
 For each documented experiment, you must include:
 
