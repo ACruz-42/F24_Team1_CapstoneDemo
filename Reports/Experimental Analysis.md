@@ -91,26 +91,199 @@ These results mostly match my expectations, as most of the material was transfer
 
 
 # Sensors
-For each documented experiment, you must include:
 
-1.  **Purpose and Justification**:
-    
-    -   Explain why the experiment was designed, and how it relates to your critical success criteria.
-2.  **Detailed Procedure**:
-    
-    -   Outline clearly the methods used, ensuring another team could reproduce your experiment.
-3.  **Expected Results**:
-    
-    -   State your initial hypothesis or expectations clearly before conducting experiments.
-4.  **Actual Results**:
-    
-    -   Present data collected during the experiments in an organized, easy-to-interpret format (tables, graphs, charts).
-5.  **Interpretation and Conclusions**:
-    
-    -   Provide a detailed analysis explaining the significance of the results.
-    -   State whether results matched your expectations and explain any discrepancies.
+## Critical Aspects of Sensors
 
-When you have complete all of the experiments: clearly summarize whether your experiments demonstrated that your project meets the original success criteria outlined in your conceptual design. If success criteria were not met, discuss the reasons and outline steps for improvement.
+Specifications:
+1.	The robot's distance measurement sensor shall be able to find the walls of the game field and the cave.
+2.	The robot's light detector shall be able to detect when the start LED turns on.
+3.	The robot's magnetic sensors shall be able to detect the magnetic fields of the Geodinium.
+4.	All of the robot's sensors shall be able to work effectively despite background interference in the competition environment.
+
+Constraints:
+1.	The robot shall know its current position.
+2.	The magnetic sensor shall provide a signal that is larger than the resolution of the Arduino's Analog-to-Digital Converter.
+3.	The light detector shall provide a signal visible through the background noise.
+
+The sensor subsystem needs to know the robot’s location to avoid walls and stay on the game field. The subsystem helps gain points by sorting materials and using the referee controlled starting LED. These sensors need to work in a noisy environment and provide readable signals.
+
+## Sensors Experimental Overview
+The sensors subsystem has 3 main components. There is the Optical Tracking and Odometry Sensor (OTOS), photoresistors, and hall effects. Each of these components will be tested on the robot to verify that it works properly with the total system.
+
+## Purpose and Justification:
+### OTOS
+The accuracy of the linear and angular displacements was measured. By knowing the accuracy of the OTOS, the navigation can set narrower tolerances on the area of the destination point. This will allow the robot to travel to more precise locations. If the robot does not know its current location well enough, it will fail. A different method available is to use distance sensors.
+
+### Hall Effect
+The range and noise of the hall effect sensors were measured. This determines the tolerance for detecting magnetic material. If the noise is too large and the signal is too small, the signal will be lost. If the robot cannot detect magnetic materials, it will not sort them. This is alright as the robot will still score points for putting materials in the wrong bin.
+
+### Photoresistor
+The number of accurate start LED detections was counted. This would determine if there were any false readings and how often they would happen. This experiment would find if the robot would ever have a false start or not start. If the robot does not start successfully, a different start method would need to be built. A long timer was used before, but a button or switch would be the best.
+
+## Detailed Procedure:
+### OTOS
+The OTOS was left attached to the robot. If there was any issue with how level the OTOS was, it would be discovered and fixed. Since the OTOS was tested on the robot, the drive wheels were removed to reduce noise from the forced spin of the motors. Data is taken with the Jetson Nano. The starting point is always set as (0, 0, 0) for X, Y, and heading.  The ending point is the same. Only the final position point is recorded.
+For the linear displacement experiment, the robot was rolled on neutral wheels on a flat surface against a flat object. The robot was moved forward 105 inches by hand, back to the start and repeated 3 times in a single run for a total of 630 inches. The robot had the same starting and ending position to easily compare the drift. The choice of total distance was arbitrary but was suggested by the manufacturer to be more than 100 inches to see significant drift. The larger the distance, the easier it was to see the drift and measure its offset. The robot was not rotated when the linear displacement was tested.
+
+For the angular displacement experiment, the robot was spun on neutral wheels on a flat surface. It would start against a flat object and then was positioned back on the same flat object, so it had the same starting and ending angle. The robot was spun counterclockwise ten times by hand in a single run for a total of 3600 degrees. The choice of total angular rotation was suggested by the manufacturer to be at least 3600 degrees to see significant drift. The larger the distance, the easier it was to see the drift and measure its offset.
+
+The image below shows the OTOS attached to the bottom of the robot.
+
+<img src=https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/a7926c034d774467a321dac6adb84d7c4ea20ab2/Reports/Images%20and%20Sources/Experimental%20Analysis/attached_OTOS.jpg  alt="Attached_OTOS" width="50%"/>
+
+### Hall Effect
+The hall effects were left attached to the robot. There are three hall effects used on the robot. They are situated close together, near the exit of the auger. They are each oriented in a different axis to detect orthogonal magnetic fields. One of the sensors will have material slide over it, while the other two are placed on a nearby wall with materials about 1 cm away. Each sensor is tested to check the capability of its data. Power is applied to the robot. The auger is turned on, and data is taken with the Arduino Mega.
+
+For the experiment, each of the hall effects set points were measured. To find the setpoint, an average of the voltage with no magnetic field near the sensors was measured with 100 data points. After measuring the setpoint, the maximum and minimum are measured for each hall effect. To measure the maximum and minimum, a timer is set for 15 seconds in the Arduino Mega. At the end of the 15 seconds, the maximum and minimum measured by the hall effects is recorded by the Arduino Mega. During the 15 seconds, the auger turned on, and then a single material travels up the auger and past the hall effects. This way, each run corresponds to a single magnetic material traveling past the hall effects. At the end of each run, the average set point for the last 100 measurements is also recorded. This average is long after the material had passed by the hall effects, so it will not include any of the data from the material passing by. Lastly, two extra runs are taken to see the background noise.
+
+The two images below show the hall effects and a magnetic material next to them. The hall effect by itself is number 1 in the following tables and hall effect X in the Arduino code. The bottom hall effect of the two together is number 2 in the following tables and hall effect Y in the Arduino code. The top hall effect of the two together is number 3 in the following tables and hall effect Z in the Arduino code.
+
+<img src=https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/a7926c034d774467a321dac6adb84d7c4ea20ab2/Reports/Images%20and%20Sources/Experimental%20Analysis/attached_Hall_Effects_drawn.jpg alt="Attached_Hall_Effects_with_Drawing" width="49%"/> <img src=https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/004042acc7b07eae4a1d0b5fc1c5e7ef025c2119/Reports/Images%20and%20Sources/Experimental%20Analysis/magnetic_material_hall_effect_sensor.jpg alt="Attached_Hall_Effects_with_Magnetic_Material" width="49%"/>
+
+### Photoresistors
+The photoresistors were left attached to the robot. There are three photoresistors. Two are on top of the robot and detect the ambient light level. One is at the back of the robot and detects the start LED. To determine if the start LED is on, the light level detected by the start LED photoresistor is compared to the light level detected by the ambient light photoresistors. Power is applied to the robot. Data is taken with the Arduino Mega.
+
+For the experiment, the robot is placed by the start LED. The LED is turned on and the detection status is determined. If the start LED photoresistor reads higher than the ambient light photoresistors, then the detection status is on. If the start LED photoresistor reads lower than the ambient light photoresistors, then the detection status is off.
+The first image below shows the ambient light sensors. The second image below shows the start LED light sensor.
+
+<img src=https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/004042acc7b07eae4a1d0b5fc1c5e7ef025c2119/Reports/Images%20and%20Sources/Experimental%20Analysis/ambient_light_detector.jpg alt="Attached_Ambient_Light_Sensors" width="49%"/> <img src=https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/004042acc7b07eae4a1d0b5fc1c5e7ef025c2119/Reports/Images%20and%20Sources/Experimental%20Analysis/start_LED_detector.jpg alt="Attached_Start_LED_Light_Sensor" width="49%"/>
+
+## Expected Results:
+It is expected that the OTOS has an angular tolerance of less than 1% of total rotation and has a linear tolerance of less than 1% of total distance. It is expected that the hall effects will have a setpoint near 2.5 V. The signal from the magnetic materials will be greater than 0.1 V and the noise will be near 0.01 V. The photoresistors will detect the status of the start LED correctly every time.
+
+## Actual Results:
+### OTOS
+The table below is for the angular displacement experiment. The percentage offset is the offset divided by the total rotation of 3600 degrees.
+
+|Run Number|Angular Offset (Degrees)|Angular Percentage Offset|
+|:-|:-|:-|
+|1|0.0831|0.0023|
+|2|1.8034|0.0501|
+|3|-1.0072|-0.0280|
+|4|-1.6482|-0.0458|
+|5|-0.4374|-0.0122|
+|6|1.2062|0.0335|
+
+The table below is for the linear displacement experiment. The percentage offset is the offset divided by the total distance of 630 inches.
+
+|Run Number|Linear Offset (Inches)|Linear Percentage Offset|
+|:-|:-|:-|
+|1|-0.7329|-0.1163|
+|2|0.4085|0.0648|
+|3|0.0481|0.0076|
+|4|-0.4085|-0.0648|
+|5|-1.2856|-0.2041|
+|6|0.5767|0.0915|
+
+### Hall Effects
+The table below shows the setpoint for each hall effect before any runs are started.
+
+|Hall Effect Number|Set Point (Volts)|
+|:-|:-|
+|1|2.486|
+|2|2.565|
+|3|2.637|
+
+The table below shows the maximum and minimum for each run for each hall effect.
+
+|Run Number|Max Hall Effect 1 (Volts)|Min Hall Effect 1 (Volts)|Max Hall Effect 2 (Volts)|Min Hall Effect 2 (Volts)|Max Hall Effect 3 (Volts)|Min Hall Effect 3 (Volts)|
+|:-|:-|:-|:-|:-|:-|:-|
+|1|2.937|2.292|3.084|2.576|3.094|0.547|
+|2|4.072|3.045|3.817|3.157|3.988|3.104|
+|3|3.935|2.028|4.022|2.537|4.101|0.640|
+|4|4.233|3.084|3.622|3.187|3.661|3.216|
+|5|3.431|2.669|3.558|2.810|3.715|1.931|
+|6|3.226|1.124|3.089|2.546|3.162|0.547|
+|7|3.514|2.151|3.210|2.649|3.542|2.678|
+|8|3.675|2.141|3.226|2.649|3.729|2.678|
+|9|3.358|2.214|3.118|2.664|3.372|2.717|
+|10|3.319|2.180|3.069|2.625|3.333|2.708|
+|11|3.187|2.199|3.065|2.542|3.133|2.727|
+|12|3.192|2.243|3.065|2.674|3.138|2.698|
+
+The table below shows the set points after each run.
+
+|Run Number|Set Point Hall Effect 1 (Volts)| Set Point Hall Effect 2 (Volts)| Set Point Hall Effect 3 (Volts)|
+|:-|:-|:-|:-|
+|1|2.721|2.937|2.910|
+|2|3.513|3.606|3.689|
+|3|3.260|3.344|3.380|
+|4|3.246|3.328|3.407|
+|5|3.280|3.367|3.443|
+|6|2.989|2.948|3.017|
+|7|2.989|2.947|3.018|
+|8|2.989|2.947|3.017|
+|9|2.992|2.950|3.021|
+|10|2.993|2.950|3.020|
+|11|2.994|2.951|3.021|
+|12|2.994|2.950|3.021|
+
+### Photoresistors
+The table below shows whether the photoresistor successfully detected the start LED status.
+
+|Run Number|Success or Failure|
+|:-|:-|
+|1|Success|
+|2|Success|
+|3|Success|
+|4|Success|
+|5|Success|
+|6|Success|
+|7|Success|
+|8|Success|
+|9|Success|
+|10|Success|
+
+## Interpretation and Conclusions:
+### OTOS
+The OTOS can successfully measure the location of the robot’s current position. The expected tolerance was less than 1% in angular displacement and less than 1% in linear displacement. The OTOS measured less than 0.1% offset from total rotation in all runs, with the worst being about 0.05% percentage offset. The OTOS measured less than 1% offset from total distance in all runs, with the worst being about 0.2% percentage offset. The OTOS met the success criteria and expected results.
+
+### Photoresistors
+The photoresistors successfully measured the status of the start LED ten out of ten trials. The success criteria were met.
+
+### Hall Effects
+12 runs are taken for the hall effects. The set point, maximum, and minimum are measured for each hall effect for each run. Before any data was taken, the original set points were measured, which are shown in the first table under Hall Effects under Actual Results. Runs 11 and 12 are background runs to help determine the noise that the sensors see.
+
+The set point changed by a large margin (about 0.35 V) between runs 5 and 6. This is due to the battery being replaced between these runs. Before run 5, the input voltage was about 10.8 volts. After run 5, the input voltage was about 11.8 volts. The voltage of the rail powering the hall effects was not measured, but it is controlled by a DC-DC converter. The power board is presented at this link: <https://github.com/TnTech-ECE/Spring2024-Base-Modular-Robot/blob/7f402b8c3b09a4edfa15642721f54641bdb7cd87/Documentation/Signoffs/LukeChapman-Signoff-Power-Distribution.md>. Doing some testing with the schematic shows the voltage rail does shift as the input power shifts.
+
+To account for the shifting power supply and set point, each run has its own set point for comparing data. The table below shows the difference between the maximum or minimum and the set point for each run and hall effect. The absolute value is taken, since the difference of the minimum will be negative.
+
+|Run Number|Max Dif Hall 1 (Volts)|Min Dif Hall 1 (Volts)|Max Dif Hall 2 (Volts)|Min Dif Hall 2 (Volts)|Max Dif Hall 3 (Volts)|Min Dif Hall 3 (Volts)|
+|:-|:-|:-|:-|:-|:-|:-|
+|1|0.216|0.429|0.147|0.361|0.184|2.363|
+|2|0.559|0.468|0.211|0.449|0.299|0.585|
+|3|0.675|1.232|0.678|0.807|0.721|2.740|
+|4|0.987|0.162|0.294|0.141|0.254|0.191|
+|5|0.151|0.611|0.191|0.557|0.272|1.512|
+|6|0.237|1.865|0.141|0.402|0.145|2.470|
+|7|0.525|0.838|0.263|0.298|0.524|0.340|
+|8|0.686|0.848|0.279|0.298|0.712|0.339|
+|9|0.366|0.778|0.168|0.286|0.351|0.304|
+|10|0.326|0.813|0.119|0.325|0.313|0.312|
+|11|0.193|0.795|0.114|0.409|0.112|0.294|
+|12|0.198|0.751|0.115|0.276|0.117|0.323|
+
+The background is then subtracted from the data above to remove the noise levels measured in runs 11 and 12. The larger of the two noise levels are subtracted, because it gives a tighter tolerance on the hall effects and leaves less room for false positives. Between runs 11 and 12, they give close values except for minimum difference for hall effect 2. In the following table, the bold numbers are greater than 0.1 V, and the bold italic numbers are above 0.2 V. Overall, the thresholds for the sensors can be derived from this table. 
+
+|Run Number|Max Thresh Hall 1 (Volts)|Min Thresh Hall 1 (Volts)|Max Thresh Hall 2 (Volts)|Min Thresh Hall 2 (Volts)|Max Thresh Hall 3 (Volts)|Min Thresh Hall 3 (Volts)|
+|:-|:-|:-|:-|:-|:-|:-|
+|1|0.018|-0.366|0.032|-0.048|0.067|***2.040***|
+|2|***0.361***|-0.327|0.096|0.040|**0.182**|***0.262***|
+|3|***0.477***|***0.437***|***0.563***|***0.398***|***0.604***|*2.417***|
+|4|***0.789***|-0.633|**0.179**|-0.268|**0.137**|-0.132|
+|5|-0.047|-0.184|0.076|**0.148**|**0.155**|***1.189***|
+|6|0.039|***1.070***|0.026|-0.007|0.028|***2.147***|
+|7|***0.327***|0.043|**0.148**|-0.111|***0.407***|0.017|
+|8|***0.488***|0.053|**0.164**|-0.111|***0.595***|0.016|
+|9|**0.168**|-0.017|0.053|-0.123|***0.234***|-0.019|
+|10|**0.128**|0.018|0.004|-0.084|**0.196**|-0.011|
+
+<img src=https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/dc8cb7584cbbff4bca22e3ca8325016be6d87f9e/Reports/Images%20and%20Sources/Experimental%20Analysis/Full_Table_Hall_Effects.png alt="Full_Hall_Effects_Graph" width="50%"/>
+
+<img src=https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/dc8cb7584cbbff4bca22e3ca8325016be6d87f9e/Reports/Images%20and%20Sources/Experimental%20Analysis/Partial_Graph_Hall_Effects.png alt="Zoomed_Hall_Effects_Graph" width="50%"/>
+
+This last table and graphs show how well each sensor sees magnetic material. The first graph shows the data from the last table grouped by run number and then color coded by sensor type. The second graph shows the same data but zoomed in to better see the thresholds. A threshold of 0.1 V would be enough, but a threshold of 0.2 V can be used as well but barely misses run 10. Higher than 0.2 V would miss runs 9 and 10. Run 3 looks like an anomaly since all values are past the threshold. The minimums for each of the sensors are farther away from the set point than the maximums for an unknown reason. A method of a moving average or set point and background subtraction could be implemented to make the data usable on an operational robot. However, it was not implemented in this project due to time constraints. Lastly, the noise values were much higher than expected. When tested on their own, hall effects have very low noise. However, all the components working at the same time on the robot caused large amounts of noise. The signal is still visible through the noise and above 0.1 V. Overall, the hall effects are successful at measuring the magnetic material, but it was not fully implemented on the final design.
+
 # Camera
 For each documented experiment, you must include:
 
