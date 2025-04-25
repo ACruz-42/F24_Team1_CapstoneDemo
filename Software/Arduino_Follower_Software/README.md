@@ -1,0 +1,1 @@
+This folder contains the final Arduino code presented at the SECON 2025 Hardware Competition. The Arduino code was redesigned to work as a follower or responder to the Jetson Nano leader or controller code. The Jetson Nano had all of the control and autonomous software. The Arduino had low level interface with motors for PWM signals and for reading in most sensor data.
