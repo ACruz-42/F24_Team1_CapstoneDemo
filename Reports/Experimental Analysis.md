@@ -9,10 +9,15 @@ Based on the conceptual design and the outlined competition rules, the most crit
 # Motor Control
 
 ## Relevant Critical Success Criteria:
+- Specification 1d: The drivetrain motors shall be able to operate under a load of up to 12 kg.
 
-1e.  The sorting and collecting motor systems for astral material shall be able to transfer and carry the load of at least one astral material at a time (3D printed icosahedrons, 48.2 g each for Geodinium).
+- Specification 1e:  The sorting and collecting motor systems for astral material shall be able to transfer and carry the load of at least one astral material at a time (3D printed icosahedrons, 48.2 g each for Geodinium).
 
-1f.  The Cosmic Shipping Container motors shall be able to carry and support most of the load from a full container of astral material – 18 Geodinium for a total of 867.7 g.
+- Specification 1f:  The Cosmic Shipping Container motors shall be able to carry and support most of the load from a full container of astral material 18 Geodinium for a total of 867.7 g.
+
+- Specification 4:   The motors shall be capable of reversing the robot in the case that reversing the robot is the only method of not damaging the game field walls [S4].
+
+The above critical success criteria prompt tests for the performance limits of all motors involved in this subsystem. Specifications 1e and 1f will be combined into one experiment that will test the performance of the sweeper, auger, sorting gate, and cosmic shipping container mechanism. The entire process of astral material collection and its process flow will be evaluated at its extremes in order to be prepared for what the team may face in a real run at the competition. Likewise, Specifications 1d and 4 will enable tests of the limits of the drivetrain for potential worst case scenarios at the competition. 
 
 ## Experiment One: Astral Material Collection
 
@@ -86,9 +91,69 @@ A fourth trial was tested in order to provide a larger sample size for the seque
 
 These results mostly match my expectations, as most of the material was transferred smoothly and there was very little slip on the container hold. However, the two pieces that did not make it in Trial 1 need to be addressed. These pieces had a significant amount of glue on their exterior, which likely made transport more difficult through the increased friction. These pieces were also the last two. One observation for all trials that I had was that most of the time, material would get stuck on the servo chute platform, but would be pushed into the container by the next one after it. Therefore, if there is a need to push the material stuck on the chute, then it may be unlikely for the robot to transfer every material piece to the respective container. Just all of the ones that lead up to the last couple would be the most reliable. Also, if there is a long sequence of lighter pieces, then a buildup failure will be more likely to occur due to less weight forcing the pieces down the chute.
 
-- When you have complete all of the experiments: clearly summarize whether your experiments demonstrated that your project meets the original success criteria outlined in your conceptual design. If success criteria were not met, discuss the reasons and outline steps for improvement.
+## Experiment Two: Drivetrain Performance
+
+1.  **Purpose and Justification**:
+    
+Specification 1d covers the need for the drivetrain motors to be able to operate under the maximum possible load. However, the robot should never realistically reach a load of 12 kg, so the load of the robot plus the full approximate load of astral material would be a more critical test. If the drivetrain motors can still enable translational and rotational movements for the robot with this load, all loads less than this will be feasible. Specification 4 states that the robot should be capable of effectively reversing at field walls without inflicting damage to them. This movement can be tested under the full load of Specification 1d. Also, this test will not involve the use of navigational correction capabilities, as it is meant to test the pure performance of the motors alone. Therefore, some error accumulation for the paths tested is to be expected, but the main aspect of the motors that will be evaluated is the translational and rotational speed under a heavy load.
+
+2.  **Detailed Procedure**:
+    
+First, use all of the available astral material from the previous experiment (15 Geodinium plus 13 Nebulite) and the extra remaining to simulate a nearly full configuration of all astral material. The original amount of 15 Geodinium and 13 Nebulite can be put into the Geodinum-side shipping container and pulled up by the robot. The remaining can be dispersed throughout the material flow system. In order to escape from the corner of the field as requested by Specification 4, put the robot at either of the two telemetry corners aligned with the longer side wall, as seen in the picture below. Then test the rotational capabilities of the robot by backing out into the center of the field by giving a serial input negative speed for each motor. The right motor should be double that of the left motor when starting from the configuration seen in the picture. This would be flipped if the position was also flipped to the other corner. Complete several trials with varying motor speeds between 0-100 to determine the general performance of the robot under the heavy load. Success will be determined by whether the robot reverses out of the corner without being impeded by the walls and whether the robot successfully maintains the container grip. 
+
+![Corner](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/5f03e629322f527f148ddeeb20877b4b0497c8ac/Reports/Images%20and%20Sources/Experimental%20Analysis/Corner.jpg)
+
+Another test that will be done involves the purely translational capabilities of the robot, seeing how straight of a line the robot can make when it is not subject to error-correcting navigation, also with varied speeds. Starting at the front of the white line spanning the telemetry zones facing the cave, center the robot with the intention of allowing a straight path from the white line to the cave. Success will be determined by whether the robot makes it to the cave entrance and whether the robot maintains the container grip. 
+
+![Start](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/5f03e629322f527f148ddeeb20877b4b0497c8ac/Reports/Images%20and%20Sources/Experimental%20Analysis/Straight%20Line%20Start.jpg)
+
+3.  **Expected Results**:
+    
+I would expect the robot to be mostly capable of completing this task with the heavy load, but it may have issues at lower speeds. Also, I expect the robot to veer to the left some in the straight line test due to the Geodinium shipping container and the lack of error correction. However, at full speed the robot should be more than capable of any movement across the board with the full load, even if it isn’t completely accurate. 
+
+4.  **Actual Results**:
 
 
+### Escape Corner Test
+
+| Trial | Left Speed | Right Speed | Escaped Corner? | Maintained Container Grip? |
+| :-- | :-------------------------- | :------------------------------ | :----------------------- | :----------------------- |
+| 1   | -50 | -100 | Yes | Yes |
+| 2   | -25 | -50 | Yes | Yes |
+| 3   | -12.5 | -25 | No - remained stationary | Yes |
+
+### Straight Line Test
+
+| Trial | Left Speed | Right Speed | Made it to the cave? | Maintained Container Grip? |
+| :-- | :-------------------------- | :------------------------------ | :----------------------- | :----------------------- |
+| 1   | 100 | 100 | No - veered left | Yes |
+| 2   | 50 | 50 | No - veered more left than Trial 1 | Yes |
+| 3   | 25 | 25 | No - remained stationary | Yes |
+
+5.  **Interpretation and Conclusions**:
+    
+- Provide a detailed analysis explaining the significance of the results.
+
+For the Corner and Straight Line Tests, the speed for each motor was gradually decreased per each of the three trials. Regarding shared results, the grip of the container was maintained for all trials of each test. 
+For the Corner Test, the maximum speed of 100 on the given range was used for the right motor, with the left motor being half of that on Trial 1. The resulting performance had the robot quickly and easily reverse out of the corner into the open field, as seen in the picture below.
+
+![Escape Corner](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/5f03e629322f527f148ddeeb20877b4b0497c8ac/Reports/Images%20and%20Sources/Experimental%20Analysis/Escape%20Corner.jpg)
+
+The same general behavior occurred again for the second trial with the left and right motor speeds being half of Trial 1. However, when this was halved again for Trial 3, the robot would not budge, signifying that this final left and right motor speed pairing was not enough to allow movement with the full load. 
+
+For the Straight Line Test, the maximum speed of 100 was used for both motors on Trial 1, and the result was that the robot easily traversed the field to the side of the cave, but it did not make it to the cave as the robot veered to the left along the path. For Trial 2 with halved speeds for both motors, the same result occurred, this time with more error and a slower time of completion. For Trial 3 with the motor speeds halved again, the robot did not budge from the start line. 
+
+![Finish](https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/5f03e629322f527f148ddeeb20877b4b0497c8ac/Reports/Images%20and%20Sources/Experimental%20Analysis/Straight%20Line%20Finish.jpg)
+
+Regarding the significance of the results in both tests, it seems the full speed is more than enough to complete translational and rotational movement quickly across the field. However, motor speeds nearing the 25 range were not enough to allow either type of movement between both tests. The robot did successfully remove itself from the corner each time it had enough speed, so the robot is capable of satisfying Specification 4. The robot also did all of these movements for each test with the described full load, which would meet the realistic expectations for Specification 1d. The only issue present for the drivetrain was the lack of accuracy in the robot path, which emphasizes the necessity of a feedback system for error correction using the navigation subsystem. 
+
+- State whether results matched your expectations and explain any discrepancies.
+
+These results for each test matched my expectations. I expected the robot to be able to move with the maximum speed, but I wasn’t aware of how quickly it would move. The robot exceeded my expectations with regard to its quick response movement at full speed. I did expect the drop off in performance as the speed decreased to quarter speed. I did not expect the robot to veer to the left excessively as demonstrated in the Straight Line Test, but I did expect some error. The shipping container touching the ground may have been the source of issue for drastic leftward error. 
+
+## Summary of All Experiments
+
+As demonstrated by the Astral Material Collection Experiment and the Drivetrain Performance Experiment, all motors involved in movement and material flow, including the sweeper motor, auger motor, sorting gate servo, drivetrain motors, linear actuator, and shipping container servo function as intended and when prompted. There were some physical issues involved in testing that prohibited further success for material transfer and drivetrain movement, but each of the motors were proven to meet the realistic expectations of the given specifications and were thus proven to be prepared to test the limits of any potential competition run. 
 
 # Sensors
 
