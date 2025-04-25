@@ -350,26 +350,78 @@ The background is then subtracted from the data above to remove the noise levels
 This last table and graphs show how well each sensor sees magnetic material. The first graph shows the data from the last table grouped by run number and then color coded by sensor type. The second graph shows the same data but zoomed in to better see the thresholds. A threshold of 0.1 V would be enough, but a threshold of 0.2 V can be used as well but barely misses run 10. Higher than 0.2 V would miss runs 9 and 10. Run 3 looks like an anomaly since all values are past the threshold. The minimums for each of the sensors are farther away from the set point than the maximums for an unknown reason. A method of a moving average or set point and background subtraction could be implemented to make the data usable on an operational robot. However, it was not implemented in this project due to time constraints. Lastly, the noise values were much higher than expected. When tested on their own, hall effects have very low noise. However, all the components working at the same time on the robot caused large amounts of noise. The signal is still visible through the noise and above 0.1 V. Overall, the hall effects are successful at measuring the magnetic material, but it was not fully implemented on the final design.
 
 # Camera
-For each documented experiment, you must include:
+## Critical Success Criteria
+1. The camera shall detect the Nebulite.
+2. The camera shall detect the Geodinium.
+3. The robot shall be able to detect the walls of the arena, walls of the cave, and cave entrance.
+4. The camera shall read April Tags.
 
-1.  **Purpose and Justification**:
-    
-    -   Explain why the experiment was designed, and how it relates to your critical success criteria.
-2.  **Detailed Procedure**:
-    
-    -   Outline clearly the methods used, ensuring another team could reproduce your experiment.
-3.  **Expected Results**:
-    
-    -   State your initial hypothesis or expectations clearly before conducting experiments.
-4.  **Actual Results**:
-    
-    -   Present data collected during the experiments in an organized, easy-to-interpret format (tables, graphs, charts).
-5.  **Interpretation and Conclusions**:
-    
-    -   Provide a detailed analysis explaining the significance of the results.
-    -   State whether results matched your expectations and explain any discrepancies.
+## Experiment One
+### Purpose and Justification
+This experiment will seek to address success criteria 1 and 2, which will involve testing to make sure the camera can find the astral material on the game field. The robots ability to locate astral material is an important part of scoring points and will help the robot in navigation of the game field and collection of the astral material. Successful completion of this test would mean the camera is able to accurately locate all astral material on the game board.
 
-When you have complete all of the experiments: clearly summarize whether your experiments demonstrated that your project meets the original success criteria outlined in your conceptual design. If success criteria were not met, discuss the reasons and outline steps for improvement.
+### Detailed Procedure
+The robot will be placed in the cave entrance facing the telemetry zones for the cosmic shipping containers, then the appropriate amount of astral material will be randomly placed on the game field in front of the robot between the telemetry zones and the robot, this will simulate how the camera would function in an actual match scenario. After the robot has been positioned and the object detection algorithm will be run and the number of detected objects will be counted. Some notes for the experiment:
+In an actual game scenario the amount of astral material on the game field will change with each match due to random placement of material and  set up steps to get to that point in the match, so for this experiment the “appropriate amount of astral material” is set to 14 as that is the amount of material on the outside game field at the start of the match and will be the maximum amount of material that will be on the game field once the match has progressed to the point of object detection.
+The objects will be counted by using a modified version of the object detection code which will display a window with distances and bounding boxes, this will simulate the game scenario well enough as the object detection algorithm would run for a second or 2 and will make it easy to capture data.
+### Expected Results 
+The object detection is expected to work well with some issues in reliability, which would look like some objects being solidly detected with some objects having partial flickering detections. During coding the algorithm worked well but had some troubles with 100% reliability often having minor differences from frame to frame which resulted in some variance to the detected objects. This would appear as an object being detected for a few frames then not detected for a few frames leading to a flickering effect in the windows for the bounding box, however this flickering was accounted for in the way the objects are added to a list and sent to navigation, so for the purposes of this experiment a flickering or partial detection will be counted as a success. 
+
+### Actual Results 
+The camera and algorithms performed as expected, for the most part the objects were solidly detected, however there were instances of partial detection, and a couple instances of no detection. The experiment was run 10 times and was run according to the Detailed Procedure above with a new random distribution of materials each time. The overall numbers for the experiment are as follows:
+|Run Number|Objects Fully Detected|Objects Partially Detected|Objects Not Detected|
+|:-|:-|:-|:-|
+|1|12|2|0|
+|2|13|1|0|
+|3|14|0|0|
+|4|10|4|0|
+|5|13|1|0|
+|6|11|3|0|
+|7|11|1|2|
+|8|13|1|0|
+|9|12|2|0|
+|10|12|2|0|
+
+So as can be seen from the table the camera will always get full detection on most of the objects then will get partial detections on the rest, and will rarely get no detections. Here is an image of the run with full detections.
+<img src="https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/main/Reports/Images%20and%20Sources/Experimental%20Analysis/full%20detection.png" alt="Full Detection" width="50%" />
+
+### Interpretation and Conclusion
+
+The Actual results and Expected results matched closely, so as long as the period that the algorithm runs for is sufficiently long, which a few seconds is plenty long, then the object detection will work almost perfectly. Out of the 10 runs only 2 objects failed to detect out of 140 total objects, the 2 that were not detected are believed to be due to the lighting conditions, the ones that were not detected as well as most of the partial detections happened in the middle of the cameras view, so it is believed the camera has issues receiving the light from objects that are in the center of its view. For the purposes of this experiment 2 objects that are close enough together to where they share the same bounding box are considered a successful detection as if they are that close the robot will pick both up as it goes to that region due to the size of the sweeper.
+
+## Experiment Two
+### Purpose and Justification
+This experiment will test the camera's abilities to meet success criteria 4. Being able to read the april tags will help with finding the right telemetry zone, if the robot sorts the cosmic shipping containers into the right telemetry zone the points from each collected astral material will be increased. A successful experiment would be the camera being able to detect all april tags from multiple different angles.
+
+### Detailed Procedure
+The experiment will involve placing the robot on the game field in the entrance of the cave facing the telemetry zones, the april tag will then be placed across from the robot in the position it would be in during the match and the april tag detection algorithm will be run, the april tag will then be placed in the right corner opposite the robot and the algorithm will be run again, finally the tag will be placed in the left corner opposite the robot and the algorithm will be run again. This test will see if the april tags can be read from multiple different angles and positions.
+
+### Expected Results
+It is expected the cameras will be able to read each april tag in each different position and angle. April tags are common to robotics and are designed in a way that they can be read from many different positions and angles and as such the camera is expected to have no trouble with reading them.
+
+### Actual Results 
+The test was run 5 times with 5 different april tags, with each april tag being placed in each position and the camera was able to read all 5 tags in all 3 positions, totaling to be 15 tags read in total. 
+
+### Interpretation and conclusion
+As stated before the april tags are common to robotics and are designed in such a way as to be easily read despite angle or position, along with this there are also mature and developed libraries for april tag collection, all of which make the 100% success rate expected. 
+
+## Experiment 3
+### Purpose and Justification
+This experiment is to ensure the robot meets success criteria 3. As the camera is the only forward facing sensor it is responsible for making sure the robot does not have any collisions from the front, and this test will make sure the robot can see the walls to warn against collision before it can occur. A successful experiment would be the robot accurately finding each wall and the distance to the robot from the closest point on the wall. 
+
+### Detailed Procedure 
+The procedure for this experiment is to place the robot at different points around the game field and then to run the wall algorithm to see if the robot can accurately place the closest point on the wall. To begin the robot was placed facing the telemetry zones with the wall approximately 3 inches from the right side of the robot so that the robot was close to the wass on the right with open game field to the left. Then the robot was placed in the same position but on the other side of the field but with the wall on the left side of the robot. Then the robot was placed in the corner that is the left corner opposite the start zone and the corner closest to the robots position in the first position in this experiment, it is placed in a way so that it is closer to the walls on the right side than the left. The previous positioning is repeated in the corner directly left to the start zone and again the robot is placed so that the left walls are closer than the right walls. The robot is then placed in the middle of the field facing the telemetry zones parallel with the wall behind the telemetry zones. Finally the robot is placed to the side of the cave entrance on either side so that the walls of the cave are directly in front of the camera. 
+
+### Expected Results 
+The camera is expected to be able to find the closest position on the wall in each position, this will give how far away the robot is to the wall. 
+
+### Actual Results 
+The experiment was run 2 times, so the robot was placed in each position twice and the algorithm was run to find the closest point on the wall to the robot. In both straight on positions where the wall was close to the left and right of the robot the algorithm worked perfectly accurately finding the closest position to be somewhat in front of and either to the right or left of the robot. In the corner positions the robot was able to accurately find the wall when the right wall was closer to the robot however in the other position when the left wall was closer it still showed the right wall being closer. In the head on position the algorithm seemed to have trouble picking out 1 exact point and instead jumped around the center of view some. For the final test where the robot was placed in front of the cave walls it was able to find the cave walls without difficulty. Here is an image that gives a visual representation of the wall algorithm, the red dot represents the point on the wall closest to the robot.
+
+<img src="https://github.com/ACruz-42/F24_Team1_CapstoneDemo/blob/main/Reports/Images%20and%20Sources/Experimental%20Analysis/wall%20on%20april.png" alt="Wall Algorithm" width="50%" />
+
+### Interpretation and Conclusion 
+For the most part the robot was able to find the walls as expected. For the instances in the left corner where the robot showed the right wall being closer when it should have been the left there are a few possible explanations, it is possible that something with how the algorithm was written that a more right point might be favored, however it is more likely that the issue was physical, most likely having to do with how the camera was mounted, perhaps there was a slight angle or tilt to the mounting, or the mounting was just off center enough to skew results. For the results in the parallel position, this is just due to the way the algorithm tries to find one specific point, which becomes slightly more difficult when head on to a wall, but as the point stayed in the center of the camera's view each point would be accurate enough to help the robot avoid collision. 
 # Navigation
 
 ## Relevant Critical Success Criteria:
