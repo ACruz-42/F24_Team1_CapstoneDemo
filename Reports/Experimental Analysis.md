@@ -531,7 +531,20 @@ In two runs, the robot successfully navigated through the defined sequence of po
 The results of Experiment Two nearly aligned with our expectations. The almost consistent successful navigation sequence implies that the overall function of the navigation subsystem is working as intended, but perhaps needed some tweaks to make the robot fully autonomous. More importantly, the successful and timely cessation of all robot operations at the 3-minute mark in every run definitively validates Critical Success Criterion 4. This experiment confirms that the robot's state machine correctly 
  
 # Conclusion
-When you have complete all of the experiments: clearly summarize whether your experiments demonstrated that your project meets the original success criteria outlined in your conceptual design. If success criteria were not met, discuss the reasons and outline steps for improvement.
+This capstone aimed for a reliable robot capable of scoring highly, but faced constraints from a limited development and testing timeline.
+
+Motor Control experiments demonstrated the drivetrain's capacity to operate under realistic competition loads (Spec 1d evaluated at its extremes) and the material handling systems' ability to transfer individual astral materials (Spec 1e), although physical design aspects sometimes hindered consistent flow of all pieces. These tests indicated the motors themselves were capable for the intended loads.
+
+The Sensor analysis confirmed the functionality of key components against critical success criteria. The OTOS accurately measured robot position (Constraint 1). Photoresistors reliably detected the start LED (Spec 2, Constraint 3). Hall Effect sensors successfully detected magnetic material above the ADC resolution (Spec 3, Constraint 2) despite higher-than-expected noise levels (partially addressing Spec 4).
+
+Camera testing validated its ability to detect astral materials (Spec 1, Spec 2) and read AprilTags with high reliability (Spec 4). It also demonstrated capability in detecting arena walls and the cave entrance (Spec 3), though performance was sensitive to viewing angle and distance, indicating partial fulfillment of this criterion under all conditions.
+
+The Navigation subsystem relied on data from these sensors to plan movements and control the motors for tasks like object collection and placement. In testing, this subsystem succesfully completed all attributed critical success criteria with the exception of failure to enter the cave area at one point.
+
+In summary, the experiments verified that core subsystem functionalities met several key original success criteria regarding basic operational capability and sensing. However, the challenges identified during testing, coupled with the constraints of a short development period that limited full system integration and optimization, likely contributed to the robot's less than exmplary performance outcome in the IEEE SECON 2025 competition, highlighting the gap between component-level function and integrated system reliability in a dynamic environment. Given the extensive testing that has been completed, key improvements include refining datapoints to use for the Navigation subsystem, implementing advanced motor control techniques (such as PID control), purchasing more advanced and robust sensors for the Sensor subsystem, and further integration of the Camera subsystem for localization purposes.
 
 # Statement of Contributions
-Alex Cruz - Navigation, Introduction, Conclusion.
+Alex Cruz - Navigation Subsystem, Introduction, Conclusion.
+Dakota Moye - Sensors Subsystem
+Sam Hunter - Camera Subsystem
+Sean Borchers - Motor Subsystem
