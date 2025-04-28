@@ -334,7 +334,7 @@ The background is then subtracted from the data above to remove the noise levels
 |:-|:-|:-|:-|:-|:-|:-|
 |1|0.018|-0.366|0.032|-0.048|0.067|***2.040***|
 |2|***0.361***|-0.327|0.096|0.040|**0.182**|***0.262***|
-|3|***0.477***|***0.437***|***0.563***|***0.398***|***0.604***|*2.417***|
+|3|***0.477***|***0.437***|***0.563***|***0.398***|***0.604***|***2.417***|
 |4|***0.789***|-0.633|**0.179**|-0.268|**0.137**|-0.132|
 |5|-0.047|-0.184|0.076|**0.148**|**0.155**|***1.189***|
 |6|0.039|***1.070***|0.026|-0.007|0.028|***2.147***|
@@ -545,6 +545,9 @@ In summary, the experiments verified that core subsystem functionalities met sev
 
 # Statement of Contributions
 Alex Cruz - Navigation Subsystem, Introduction, Conclusion.
+
 Dakota Moye - Sensors Subsystem
+
 Sam Hunter - Camera Subsystem
+
 Sean Borchers - Motor Subsystem
