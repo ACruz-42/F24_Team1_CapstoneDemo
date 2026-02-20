@@ -10,3 +10,5 @@ The following link goes to the Arduino Follower Software readme. This provides i
 ## Dependencies
 
 smbus2, other otos, camera, python3.11.smth
+
+Written in the notes: PyRealSense2 (through liberal sense), Cv2, Pupil_apriltags, Pyserial, Smbus, Qwiic otos, Otos
